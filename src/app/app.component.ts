@@ -15,13 +15,33 @@
 // You should have received a copy of the GNU General Public License
 // along with clavicode-frontend.  If not, see <http://www.gnu.org/licenses/>.
 
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { ExecuteService } from './services/execute.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent {
-  title = 'my-app';
+export class AppComponent implements OnInit {
+  constructor(private executeService: ExecuteService) {
+  }
+
+  ngOnInit(): void {
+    this.executeService.create();
+    this.executeService.receiver?.subscribe(msg => {
+      console.log(msg);
+    })
+  }
+
+  send() {
+    this.executeService.sender?.next({
+      message: 'Hello from app component'
+    });
+  }
+
+  close() {
+    this.executeService.close();
+  }
+
 }
