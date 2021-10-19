@@ -1,1 +1,7 @@
-<nz-demo-layout-top-side-2>loading</nz-demo-layout-top-side-2>
+<div id="header" [ngStyle]="{ 'height.px': headerHeight }">
+  <app-header></app-header>
+</div>
+<div id="mainView" [ngStyle]="{ 'height.px': mainViewHeight }">
+  <app-main-view></app-main-view>
+</div>
+<div id="footer" [ngStyle]="{ 'height.px': footerHeight }"></div>
