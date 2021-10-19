@@ -28,6 +28,9 @@ import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NzLayoutModule } from 'ng-zorro-antd/layout';
+import { AngularSplitModule } from 'angular-split';
+import { TabsModule } from './tabs/tabs.module'
+
 import { HeaderComponent } from './header/header.component';
 import { FooterComponent } from './footer/footer.component';
 import { MainViewComponent } from './main-view/main-view.component';
@@ -43,9 +46,11 @@ registerLocaleData(zh);
   imports: [
     BrowserModule,
     AppRoutingModule,
+    AngularSplitModule,
     FormsModule,
     HttpClientModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    TabsModule
   ],
   providers: [{ provide: NZ_I18N, useValue: zh_CN }],
   bootstrap: [AppComponent]
