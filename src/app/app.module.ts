@@ -27,7 +27,7 @@ import zh from '@angular/common/locales/zh';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { NzLayoutModule } from 'ng-zorro-antd/layout';
+import { NzIconModule } from 'ng-zorro-antd/icon';
 import { AngularSplitModule } from 'angular-split';
 import { TabsModule } from './tabs/tabs.module'
 
@@ -50,6 +50,7 @@ registerLocaleData(zh);
     FormsModule,
     HttpClientModule,
     BrowserAnimationsModule,
+    NzIconModule,
     TabsModule
   ],
   providers: [{ provide: NZ_I18N, useValue: zh_CN }],

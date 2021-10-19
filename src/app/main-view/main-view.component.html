@@ -1,5 +1,13 @@
-<p>main-view works!</p>
-<h1>Clavicode</h1>
+<div id="asContainer">
+  <ul id="activityBarIconConatiner">
+    <li *ngFor="let i of sidebarItems" class="activity-bar-icon" [title]="i.title">
+      <i nz-icon [nzType]="i.icon"></i>
+    </li>
+  </ul>
+  <div>
+    Editor
+    <button (click)="send()">Send Message</button>
+    <button (click)="close()">Close</button>
+  </div>
+</div>
 
-<button (click)="send()">Send Message</button>
-<button (click)="close()">Close</button>

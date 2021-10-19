@@ -17,6 +17,7 @@
 
 import { Component, OnInit } from '@angular/core';
 import { ExecuteService } from '../services/execute.service';
+import { NzIconService } from 'ng-zorro-antd/icon';
 
 @Component({
   selector: 'app-main-view',
@@ -25,9 +26,33 @@ import { ExecuteService } from '../services/execute.service';
 })
 export class MainViewComponent implements OnInit {
 
-  constructor(private executeService: ExecuteService) { }
+  readonly sidebarItems = [
+      {
+        title: '常用',
+        url: 'common',
+        icon: 'star',
+        disabled: false
+      },
+      {
+        title: '调试',
+        url: 'debug',
+        icon: 'control',
+        disabled: false
+      },
+      {
+        title: '文件',
+        url: 'file',
+        icon: 'file',
+        disabled: true
+      }
+    ];
 
- 
+  constructor(private iconService: NzIconService, private executeService: ExecuteService) {
+    // this.iconService.fetchFromIconfont({
+    //   scriptUrl: 'https://at.alicdn.com/t/font_2879102_dgzdvy8za0i.js'
+    // })
+  }
+
   ngOnInit(): void {
     this.executeService.create();
     this.executeService.receiver?.subscribe(msg => {
