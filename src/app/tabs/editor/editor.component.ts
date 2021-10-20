@@ -32,4 +32,8 @@ export class EditorComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  editorInit(editor: monaco.editor.IStandaloneCodeEditor) {
+    console.log("Editor initialized");
+    console.log(editor);
+  }
 }
