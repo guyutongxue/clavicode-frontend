@@ -16,6 +16,9 @@
 // along with clavicode-frontend.  If not, see <http://www.gnu.org/licenses/>.
 
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { EditorService } from '../../services/editor.service';
+import { TabsService } from '../../services/tabs.service';
 
 @Component({
   selector: 'app-editor',
@@ -24,16 +27,43 @@ import { Component, OnInit } from '@angular/core';
 })
 export class EditorComponent implements OnInit {
 
-  constructor() { }
-
+  key: string | null = null;
   code: string = "int main() {}";
-  editorOptions = {theme: 'vs', language: 'cpp'};
+  editorOptions: monaco.editor.IStandaloneEditorConstructionOptions = {
+    glyphMargin: true,
+    wordBasedSuggestions: false,
+    lightbulb: {
+        enabled: true
+    },
+    theme: "vs",
+    language: "cpp"
+  };
+
+  constructor(private route: ActivatedRoute,
+    private tabsService: TabsService,
+    private editorService: EditorService) { }
+
+
+  private keyOnChange(key: string) {
+    if (typeof key === "undefined") this.key = null;
+    this.key = key;
+  }
 
   ngOnInit(): void {
+    this.route.params.subscribe(routeParams => {
+      this.keyOnChange(routeParams['key']);
+    });
+    console.log(this.editorService);
   }
 
   editorInit(editor: monaco.editor.IStandaloneCodeEditor) {
     console.log("Editor initialized");
-    console.log(editor);
+    this.editorService.editorInit(editor);
+    if (this.key) {
+      const [activeTab] = this.tabsService.getByKey(this.key);
+      if (activeTab) {
+        this.editorService.switchToModel(activeTab);
+      }
+    }
   }
 }

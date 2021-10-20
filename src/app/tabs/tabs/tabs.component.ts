@@ -16,6 +16,9 @@
 // along with clavicode-frontend.  If not, see <http://www.gnu.org/licenses/>.
 
 import { Component, OnInit } from '@angular/core';
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { Router } from '@angular/router';
+import { Tab, TabsService } from '../../services/tabs.service';
 
 @Component({
   selector: 'app-tabs',
@@ -24,9 +27,48 @@ import { Component, OnInit } from '@angular/core';
 })
 export class TabsComponent implements OnInit {
 
-  constructor() { }
+  constructor(private router: Router, private tabsService: TabsService) { }
 
   ngOnInit(): void {
+  }
+
+  get tabList() {
+    return this.tabsService.tabList;
+  }
+
+
+
+  get activeIndex(): number {
+    return this.tabsService.getActive()[1];
+  }
+  set activeIndex(index: number) {
+    if (index >= 0) {
+      this.tabsService.changeActive(index);
+      const tab = this.tabList[index];
+      this.router.navigate([tab.type + '/' + tab.key]);
+    }
+  }
+
+  private doRemoveTab(tab: Tab) {
+    this.activeIndex = this.tabsService.remove(tab.key);
+    if (this.tabList.length === 0) {
+      this.router.navigate(['empty']);
+    }
+  }
+
+  closeTab(e: { index: number }) {
+    const target = this.tabList[e.index];
+    // if (target.saved === false) {
+    //   this.notSaveModalShow(target);
+    // } else {
+      this.doRemoveTab(target);
+    // }
+  }
+
+  // https://github.com/NG-ZORRO/ng-zorro-antd/issues/3461
+  cdkOnDrop(event: CdkDragDrop<string[]>) {
+    moveItemInArray(this.tabsService.tabList, event.previousIndex, event.currentIndex);
+    // this.activeIndex = event.currentIndex;
   }
 
 }

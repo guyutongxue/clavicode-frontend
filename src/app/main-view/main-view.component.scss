@@ -20,6 +20,10 @@
       padding: 12px;
     }
 
+    .activity-bar-icon:hover {
+      color: white;
+    }
+
     .active.activity-bar-icon {
       color: white;
       box-shadow: inset 2px 0 white;

@@ -15,9 +15,11 @@
 // You should have received a copy of the GNU General Public License
 // along with clavicode-frontend.  If not, see <http://www.gnu.org/licenses/>.
 
+import { AppRoutingModule } from '../app-routing.module';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { EditorComponent } from './editor/editor.component';
 import { TabsComponent } from './tabs/tabs.component';
 import { MonacoEditorModule } from '@materia-ui/ngx-monaco-editor';
@@ -29,8 +31,10 @@ import { MonacoEditorModule } from '@materia-ui/ngx-monaco-editor';
     TabsComponent
   ],
   imports: [
+    AppRoutingModule,
     CommonModule,
     FormsModule,
+    NzTabsModule,
     MonacoEditorModule
   ],
   exports: [TabsComponent]
