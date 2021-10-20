@@ -1,13 +1,18 @@
 <div id="mainViewContainer">
   <ul id="activityBarIconConatiner">
-    <li *ngFor="let i of sidebarItems" class="activity-bar-icon" [title]="i.title">
+    <li *ngFor="let i of sidebarItems" 
+    class="activity-bar-icon" 
+    [title]="i.title" 
+    [ngClass]="currentOutletUrl('sidebar') === i.url ? ['active'] : []"
+    (click)="showSidebar(i.url)"
+    >
       <i nz-icon [nzType]="i.icon"></i>
     </li>
   </ul>
   <div id="asContainer">
     <as-split unit="pixel" direction="horizontal" id="horizontalAs">
       <as-split-area [order]="0" [size]="200" id="sidebarAsArea">
-
+        <router-outlet name="sidebar"></router-outlet>
       </as-split-area>
       <as-split-area [order]="1" [size]="$any('*')">
         <as-split unit="pixel" direction="vertical" id="verticalAs">

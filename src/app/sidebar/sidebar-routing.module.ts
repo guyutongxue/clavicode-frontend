@@ -16,23 +16,34 @@
 // along with clavicode-frontend.  If not, see <http://www.gnu.org/licenses/>.
 
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { EditorComponent } from './editor/editor.component';
-import { TabsComponent } from './tabs/tabs.component';
-import { MonacoEditorModule } from '@materia-ui/ngx-monaco-editor';
+import { Routes, RouterModule } from '@angular/router';
 
+// import { OutlineComponent } from './outline/outline.component';
+// import { WatchComponent } from './watch/watch.component';
+import { EmptyPageComponent } from '../empty-page/empty-page.component';
+
+const routes: Routes = [
+  {
+    path: 'common',
+    component: EmptyPageComponent,
+    outlet: 'sidebar'
+  },
+  {
+    path: 'debug',
+    component: EmptyPageComponent,
+    outlet: 'sidebar'
+  },
+  {
+    path: 'file',
+    component: EmptyPageComponent,
+    outlet: 'sidebar'
+  }
+];
 
 @NgModule({
-  declarations: [
-    EditorComponent,
-    TabsComponent
-  ],
-  imports: [
-    CommonModule,
-    FormsModule,
-    MonacoEditorModule
-  ],
-  exports: [TabsComponent]
+  declarations: [],
+  imports: [CommonModule, RouterModule.forChild(routes)],
+  exports: [RouterModule]
 })
-export class TabsModule { }
+export class SidebarRoutingModule {}

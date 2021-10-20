@@ -35,6 +35,7 @@ import { TabsModule } from './tabs/tabs.module';
 import { HeaderComponent } from './header/header.component';
 import { FooterComponent } from './footer/footer.component';
 import { MainViewComponent } from './main-view/main-view.component';
+import { EmptyPageComponent } from './empty-page/empty-page.component';
 registerLocaleData(zh);
 
 @NgModule({
@@ -42,7 +43,8 @@ registerLocaleData(zh);
     AppComponent,
     HeaderComponent,
     FooterComponent,
-    MainViewComponent
+    MainViewComponent,
+    EmptyPageComponent
   ],
   imports: [
     BrowserModule,

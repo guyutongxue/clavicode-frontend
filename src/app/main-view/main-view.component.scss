@@ -19,6 +19,11 @@
       line-height: 24px;
       padding: 12px;
     }
+
+    .active.activity-bar-icon {
+      color: white;
+      box-shadow: inset 2px 0 white;
+    }
   }
   
   #asContainer {

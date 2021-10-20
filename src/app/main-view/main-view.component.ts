@@ -18,6 +18,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ExecuteService } from '../services/execute.service';
 import { NzIconService } from 'ng-zorro-antd/icon';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-main-view',
@@ -43,11 +44,18 @@ export class MainViewComponent implements OnInit {
         title: '文件',
         url: 'file',
         icon: 'file',
-        disabled: true
+        disabled: false
       }
     ];
+  readonly toolsItems = [
+    {
+      title: '问题',
+      url: 'problems',
+      disabled: false
+    }
+  ]
 
-  constructor(private iconService: NzIconService, private executeService: ExecuteService) {
+  constructor(private router: Router, private executeService: ExecuteService) {
     // this.iconService.fetchFromIconfont({
     //   scriptUrl: 'https://at.alicdn.com/t/font_2879102_dgzdvy8za0i.js'
     // })
@@ -58,6 +66,46 @@ export class MainViewComponent implements OnInit {
     this.executeService.receiver?.subscribe(msg => {
       console.log(msg);
     })
+  }
+
+  currentOutletUrl(name: string) {
+    const routerChildren = this.router.parseUrl(this.router.url).root.children;
+    if (name in routerChildren) {
+      return routerChildren[name].segments[0].path;
+    }
+    return null;
+  }
+  showSidebar(who: string): void {
+    if (who === this.currentOutletUrl("sidebar") || who === null) {
+      this.router.navigate([{
+        outlets: {
+          sidebar: null
+        }
+      }]);
+    } else {
+      if (this.sidebarItems.find(i => i.url === who)?.disabled) return;
+      this.router.navigate([{
+        outlets: {
+          sidebar: who
+        }
+      }]);
+    }
+  }
+  showTools(who: string): void {
+    if (who === this.currentOutletUrl("tools") || who === null) {
+      this.router.navigate([{
+        outlets: {
+          tools: null
+        }
+      }]);
+    } else {
+      if (this.toolsItems.find(i => i.url === who)?.disabled) return;
+      this.router.navigate([{
+        outlets: {
+          tools: who
+        }
+      }]);
+    }
   }
 
   send() {
