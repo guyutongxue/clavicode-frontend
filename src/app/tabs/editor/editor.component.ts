@@ -26,6 +26,9 @@ export class EditorComponent implements OnInit {
 
   constructor() { }
 
+  code: string = "int main() {}";
+  editorOptions = {theme: 'vs', language: 'cpp'};
+
   ngOnInit(): void {
   }
 
