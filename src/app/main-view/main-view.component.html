@@ -1,13 +1,26 @@
-<div id="asContainer">
+<div id="mainViewContainer">
   <ul id="activityBarIconConatiner">
     <li *ngFor="let i of sidebarItems" class="activity-bar-icon" [title]="i.title">
       <i nz-icon [nzType]="i.icon"></i>
     </li>
   </ul>
-  <div>
-    Editor
-    <button (click)="send()">Send Message</button>
-    <button (click)="close()">Close</button>
+  <div id="asContainer">
+    <as-split unit="pixel" direction="horizontal" id="horizontalAs">
+      <as-split-area [order]="0" [size]="200" id="sidebarAsArea">
+
+      </as-split-area>
+      <as-split-area [order]="1" [size]="$any('*')">
+        <as-split unit="pixel" direction="vertical" id="verticalAs">
+          <as-split-area [order]="0" [size]="$any('*')" id="tabsAsArea">
+            <app-tabs></app-tabs>
+          </as-split-area>
+          <as-split-area [order]="1" [size]="200" id="toolsAsArea">
+            <button (click)="send()">Send Message</button>
+            <button (click)="close()">Close</button>
+          </as-split-area>
+        </as-split>
+      </as-split-area>
+    </as-split>
   </div>
 </div>
 

@@ -6,7 +6,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "my-app": {
+    "clavicode-frontend": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -23,7 +23,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/my-app",
+            "outputPath": "dist/clavicode-frontend",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -36,6 +36,11 @@
                 "glob": "**/*",
                 "input": "./node_modules/@ant-design/icons-angular/src/inline-svg/",
                 "output": "/assets/"
+              },
+              {
+                "glob": "**/*",
+                "input": "./node_modules/monaco-editor-core",
+                "output": "assets/monaco-editor/"
               }
             ],
             "styles": [
@@ -81,10 +86,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "my-app:build:production"
+              "browserTarget": "clavicode-frontend:build:production"
             },
             "development": {
-              "browserTarget": "my-app:build:development"
+              "browserTarget": "clavicode-frontend:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -92,7 +97,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "my-app:build"
+            "browserTarget": "clavicode-frontend:build"
           }
         },
         "test": {
@@ -116,5 +121,5 @@
       }
     }
   },
-  "defaultProject": "my-app"
+  "defaultProject": "clavicode-frontend"
 }

@@ -19,7 +19,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { EditorComponent } from './editor/editor.component';
 import { TabsComponent } from './tabs/tabs.component';
-
+import { MonacoEditorModule } from '@materia-ui/ngx-monaco-editor';
 
 
 @NgModule({
@@ -28,7 +28,9 @@ import { TabsComponent } from './tabs/tabs.component';
     TabsComponent
   ],
   imports: [
-    CommonModule
-  ]
+    CommonModule,
+    MonacoEditorModule
+  ],
+  exports: [TabsComponent]
 })
 export class TabsModule { }

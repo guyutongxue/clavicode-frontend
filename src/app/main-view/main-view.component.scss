@@ -1,4 +1,4 @@
-#asContainer {
+#mainViewContainer {
   display: flex;
   flex-direction: row;
   height: 100%;
@@ -19,5 +19,9 @@
       line-height: 24px;
       padding: 12px;
     }
+  }
+  
+  #asContainer {
+    flex-grow: 1;
   }
 }

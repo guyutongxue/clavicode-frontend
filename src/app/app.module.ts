@@ -27,9 +27,10 @@ import zh from '@angular/common/locales/zh';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MonacoEditorModule } from '@materia-ui/ngx-monaco-editor';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { AngularSplitModule } from 'angular-split';
-import { TabsModule } from './tabs/tabs.module'
+import { TabsModule } from './tabs/tabs.module';
 
 import { HeaderComponent } from './header/header.component';
 import { FooterComponent } from './footer/footer.component';
@@ -50,6 +51,7 @@ registerLocaleData(zh);
     FormsModule,
     HttpClientModule,
     BrowserAnimationsModule,
+    MonacoEditorModule,
     NzIconModule,
     TabsModule
   ],
