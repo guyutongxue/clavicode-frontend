@@ -1,13 +1,37 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh_CN">
 <head>
   <meta charset="utf-8">
-  <title>MyApp</title>
+  <title>clavicode</title>
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
 </head>
 <body>
-  <app-root></app-root>
+  <app-root>
+    <style>
+      app-root {
+        height: 100vh;
+        width: 100vw;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+      .loading-spinner {
+        width: 100px;
+        height: 100px;
+      }
+      .loading-text {
+        font-size: 20px;
+      }
+      .loading-hint {
+        color: darkgray;
+      }
+    </style>
+    <img src="assets/loading.svg" alt="加载中" class="loading-spinner">
+    <p class="loading-text">加载中...</p>
+    <p class="loading-hint">首次加载可能需要数十秒到数分钟不等。</p>
+  </app-root>
 </body>
 </html>
