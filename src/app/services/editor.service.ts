@@ -28,6 +28,7 @@ import { debounceTime, distinctUntilChanged, filter, take } from 'rxjs/operators
 import { Tab } from './tabs.service';
 // import { ElectronService } from '../core/services';
 import { cppLang, cppLangConf } from '../cppLanguageConfig';
+import { environment } from '../../environments/environment';
 
 // All standard C++ headers filename
 const stdCppHeaders = [
@@ -154,7 +155,8 @@ export class EditorService {
       // this.electronService.ipcRenderer.on('ng:langServer/started', (_, port) => {
       // create the web socket
       const TEMP_CLANGD_TOKEN = "15bf2a54-f439-4874-a252-6a5164a0f559";
-      const socketUrl = `ws://localhost:3000/ws/languageServer/clangd/${TEMP_CLANGD_TOKEN}`;
+      const HOST = environment.production ? location.host : "localhost:3000";
+      const socketUrl = `ws://${HOST}/ws/languageServer/clangd/${TEMP_CLANGD_TOKEN}`;
       const socketOptions = {
         maxReconnectionDelay: 10000,
         minReconnectionDelay: 1000,
