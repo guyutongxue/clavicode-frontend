@@ -38,6 +38,16 @@ const routes: Routes = [
     path: 'file',
     component: EmptyPageComponent,
     outlet: 'sidebar'
+  },
+  {
+    path: 'play',
+    component: EmptyPageComponent,
+    outlet: 'sidebar'
+  },
+  {
+    path: 'search',
+    component: EmptyPageComponent,
+    outlet: 'sidebar'
   }
 ];
 

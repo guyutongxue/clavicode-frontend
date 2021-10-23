@@ -45,6 +45,20 @@ export class MainViewComponent implements OnInit {
         url: 'file',
         icon: 'file',
         disabled: false
+      },
+      {
+        title: '运行',
+        url: 'play',
+        icon: 'play-circle',
+        disabled: false
+
+      },
+      {
+        title: '搜索',
+        url: 'search',
+        icon: 'search',
+        disabled: false
+
       }
     ];
   readonly toolsItems = [
