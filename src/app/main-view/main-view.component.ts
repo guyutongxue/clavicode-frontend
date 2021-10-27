@@ -19,6 +19,8 @@ import { Component, OnInit } from '@angular/core';
 import { ExecuteService } from '../services/execute.service';
 import { NzIconService } from 'ng-zorro-antd/icon';
 import { Router } from '@angular/router';
+import { CompileService } from '../services/compile.service';
+import { EditorService } from '../services/editor.service';
 
 @Component({
   selector: 'app-main-view',
@@ -69,7 +71,10 @@ export class MainViewComponent implements OnInit {
     }
   ]
 
-  constructor(private router: Router, private executeService: ExecuteService) {
+  constructor(private router: Router, 
+    private executeService: ExecuteService, 
+    private compileService: CompileService,
+    private editorService: EditorService) {
     // this.iconService.fetchFromIconfont({
     //   scriptUrl: 'https://at.alicdn.com/t/font_2879102_dgzdvy8za0i.js'
     // })
@@ -122,14 +127,21 @@ export class MainViewComponent implements OnInit {
     }
   }
 
-  send() {
-    this.executeService.sender?.next({
-      message: 'Hello from app component'
-    });
-  }
+  // send() {
+  //   this.executeService.sender?.next({
+  //     message: 'Hello from app component'
+  //   });
+  // }
 
-  close() {
-    this.executeService.close();
+  // close() {
+  //   this.executeService.close();
+  // }
+
+  stdin: string = "";
+  stdout: string = "";
+  async compile() {
+    const code = this.editorService.getCode();
+    this.stdout = await this.compileService.fileCompile(code, this.stdin) ?? "";
   }
 
 

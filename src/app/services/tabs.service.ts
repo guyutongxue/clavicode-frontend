@@ -40,14 +40,14 @@ const initTab: Tab[] = [{
   key: "aaa",
   type: "file",
   title: "a.cpp",
-  code: "int main() {}",
+  code: `#include <iostream>\nint main() {\n    std::cout << "Hello, world!" << std::endl;\n}`,
   path: "/tmp/a.cpp",
   // saved: false
 }, {
   key: "bbb",
   type: "file",
   title: "b.cpp",
-  code: "#include <iostream>\nint main() { ; ; ; }",
+  code: `#include <iostream>\nint main() {\n    int n;\n    std::cin >> n;\n    std::cout << n * n << std::endl;\n}`,
   path: "/tmp/b.cpp",
   // saved: false
 }];
