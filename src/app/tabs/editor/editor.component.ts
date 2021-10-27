@@ -28,7 +28,9 @@ import { TabsService } from '../../services/tabs.service';
 export class EditorComponent implements OnInit {
 
   key: string | null = null;
-  code: string = "int main() {}";
+  get code() {
+    return this.tabsService.getActive()[0]?.code ?? "";
+  }
   editorOptions: monaco.editor.IStandaloneEditorConstructionOptions = {
     glyphMargin: true,
     wordBasedSuggestions: false,
