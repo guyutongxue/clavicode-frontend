@@ -81,6 +81,7 @@ export interface EditorBreakpointInfo extends EditorBreakpointDecInfo {
 interface ModelInfo {
   cursor: monaco.IPosition;
   scrollTop: number;
+  readonly readOnly: boolean;
   bkptDecs: EditorBreakpointDecInfo[];
 }
 
@@ -385,6 +386,7 @@ export class EditorService {
       this.modelInfos[newUri] = {
         cursor: { column: 1, lineNumber: 1 },
         scrollTop: 0,
+        readOnly: tab.readOnly,
         bkptDecs: [],
       };
       if (replace && oldModel !== null && oldUri) {
@@ -403,13 +405,16 @@ export class EditorService {
       }
     }
     this.editor.setModel(newModel);
-    console.log('switch to ', newUri, tab);
+    console.log('switch to ', newUri);
     if (replace) {
       oldModel?.dispose();
     }
-    this.editor.setPosition(this.modelInfos[newUri].cursor);
-    this.editor.setScrollTop(this.modelInfos[newUri].scrollTop);
     this.editor.focus();
+    this.editor.setScrollTop(this.modelInfos[newUri].scrollTop);
+    this.editor.updateOptions({ readOnly: this.modelInfos[newUri].readOnly });
+    // Set position seems doesn't work if called immediately.
+    // Call it after 3ms. I don't know why
+    setTimeout(() => this.editor?.setPosition(this.modelInfos[newUri].cursor), 3);
   }
 
   async getSymbols(): Promise<DocumentSymbol[]> {

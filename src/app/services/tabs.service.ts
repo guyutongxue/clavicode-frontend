@@ -20,11 +20,12 @@ import { Injectable } from '@angular/core';
 import { EditorService } from './editor.service';
 
 export interface Tab {
-  key: string, // An unique udid for each tab
-  type: "file" | "setting",
-  title: string,
-  code: string,
-  path: string,
+  key: string; // An unique udid for each tab
+  type: "file" | "setting";
+  title: string;
+  code: string;
+  path: string;
+  readOnly: boolean;
   // saved: boolean
 }
 
@@ -42,6 +43,7 @@ const initTab: Tab[] = [{
   title: "a.cpp",
   code: `#include <iostream>\nint main() {\n    std::cout << "Hello, world!" << std::endl;\n}`,
   path: "/tmp/a.cpp",
+  readOnly: false,
   // saved: false
 }, {
   key: "bbb",
@@ -49,6 +51,7 @@ const initTab: Tab[] = [{
   title: "b.cpp",
   code: `#include <iostream>\nint main() {\n    int n;\n    std::cin >> n;\n    std::cout << n * n << std::endl;\n}`,
   path: "/tmp/b.cpp",
+  readOnly: true
   // saved: false
 }];
 
@@ -67,8 +70,11 @@ export class TabsService {
     // When initialization finished, it will send a event. TabsService will
     // do necessary initialization by calling `getActive` then.
     this.editorService.editorMessage.subscribe(({ type, arg }) => {
-      if (type === "initCompleted") {
-        this.getActive();
+      switch (type) {
+        case "initCompleted": {
+          this.getActive();
+          break;
+        }
       }
     });
   }
@@ -128,6 +134,7 @@ export class TabsService {
       type: options.type,
       title: options.title,
       code: options.code ?? "",
+      readOnly: true,
       // saved: true, // !(options.type === "file" && typeof options.path === "undefined") // use this if create unsaved new file
       path: options.path ?? `/tmp/${options.title}`
     };
