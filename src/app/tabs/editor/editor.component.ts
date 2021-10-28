@@ -40,6 +40,7 @@ export class EditorComponent implements OnInit {
     theme: "vs",
     language: "cpp"
   };
+  editorLoaded: boolean = false;
 
   constructor(private route: ActivatedRoute,
     private tabsService: TabsService,
@@ -61,6 +62,7 @@ export class EditorComponent implements OnInit {
   editorInit(editor: monaco.editor.IStandaloneCodeEditor) {
     console.log("Editor initialized");
     this.editorService.editorInit(editor);
+    this.editorLoaded = true;
     if (this.key) {
       const [activeTab] = this.tabsService.getByKey(this.key);
       if (activeTab) {

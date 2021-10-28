@@ -1,5 +1,6 @@
-<ngx-monaco-editor [options]="editorOptions" [ngModel]="code" (init)="editorInit($any($event));">
+<ngx-monaco-editor [hidden]="!editorLoaded" [options]="editorOptions" [ngModel]="code" (init)="editorInit($any($event));"></ngx-monaco-editor>
+<div *ngIf="!editorLoaded" id="editorLoadingLayout">
   <img src="assets/loading.svg" alt="加载中" class="loading-spinner">
   <p class="loading-text">加载中...</p>
   <p class="loading-hint">首次加载可能需要数十秒到数分钟不等。</p>
-</ngx-monaco-editor>
+</div>
