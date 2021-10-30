@@ -38,21 +38,12 @@ interface TabOptions {
 }
 
 const initTab: Tab[] = [{
-  key: "aaa",
+  key: "main",
   type: "file",
-  title: "a.cpp",
+  title: "main.cpp",
   code: `#include <iostream>\nint main() {\n    std::cout << "Hello, world!" << std::endl;\n}`,
-  path: "/tmp/a.cpp",
-  readOnly: false,
-  // saved: false
-}, {
-  key: "bbb",
-  type: "file",
-  title: "b.cpp",
-  code: `#include <iostream>\nint main() {\n    int n;\n    std::cin >> n;\n    std::cout << n * n << std::endl;\n}`,
-  path: "/tmp/b.cpp",
-  readOnly: true
-  // saved: false
+  path: "/tmp/main.cpp",
+  readOnly: false
 }];
 
 @Injectable({

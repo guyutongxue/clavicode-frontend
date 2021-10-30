@@ -128,3 +128,14 @@ type WsDebugGdbS2C = {
   type: 'response';
   response: GdbResponse
 };
+
+export type CppGetHeaderFileRequest = {
+  path: string;
+};
+export type CppGetHeaderFileResponse = {
+  success: true;
+  content: string;
+} | {
+  success: false;
+  reason: string;
+}

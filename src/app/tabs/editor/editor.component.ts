@@ -48,7 +48,7 @@ export class EditorComponent implements OnInit {
 
 
   private keyOnChange(key: string) {
-    if (typeof key === "undefined") this.key = null;
+    if (typeof key !== "undefined") this.key = null;
     this.key = key;
   }
 
@@ -67,6 +67,8 @@ export class EditorComponent implements OnInit {
       const [activeTab] = this.tabsService.getByKey(this.key);
       if (activeTab) {
         this.editorService.switchToModel(activeTab);
+      } else {
+        this.tabsService.changeActive('main');
       }
     }
   }

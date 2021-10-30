@@ -1,7 +1,7 @@
 <div id="tabContainer">
   <nz-tabset nzType="editable-card" [(nzSelectedIndex)]="activeIndex" (nzClose)="closeTab($event)" nzHideAdd
       cdkDropList cdkDropListOrientation="horizontal" (cdkDropListDropped)="cdkOnDrop($any($event))">
-      <nz-tab *ngFor="let tab of tabList" [nzTitle]="titleTemplate" nzClosable>
+      <nz-tab *ngFor="let tab of tabList" [nzTitle]="titleTemplate" [nzClosable]="tab.readOnly">
           <ng-template #titleTemplate>
               <div cdkDrag class="tab-title">
                   <!-- <div class="example-custom-placeholder" *cdkDragPlaceholder></div> -->

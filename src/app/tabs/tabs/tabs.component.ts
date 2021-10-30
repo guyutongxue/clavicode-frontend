@@ -19,6 +19,7 @@ import { Component, OnInit } from '@angular/core';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Router } from '@angular/router';
 import { Tab, TabsService } from '../../services/tabs.service';
+import { FileService } from 'src/app/services/file.service';
 
 @Component({
   selector: 'app-tabs',
@@ -27,7 +28,11 @@ import { Tab, TabsService } from '../../services/tabs.service';
 })
 export class TabsComponent implements OnInit {
 
-  constructor(private router: Router, private tabsService: TabsService) { }
+  constructor(
+    private router: Router, 
+    private tabsService: TabsService,
+    private fileService: FileService
+    ) { }
 
   ngOnInit(): void {
   }
@@ -35,8 +40,6 @@ export class TabsComponent implements OnInit {
   get tabList() {
     return this.tabsService.tabList;
   }
-
-
 
   get activeIndex(): number {
     return this.tabsService.getActive()[1];

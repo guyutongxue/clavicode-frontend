@@ -50,7 +50,7 @@ const routes: Routes = [
   // },
   {
     path: '**',
-    redirectTo: 'file/aaa'
+    redirectTo: 'file/main'
   }];
 
 @NgModule({

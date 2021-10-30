@@ -146,7 +146,6 @@ export class EditorService {
       MonacoServices.install(require('monaco-editor-core/esm/vs/platform/commands/common/commands').CommandsRegistry);
       // this.startLanguageClient();
       // });
-
       // this.electronService.ipcRenderer.invoke('window/getExtraResourcePath')?.then(v => {
       //   this.nullPath = v + '/anon_workspace/';
       // });
@@ -305,7 +304,7 @@ export class EditorService {
           type: "requestOpen",
           arg: {
             selection: selection ?? ({ startColumn: 1, startLineNumber: 1, endColumn: 1, endLineNumber: 1 } as monaco.IRange),
-            path: input.resource.path.substr(1) // Remove prefix '/' from URI
+            path: input.resource.path
           }
         });
       }
@@ -373,6 +372,7 @@ export class EditorService {
     let newModel = monaco.editor.getModel(uri);
     const oldModel = this.editor.getModel();
     const oldUri = oldModel?.uri.toString();
+    if (newUri === oldUri) return;
     if (oldUri && oldUri in this.modelInfos) {
       this.modelInfos[oldUri].cursor = this.editor.getPosition() ?? { column: 1, lineNumber: 1 };
       this.modelInfos[oldUri].scrollTop = this.editor.getScrollTop();
@@ -409,12 +409,9 @@ export class EditorService {
     if (replace) {
       oldModel?.dispose();
     }
-    this.editor.focus();
-    this.editor.setScrollTop(this.modelInfos[newUri].scrollTop);
     this.editor.updateOptions({ readOnly: this.modelInfos[newUri].readOnly });
-    // Set position seems doesn't work if called immediately.
-    // Call it after 3ms. I don't know why
-    setTimeout(() => this.editor?.setPosition(this.modelInfos[newUri].cursor), 3);
+    this.setPosition(this.modelInfos[newUri].cursor);
+    this.editor.setScrollTop(this.modelInfos[newUri].scrollTop);
   }
 
   async getSymbols(): Promise<DocumentSymbol[]> {
@@ -447,13 +444,15 @@ export class EditorService {
   }
   setSelection(range: monaco.IRange) {
     if (this.editor === null) return;
-    this.editor.setSelection(range);
+    setTimeout(() => this.editor?.setSelection(range), 3);
     this.editor.revealRange(range);
     this.editor.focus();
   }
   setPosition(position: monaco.IPosition) {
     if (this.editor === null) return;
-    this.editor.setPosition(position);
+    // Set position seems doesn't work if called immediately.
+    // Call it after 3ms. I don't know why
+    setTimeout(() => this.editor?.setPosition(position), 3);
     this.editor.revealLine(position.lineNumber);
     this.editor.focus();
   }
