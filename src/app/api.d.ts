@@ -97,15 +97,17 @@ export type WsExecuteC2S = {
   type: 'input';
   content: string;
 };
-export type WsExecuteS2C = {
+type WsExecuteS2C = {
   type: 'started';
 } | {
   type: 'closed';
-  retVal: number;
+  exitCode: number;
 } | {
-  type: 'timeout';
+  type: 'error';
+  reason: RuntimeError;
 } | {
   type: 'output';
+  stream: 'stdout' | 'stderr';
   content: string;
 }
 

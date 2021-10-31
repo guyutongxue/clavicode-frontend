@@ -1,1 +1,23 @@
 /* You can add global styles to this file, and also import other style files */
+
+ngneat-dialog {
+  .ngneat-dialog-backdrop {
+    background    : none;
+    pointer-events: none;
+  }
+
+  .ngneat-dialog-content {
+    pointer-events: initial;
+
+    .ngneat-drag-marker {
+      height: 25px;
+    }
+
+    app-execute-dialog {
+      margin-top: 25px;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+    }
+  }
+}

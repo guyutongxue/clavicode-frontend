@@ -10,7 +10,7 @@ export class WebsocketWrapper {
 
   constructor(private url: string) {
     this.ws = new WebSocket(url);
-    this.ws.onmessage = (e) => this.subject.next(e.data);
+    this.ws.onmessage = async (e) => this.subject.next(await e.data.text());
     this.ws.onerror = (e) => this.subject.error(e);
     this.ws.onclose = () => this.subject.complete();
 
@@ -18,6 +18,8 @@ export class WebsocketWrapper {
       next: (data: string) => {
         if (this.ws.readyState === WebSocket.OPEN) {
           this.ws.send(data);
+        } else {
+          this.ws.onopen = () => this.ws.send(data);
         }
       },
       error: (err: any) => this.ws.close(1000, err),

@@ -3,8 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { CppCompileRequest, CppCompileResponse } from '../api';
 
-const HOST = environment.production ? location.host : "localhost:3000";
-const COMPILE_URL = `//${HOST}/cpp/compile`;
+const COMPILE_URL = `//${environment.backendHost}/cpp/compile`;
 
 @Injectable({
   providedIn: 'root'
@@ -23,15 +22,31 @@ export class CompileService {
     }).toPromise();
     if (result.status !== 'ok') {
       alert(result.error);
-      return;
+      return null;
     }
     if (result.execute !== 'file') {
       alert("non file response");
-      return;
+      return null;
     }
     if (result.result !== 'ok') {
       alert(`RE: ${result.reason}`);
     }
     return result.stdout;
+  }
+
+  async interactiveCompile(code: string) {
+    const result = await this.http.post<CppCompileResponse>(COMPILE_URL, <CppCompileRequest>{
+      code: code,
+      execute: 'interactive'
+    }).toPromise();
+    if (result.status !== 'ok') {
+      alert(result.error);
+      return null;
+    }
+    if (result.execute !== 'interactive') {
+      alert("non interactive response");
+      return null;
+    }
+    return result.executeToken;
   }
 }

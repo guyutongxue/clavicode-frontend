@@ -17,10 +17,10 @@
 
 import { Component, OnInit } from '@angular/core';
 import { ExecuteService } from '../services/execute.service';
-import { NzIconService } from 'ng-zorro-antd/icon';
 import { Router } from '@angular/router';
 import { CompileService } from '../services/compile.service';
 import { EditorService } from '../services/editor.service';
+import { DialogService } from '@ngneat/dialog';
 
 @Component({
   selector: 'app-main-view',
@@ -71,7 +71,8 @@ export class MainViewComponent implements OnInit {
     }
   ]
 
-  constructor(private router: Router, 
+  constructor(private router: Router,
+    private dialogService: DialogService,
     private executeService: ExecuteService, 
     private compileService: CompileService,
     private editorService: EditorService) {
@@ -81,10 +82,6 @@ export class MainViewComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.executeService.create();
-    this.executeService.receiver?.subscribe(msg => {
-      console.log(msg);
-    })
   }
 
   currentOutletUrl(name: string) {
@@ -144,5 +141,11 @@ export class MainViewComponent implements OnInit {
     this.stdout = await this.compileService.fileCompile(code, this.stdin) ?? "";
   }
 
+  async openDialog() {
+    const code = this.editorService.getCode();
+    const token = await this.compileService.interactiveCompile(code);
+    if (token === null) return;
+    this.executeService.create(token);
+  }
 
 }

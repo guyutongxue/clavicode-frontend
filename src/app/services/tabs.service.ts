@@ -41,7 +41,7 @@ const initTab: Tab[] = [{
   key: "main",
   type: "file",
   title: "main.cpp",
-  code: `#include <iostream>\nint main() {\n    std::cout << "Hello, world!" << std::endl;\n}`,
+  code: `#include <iostream>\nint main() {\n    int a, b;\n    std::cin >> a >> b;\n    std::cout << a + b << std::endl;\n}`,
   path: "/tmp/main.cpp",
   readOnly: false
 }];

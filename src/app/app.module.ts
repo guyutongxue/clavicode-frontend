@@ -30,12 +30,16 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MonacoEditorModule } from '@materia-ui/ngx-monaco-editor';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { AngularSplitModule } from 'angular-split';
+import { DialogModule } from '@ngneat/dialog'
 import { TabsModule } from './tabs/tabs.module';
+import { ToolsModule } from './tools/tools.module';
 
 import { HeaderComponent } from './header/header.component';
 import { FooterComponent } from './footer/footer.component';
 import { MainViewComponent } from './main-view/main-view.component';
 import { EmptyPageComponent } from './empty-page/empty-page.component';
+import { XtermComponent } from './execute-dialog/xterm/xterm.component';
+import { ExecuteDialogComponent } from './execute-dialog/execute-dialog.component';
 registerLocaleData(zh);
 
 @NgModule({
@@ -44,7 +48,9 @@ registerLocaleData(zh);
     HeaderComponent,
     FooterComponent,
     MainViewComponent,
-    EmptyPageComponent
+    EmptyPageComponent,
+    XtermComponent,
+    ExecuteDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -55,7 +61,9 @@ registerLocaleData(zh);
     BrowserAnimationsModule,
     MonacoEditorModule,
     NzIconModule,
-    TabsModule
+    DialogModule.forRoot(),
+    TabsModule,
+    ToolsModule
   ],
   providers: [{ provide: NZ_I18N, useValue: zh_CN }],
   bootstrap: [AppComponent]

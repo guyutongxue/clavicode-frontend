@@ -8,8 +8,7 @@ import { TabsService } from './tabs.service';
 import { v4 as uuid } from 'uuid';
 import * as path from 'path';
 
-const HOST = environment.production ? location.host : "localhost:3000";
-const GET_HEADER_URL = `//${HOST}/cpp/getHeaderFile`;
+const GET_HEADER_URL = `//${environment.backendHost}/cpp/getHeaderFile`;
 
 @Injectable({
   providedIn: 'root'
