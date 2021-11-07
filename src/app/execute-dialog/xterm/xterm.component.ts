@@ -1,7 +1,6 @@
 import { DOCUMENT } from '@angular/common';
 import { Component, Inject, OnInit, ViewEncapsulation } from '@angular/core';
 import { Terminal } from 'xterm';
-import { LocalEchoAddon } from '@gytx/xterm-local-echo';
 import { ExecuteService } from 'src/app/services/execute.service';
 import { filter, map } from 'rxjs/operators';
 
@@ -36,32 +35,21 @@ export class XtermComponent implements OnInit {
     cols: TERM_COLS,
     rows: TERM_ROWS
   });
-  private readonly localEcho = new LocalEchoAddon({
-    enableAutocomplete: false,
-    enableIncompleteInput: false
-  });
 
   ngOnInit(): void {
     this.term.open(this.document.getElementById('executeXterm')!);
-    this.term.loadAddon(this.localEcho);
     this.term.focus();
-    const readLine = async () => {
-      const input = await this.localEcho.read("");
+    this.term.onData(data => {
       this.executeService.sender?.next({
-        type: 'input',
-        content: input + '\n'
-      })
-      readLine();
-    };
-    readLine();
-    this.executeService.receiver?.subscribe((data) => {
-      if (data.type === 'output') {
-        this.localEcho.print(data.content);
-      }
-      if (data.type === 'closed') {
-        this.localEcho.print(`--------\nProcess exited with code ${data.exitCode}.\n`);
-        // this.localEcho.abortRead();
-        // this.localEcho.readChar("").then()
+        type: 'tin',
+        content: data
+      });
+    });
+    this.executeService.receiver?.subscribe(data => {
+      if (data.type === 'tout') {
+        this.term.write(data.content);
+      } else if (data.type === 'closed') {
+        this.term.write('\r-------\rClosed.\r');
       }
     })
   }

@@ -94,10 +94,10 @@ export type WsExecuteC2S = {
 } | {
   type: 'eof';
 } | {
-  type: 'input';
+  type: 'tin';
   content: string;
 };
-type WsExecuteS2C = {
+export type WsExecuteS2C = {
   type: 'started';
 } | {
   type: 'closed';
@@ -106,8 +106,7 @@ type WsExecuteS2C = {
   type: 'error';
   reason: RuntimeError;
 } | {
-  type: 'output';
-  stream: 'stdout' | 'stderr';
+  type: 'tout';
   content: string;
 }
 
@@ -117,18 +116,26 @@ type WsDebugGdbC2S = {
   type: 'request';
   request: string;
 } | {
+  type: 'tin';
+  content: string;
+} | {
   type: 'shutdown';
 };
 type WsDebugGdbS2C = {
   type: 'started';
+  sourceFilePath: string;
 } | {
   type: 'closed';
-  retVal: number;
+  exitCode: number;
 } | {
-  type: 'timeout';
+  type: 'error';
+  reason: RuntimeError;
 } | {
   type: 'response';
-  response: GdbResponse
+  response: GdbResponse;
+} | {
+  type: 'tout';
+  content: string;
 };
 
 export type CppGetHeaderFileRequest = {
