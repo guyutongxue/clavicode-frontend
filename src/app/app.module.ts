@@ -29,6 +29,9 @@ import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MonacoEditorModule } from '@materia-ui/ngx-monaco-editor';
 import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzUploadModule } from 'ng-zorro-antd/upload';
 import { AngularSplitModule } from 'angular-split';
 import { DialogModule } from '@ngneat/dialog'
 import { TabsModule } from './tabs/tabs.module';
@@ -40,6 +43,8 @@ import { MainViewComponent } from './main-view/main-view.component';
 import { EmptyPageComponent } from './empty-page/empty-page.component';
 import { XtermComponent } from './execute-dialog/xterm/xterm.component';
 import { ExecuteDialogComponent } from './execute-dialog/execute-dialog.component';
+import { SidebarSearchComponent } from './sidebar-search/sidebar-search.component';
+import { SidebarFileComponent } from './sidebar-file/sidebar-file.component';
 registerLocaleData(zh);
 
 @NgModule({
@@ -50,7 +55,9 @@ registerLocaleData(zh);
     MainViewComponent,
     EmptyPageComponent,
     XtermComponent,
-    ExecuteDialogComponent
+    ExecuteDialogComponent,
+    SidebarSearchComponent,
+    SidebarFileComponent,
   ],
   imports: [
     BrowserModule,
@@ -63,7 +70,10 @@ registerLocaleData(zh);
     NzIconModule,
     DialogModule.forRoot(),
     TabsModule,
-    ToolsModule
+    ToolsModule,
+    NzButtonModule,
+    NzInputModule,
+    NzUploadModule
   ],
   providers: [{ provide: NZ_I18N, useValue: zh_CN }],
   bootstrap: [AppComponent]

@@ -50,7 +50,7 @@ export class ExecuteService {
 
   private openDialog() {
     const ref = this.dialogService.open(ExecuteDialogComponent, {
-      draggable: true,
+      draggable: false,
       width: `${terminalWidth()}px`,
       dragConstraint: 'constrain'
     });

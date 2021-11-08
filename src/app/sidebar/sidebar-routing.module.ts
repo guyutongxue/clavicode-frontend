@@ -22,7 +22,8 @@ import { Routes, RouterModule } from '@angular/router';
 // import { OutlineComponent } from './outline/outline.component';
 // import { WatchComponent } from './watch/watch.component';
 import { EmptyPageComponent } from '../empty-page/empty-page.component';
-
+import { SidebarSearchComponent } from '../sidebar-search/sidebar-search.component';
+import { SidebarFileComponent } from '../sidebar-file/sidebar-file.component';
 const routes: Routes = [
   {
     path: 'common',
@@ -36,7 +37,7 @@ const routes: Routes = [
   },
   {
     path: 'file',
-    component: EmptyPageComponent,
+    component: SidebarFileComponent,
     outlet: 'sidebar'
   },
   {
@@ -46,7 +47,7 @@ const routes: Routes = [
   },
   {
     path: 'search',
-    component: EmptyPageComponent,
+    component: SidebarSearchComponent,
     outlet: 'sidebar'
   }
 ];
