@@ -49,11 +49,10 @@ export class MainViewComponent implements OnInit {
         disabled: false
       },
       {
-        title: '运行',
-        url: 'play',
-        icon: 'play-circle',
+        title: '题目列表',
+        url: 'problem',
+        icon: 'unordered-list',
         disabled: false
-
       },
       {
         title: '搜索',
@@ -67,6 +66,16 @@ export class MainViewComponent implements OnInit {
     {
       title: '问题',
       url: 'problems',
+      disabled: false
+    },
+    {
+      title: '调试',
+      url: 'debug',
+      disabled: false
+    },
+    {
+      title: '输出',
+      url: 'output',
       disabled: false
     }
   ]

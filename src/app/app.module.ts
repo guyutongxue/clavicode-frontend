@@ -28,10 +28,16 @@ import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MonacoEditorModule } from '@materia-ui/ngx-monaco-editor';
+
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzUploadModule } from 'ng-zorro-antd/upload';
+import { NzCollapseModule } from 'ng-zorro-antd/collapse';
+import { NzListModule } from 'ng-zorro-antd/list';
+import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
+import { NzTabsModule } from 'ng-zorro-antd/tabs';
+
 import { AngularSplitModule } from 'angular-split';
 import { DialogModule } from '@ngneat/dialog'
 import { TabsModule } from './tabs/tabs.module';
@@ -45,6 +51,12 @@ import { XtermComponent } from './execute-dialog/xterm/xterm.component';
 import { ExecuteDialogComponent } from './execute-dialog/execute-dialog.component';
 import { SidebarSearchComponent } from './sidebar-search/sidebar-search.component';
 import { SidebarFileComponent } from './sidebar-file/sidebar-file.component';
+import { SidebarCommonComponent } from './sidebar-common/sidebar-common.component';
+import { SidebarDebugComponent } from './sidebar-debug/sidebar-debug.component';
+import { SidebarProblemComponent } from './sidebar-problem/sidebar-problem.component';
+import { ProblemsComponent } from './problems/problems.component';
+import { OutputComponent } from './output/output.component';
+import { DebugComponent } from './debug/debug.component';
 registerLocaleData(zh);
 
 @NgModule({
@@ -58,6 +70,12 @@ registerLocaleData(zh);
     ExecuteDialogComponent,
     SidebarSearchComponent,
     SidebarFileComponent,
+    SidebarCommonComponent,
+    SidebarDebugComponent,
+    SidebarProblemComponent,
+    ProblemsComponent,
+    OutputComponent,
+    DebugComponent,
   ],
   imports: [
     BrowserModule,
@@ -73,7 +91,11 @@ registerLocaleData(zh);
     ToolsModule,
     NzButtonModule,
     NzInputModule,
-    NzUploadModule
+    NzUploadModule,
+    NzCollapseModule,
+    NzListModule,
+    NzSkeletonModule,
+    NzTabsModule
   ],
   providers: [{ provide: NZ_I18N, useValue: zh_CN }],
   bootstrap: [AppComponent]

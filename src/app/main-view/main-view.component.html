@@ -6,37 +6,34 @@
     </li>
   </ul>
   <div id="asContainer">
-    <as-split unit="pixel" direction="horizontal" id="horizontalAs">
+    <as-split   unit="pixel" direction="horizontal" id="horizontalAs" >
       <as-split-area [order]="0" [size]="200" id="sidebarAsArea">
         <router-outlet name="sidebar"></router-outlet>
       </as-split-area>
       <as-split-area [order]="1" [size]="$any('*')">
-        <as-split unit="pixel" direction="vertical" id="verticalAs">
-          <as-split-area [order]="0" [size]="$any('*')" id="tabsAsArea">
+        <as-split  unit="pixel" direction="vertical" id="verticalAs" >
+          <as-split-area [order]="0" [size]="$any('*')" id="tabsAsArea" >
             <app-tabs></app-tabs>
           </as-split-area>
-          <as-split-area [order]="1" [size]="200" id="toolsAsArea">
-            <as-split unit="pixel" direction="horizontal" id="horizontal1As">
-              <as-split-area [order]="0" [size]="900" id="stdinAsArea">
-            <div style="display: flex; flex-direction: row;">
-              <div>
-                <button (click)="compile()">Compile!</button>
-                <br />
-                <button (click)="openDialog()">Open Dialog</button>
-                <br />
-                <textarea nz-input nzAutosize [(ngModel)]="stdin" nzBorderless></textarea>
+          <as-split-area [order]="1" [size]="300" id="toolsAsArea" [lockSize]="true">
+            
+                <div style="display: flex; flex-direction: column;">
+                  <div>
+                <nz-tabset nzType="card">
+
                 
+                <nz-tab *ngFor="let i of toolsItems" [nzTitle]="i.title"
+                (nzSelect)="showTools(i.url)"
+                (nzSelectChange)="showTools(i.url)"
+                >  
+                </nz-tab>
+                </nz-tabset>
+              </div><div>
+
+                
+                 <router-outlet name="tools"></router-outlet>
+                </div>
               </div>
-            </div>
-            </as-split-area>
-            <as-split-area [order]="1" [size]="$any('*')" id="stdoutAsArea">
-            <div style="display: flex; flex-direction: row;">
-              <div>
-                <p>{{stdout}}</p>
-              </div>
-            </div>
-            </as-split-area>
-            </as-split>
           </as-split-area>
         </as-split>
       </as-split-area>

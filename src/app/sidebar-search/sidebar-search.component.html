@@ -1,8 +1,9 @@
 <div class="container">
       <ng-template #suffixIconButton>
         <button nz-button nzType="primary" nzSearch><i nz-icon nzType="search"></i></button>
+        <button nz-button nzType="primary" nzSearch><i nz-icon nzType="swap"></i></button>
       </ng-template>
       <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
-        <input type="text" nz-input nzSize="large" placeholder="input search text" />
+        <input type="text" nz-input nzSize="large" placeholder="搜索或替换文本" />
       </nz-input-group>
 </div>

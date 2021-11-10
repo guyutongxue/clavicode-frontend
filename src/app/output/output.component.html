@@ -1,0 +1,20 @@
+
+<as-split unit="pixel" direction="horizontal" id="horizontalAs">
+    <as-split-area [order]="0" [size]="900" id="stdinAsArea">
+                    
+        <div style="display: flex; flex-direction: column;">
+          <div>
+            <textarea nz-input [(ngModel)]="MainViewComponent.stdin" nzBorderless></textarea>
+          </div>
+        </div>
+    </as-split-area>
+    <as-split-area [order]="1" [size]="$any('*')" id="stdoutAsArea">
+          
+        <div style="display: flex; flex-direction: row;">
+          <div>
+            <p>{{MainViewComponent.stdout}}</p>
+          </div>
+        </div>
+    </as-split-area>
+    </as-split>
+ 

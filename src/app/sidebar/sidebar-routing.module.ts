@@ -24,15 +24,18 @@ import { Routes, RouterModule } from '@angular/router';
 import { EmptyPageComponent } from '../empty-page/empty-page.component';
 import { SidebarSearchComponent } from '../sidebar-search/sidebar-search.component';
 import { SidebarFileComponent } from '../sidebar-file/sidebar-file.component';
+import { SidebarCommonComponent } from '../sidebar-common/sidebar-common.component';
+import { SidebarDebugComponent } from '../sidebar-debug/sidebar-debug.component';
+import { SidebarProblemComponent } from '../sidebar-problem/sidebar-problem.component';
 const routes: Routes = [
   {
     path: 'common',
-    component: EmptyPageComponent,
+    component: SidebarCommonComponent,
     outlet: 'sidebar'
   },
   {
     path: 'debug',
-    component: EmptyPageComponent,
+    component: SidebarDebugComponent,
     outlet: 'sidebar'
   },
   {
@@ -41,8 +44,8 @@ const routes: Routes = [
     outlet: 'sidebar'
   },
   {
-    path: 'play',
-    component: EmptyPageComponent,
+    path: 'problem',
+    component: SidebarProblemComponent,
     outlet: 'sidebar'
   },
   {

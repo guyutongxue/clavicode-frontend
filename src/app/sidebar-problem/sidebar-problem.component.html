@@ -1,0 +1,37 @@
+<div>
+    <ng-template #suffixIconButton>
+      <button nz-button nzType="primary" nzSearch><i nz-icon nzType="search"></i></button>
+    </ng-template>
+    <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
+      <input type="text" nz-input nzSize="large" placeholder="搜索标题或题目编号" />
+    </nz-input-group>
+</div>
+<div>
+<nz-list class="demo-loadmore-list" [nzLoading]="initLoading">
+    <nz-list-item *ngFor="let item of list">
+      <ng-container *ngIf="!item.loading">
+        <nz-list-item-meta
+          nzAvatar="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
+          nzDescription="描述"
+        >
+          <nz-list-item-meta-title>
+            <a href="https://ng.ant.design">{{ item.name.last }}</a>
+          </nz-list-item-meta-title>
+        </nz-list-item-meta>
+        <ul nz-list-item-actions>
+          <nz-list-item-action><a (click)="view(item)">查看</a></nz-list-item-action>
+        </ul>
+      </ng-container>
+      <nz-skeleton
+        *ngIf="item.loading"
+        [nzAvatar]="true"
+        [nzActive]="true"
+        [nzTitle]="false"
+        [nzLoading]="true"
+      ></nz-skeleton>
+    </nz-list-item>
+    <div class="loadmore" nz-list-load-more>
+      <button nz-button *ngIf="!loadingMore" (click)="onLoadMore()">loading more</button>
+    </div>
+  </nz-list>
+</div>
