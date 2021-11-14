@@ -6,6 +6,9 @@
       [nzActive]="panel.active"
       [nzDisabled]="panel.disabled"
     >
+      <button nz-button (click)="run()">
+        <i nz-icon [nzType]="'play-circle'"></i>Run
+      </button>
     </nz-collapse-panel>
 </nz-collapse>
 <nz-collapse>
@@ -15,10 +18,8 @@
       [nzActive]="panel1.active"
       [nzDisabled]="panel1.disabled"
     >
-            <button (click)="MainViewComponent.compile()">Compile!</button>
-            <br />
-            <button (click)="MainViewComponent.openDialog()">Open Dialog</button>
-            <br />
+            <!-- <button (click)="MainViewComponent.compile()">Compile!</button>
+            <br /> -->
     </nz-collapse-panel>
 </nz-collapse>
 <nz-collapse>

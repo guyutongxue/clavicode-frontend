@@ -149,12 +149,4 @@ export class MainViewComponent implements OnInit {
     const code = this.editorService.getCode();
     this.stdout = await this.compileService.fileCompile(code, this.stdin) ?? "";
   }
-
-  async openDialog() {
-    const code = this.editorService.getCode();
-    const token = await this.compileService.interactiveCompile(code);
-    if (token === null) return;
-    this.executeService.create(token);
-  }
-
 }

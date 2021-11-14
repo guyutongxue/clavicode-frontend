@@ -17,8 +17,7 @@ export class SidebarCommonComponent implements OnInit {
     private dialogService: DialogService,
     private executeService: ExecuteService, 
     private compileService: CompileService,
-    private editorService: EditorService,
-    public MainViewComponent: MainViewComponent) {
+    private editorService: EditorService) {
     // this.iconService.fetchFromIconfont({
     //   scriptUrl: 'https://at.alicdn.com/t/font_2879102_dgzdvy8za0i.js'
     // })
@@ -37,7 +36,7 @@ export class SidebarCommonComponent implements OnInit {
   ];
   panels = [
     {
-      active: false,
+      active: true,
       disabled: false,
       name: '常用功能'
     }
@@ -49,4 +48,11 @@ export class SidebarCommonComponent implements OnInit {
       name: '代码大纲'
     }
   ];
+
+  async run() {
+    const code = this.editorService.getCode();
+    const token = await this.compileService.interactiveCompile(code);
+    if (token === null) return;
+    this.executeService.create(token);
+  }
 }

@@ -1,14 +1,13 @@
 #headerContainer {
-  height: 100%;
-  display: flex;
-  flex-direction: row;
+  height         : 100%;
+  display        : flex;
+  flex-direction : row;
   justify-content: center;
-  align-items: center;
-}
-#headerTitle{
-  margin-left: 800px;
-  margin-right: 800px;
-}
-[nz-button]{
-  margin-left: 20px;
+  align-items    : center;
+
+
+  #headerTitle {
+    flex-grow: 1;
+  }
+
 }
