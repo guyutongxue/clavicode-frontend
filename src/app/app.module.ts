@@ -24,7 +24,7 @@ import { NZ_I18N } from 'ng-zorro-antd/i18n';
 import { zh_CN } from 'ng-zorro-antd/i18n';
 import { registerLocaleData } from '@angular/common';
 import zh from '@angular/common/locales/zh';
-import { FormsModule } from '@angular/forms';
+import { FormsModule , ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MonacoEditorModule } from '@materia-ui/ngx-monaco-editor';
@@ -37,6 +37,9 @@ import { NzCollapseModule } from 'ng-zorro-antd/collapse';
 import { NzListModule } from 'ng-zorro-antd/list';
 import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
+import { NzFormModule  } from 'ng-zorro-antd/form';
+import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
+
 
 import { AngularSplitModule } from 'angular-split';
 import { DialogModule } from '@ngneat/dialog'
@@ -57,6 +60,7 @@ import { SidebarProblemComponent } from './sidebar-problem/sidebar-problem.compo
 import { ProblemsComponent } from './problems/problems.component';
 import { OutputComponent } from './output/output.component';
 import { DebugComponent } from './debug/debug.component';
+import { LoginpageComponent } from './loginpage/loginpage.component';
 registerLocaleData(zh);
 
 @NgModule({
@@ -76,12 +80,14 @@ registerLocaleData(zh);
     ProblemsComponent,
     OutputComponent,
     DebugComponent,
+    LoginpageComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     AngularSplitModule,
     FormsModule,
+    ReactiveFormsModule,
     HttpClientModule,
     BrowserAnimationsModule,
     MonacoEditorModule,
@@ -95,7 +101,9 @@ registerLocaleData(zh);
     NzCollapseModule,
     NzListModule,
     NzSkeletonModule,
-    NzTabsModule
+    NzTabsModule,
+    NzFormModule,
+    NzCheckboxModule
   ],
   providers: [{ provide: NZ_I18N, useValue: zh_CN }],
   bootstrap: [AppComponent]
