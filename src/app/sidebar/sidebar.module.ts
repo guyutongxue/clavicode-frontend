@@ -17,13 +17,44 @@
 
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
-
+import { FormsModule } from '@angular/forms';
+import { SidebarSearchComponent } from './sidebar-search/sidebar-search.component';
+import { SidebarFileComponent } from './sidebar-file/sidebar-file.component';
+import { SidebarCommonComponent } from './sidebar-common/sidebar-common.component';
+import { SidebarDebugComponent } from './sidebar-debug/sidebar-debug.component';
+import { SidebarProblemComponent } from './sidebar-problem/sidebar-problem.component';
+import { NzListModule } from 'ng-zorro-antd/list';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzUploadModule } from 'ng-zorro-antd/upload';
+import { NzCollapseModule } from 'ng-zorro-antd/collapse';
+import { NzTabsModule } from 'ng-zorro-antd/tabs';
+import { NzFormModule } from 'ng-zorro-antd/form';
+import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
+import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
+import { NzIconModule } from 'ng-zorro-antd/icon';
 
 @NgModule({
-  declarations: [],
+  declarations: [
+    SidebarSearchComponent,
+    SidebarFileComponent,
+    SidebarCommonComponent,
+    SidebarDebugComponent,
+    SidebarProblemComponent
+  ],
   imports: [
-    CommonModule
+    CommonModule,
+    FormsModule,
+    NzButtonModule,
+    NzInputModule,
+    NzUploadModule,
+    NzCollapseModule,
+    NzListModule,
+    NzTabsModule,
+    NzFormModule,
+    NzSkeletonModule,
+    NzCheckboxModule,
+    NzIconModule
   ]
 })
 export class SidebarModule { }

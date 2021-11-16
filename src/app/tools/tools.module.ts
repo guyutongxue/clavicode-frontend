@@ -17,13 +17,28 @@
 
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { ProblemsComponent } from './problems/problems.component';
+import { OutputComponent } from './output/output.component';
+import { DebugComponent } from './debug/debug.component';
+import { AngularSplitModule } from 'angular-split';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 
 
 
 @NgModule({
-  declarations: [],
+  declarations: [
+    ProblemsComponent,
+    OutputComponent,
+    DebugComponent
+  ],
   imports: [
-    CommonModule
+    CommonModule,
+    FormsModule,
+    NzInputModule,
+    NzSkeletonModule,
+    AngularSplitModule
   ]
 })
 export class ToolsModule { }

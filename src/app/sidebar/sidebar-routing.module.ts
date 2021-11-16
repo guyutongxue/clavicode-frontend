@@ -22,11 +22,11 @@ import { Routes, RouterModule } from '@angular/router';
 // import { OutlineComponent } from './outline/outline.component';
 // import { WatchComponent } from './watch/watch.component';
 import { EmptyPageComponent } from '../empty-page/empty-page.component';
-import { SidebarSearchComponent } from '../sidebar-search/sidebar-search.component';
-import { SidebarFileComponent } from '../sidebar-file/sidebar-file.component';
-import { SidebarCommonComponent } from '../sidebar-common/sidebar-common.component';
-import { SidebarDebugComponent } from '../sidebar-debug/sidebar-debug.component';
-import { SidebarProblemComponent } from '../sidebar-problem/sidebar-problem.component';
+import { SidebarSearchComponent } from './sidebar-search/sidebar-search.component';
+import { SidebarFileComponent } from './sidebar-file/sidebar-file.component';
+import { SidebarCommonComponent } from './sidebar-common/sidebar-common.component';
+import { SidebarDebugComponent } from './sidebar-debug/sidebar-debug.component';
+import { SidebarProblemComponent } from './sidebar-problem/sidebar-problem.component';
 const routes: Routes = [
   {
     path: 'common',

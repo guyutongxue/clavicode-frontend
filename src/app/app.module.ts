@@ -52,15 +52,9 @@ import { MainViewComponent } from './main-view/main-view.component';
 import { EmptyPageComponent } from './empty-page/empty-page.component';
 import { XtermComponent } from './execute-dialog/xterm/xterm.component';
 import { ExecuteDialogComponent } from './execute-dialog/execute-dialog.component';
-import { SidebarSearchComponent } from './sidebar-search/sidebar-search.component';
-import { SidebarFileComponent } from './sidebar-file/sidebar-file.component';
-import { SidebarCommonComponent } from './sidebar-common/sidebar-common.component';
-import { SidebarDebugComponent } from './sidebar-debug/sidebar-debug.component';
-import { SidebarProblemComponent } from './sidebar-problem/sidebar-problem.component';
-import { ProblemsComponent } from './problems/problems.component';
-import { OutputComponent } from './output/output.component';
-import { DebugComponent } from './debug/debug.component';
-import { LoginpageComponent } from './loginpage/loginpage.component';
+import { LoginPageComponent } from './login-page/login-page.component';
+import { SidebarModule } from './sidebar/sidebar.module';
+
 registerLocaleData(zh);
 
 @NgModule({
@@ -72,15 +66,7 @@ registerLocaleData(zh);
     EmptyPageComponent,
     XtermComponent,
     ExecuteDialogComponent,
-    SidebarSearchComponent,
-    SidebarFileComponent,
-    SidebarCommonComponent,
-    SidebarDebugComponent,
-    SidebarProblemComponent,
-    ProblemsComponent,
-    OutputComponent,
-    DebugComponent,
-    LoginpageComponent,
+    LoginPageComponent,
   ],
   imports: [
     BrowserModule,
@@ -91,19 +77,14 @@ registerLocaleData(zh);
     HttpClientModule,
     BrowserAnimationsModule,
     MonacoEditorModule,
+    NzFormModule,
     NzIconModule,
+    NzButtonModule,
+    NzTabsModule,
     DialogModule.forRoot(),
     TabsModule,
     ToolsModule,
-    NzButtonModule,
-    NzInputModule,
-    NzUploadModule,
-    NzCollapseModule,
-    NzListModule,
-    NzSkeletonModule,
-    NzTabsModule,
-    NzFormModule,
-    NzCheckboxModule
+    SidebarModule
   ],
   providers: [{ provide: NZ_I18N, useValue: zh_CN }],
   bootstrap: [AppComponent]

@@ -4,11 +4,11 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 
 @Component({
-  selector: 'app-loginpage',
-  templateUrl: './loginpage.component.html',
-  styleUrls: ['./loginpage.component.scss']
+  selector: 'app-login-page',
+  templateUrl: './login-page.component.html',
+  styleUrls: ['./login-page.component.scss']
 })
-export class LoginpageComponent implements OnInit {
+export class LoginPageComponent implements OnInit {
   validateForm!: FormGroup;
   checked = true;
 
