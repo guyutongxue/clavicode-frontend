@@ -17,10 +17,11 @@
 
 import { Component, OnInit } from '@angular/core';
 import { ExecuteService } from '../services/execute.service';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { CompileService } from '../services/compile.service';
 import { EditorService } from '../services/editor.service';
 import { DialogService } from '@ngneat/dialog';
+import { filter, take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-main-view',
@@ -91,6 +92,15 @@ export class MainViewComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // show common sidebar on startup if no other sidebar is selected
+    this.router.events.pipe(
+      filter((event) : event is NavigationEnd => event instanceof NavigationEnd),
+      take(1)
+    ).subscribe(() => {
+      if (this.currentOutletUrl("sidebar") === null) {
+        this.router.navigate([{ outlets: { sidebar: 'common' } }]);
+      }
+    })
   }
 
   currentOutletUrl(name: string) {

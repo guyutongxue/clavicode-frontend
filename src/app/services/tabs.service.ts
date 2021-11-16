@@ -41,7 +41,19 @@ const initTab: Tab[] = [{
   key: "main",
   type: "file",
   title: "main.cpp",
-  code: `#include <iostream>\nint main() {\n    int a, b;\n    std::cin >> a >> b;\n    std::cout << a + b << std::endl;\n}`,
+  code: `#include <iostream>
+int main() {
+    int a, b;
+    char c;
+    do {
+        std::cout << "Please input 2 numbers: ";
+        std::cin >> a >> b;
+        std::cout << a + b << std::endl;
+
+        std::cout << "Continue? (y/n) ";
+        std::cin >> c;
+    } while (c == 'y');
+}`,
   path: "/tmp/main.cpp",
   readOnly: false
 }];
