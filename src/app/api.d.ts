@@ -148,3 +148,132 @@ export type CppGetHeaderFileResponse = {
   success: false;
   reason: string;
 }
+
+export type UserRegisterRequest = {
+  email: string;
+  username: string;
+  password: string;
+};
+export type UserRegisterResponse = {
+  success: true;
+} | {
+  success: false;
+  reason: string;
+};
+
+export type UserLoginRequest = {
+  email: string;
+  password: string;
+};
+
+export type UserLoginResponse = UserRegisterResponse;
+
+export type UserChangePasswordRequest = {
+  email: string; 
+  oldPassword: string;
+  newPassword: string;
+}
+export type UserChangePasswordResponse = UserRegisterResponse;
+
+
+export type UserChangeUsernameRequest = {
+  newUsername: string;
+}
+export type UserChangeUsernameResponse = UserRegisterResponse;
+
+
+//OJ
+
+
+export type OjCommitRequest = {
+  problemId: string;
+  problemSetId: string;
+  code: string;
+};
+export type OjCommitResponse = {
+  success: true;
+  solutionId: string;
+} | {
+  success: false;
+  reason: string;
+};
+
+export type OjGetSolutionResponse = {
+  success: true;
+  status: SolutionStatusType;
+  hint?: string;
+  time?: string;
+  memory?: string;
+} | {
+  success: false;
+  reason: string;
+};
+
+export type OjGetProblemResponse = {
+  success: true;
+  title: string;
+  description: string;
+  aboutInput: string;
+  aboutOutput: string;
+  sampleInput: string;
+  sampleOutput: string;
+  hint: string;
+} | {
+  success: false;
+  reason: string;
+};
+
+export type OjListProblemsResponse = {
+  success: true;
+  title: string; // Problem set title
+  problems: {
+    title: string;
+    problemId: string;
+    status: 'accepted' | 'tried' | 'none';
+  }[];
+} | {
+  success: false;
+  reason: string;
+};
+
+export type OjListProblemSetsResponse = {
+  success: true;
+  title: string; // Course title
+  problemSets: {
+    title: string;
+    problemSetId: string;
+    status: 'ok' | 'closed';
+  }[];
+} | {
+  success: false;
+  reason: string;
+};
+
+export type OjSetCourseRequest = {
+  url: string;
+} | {
+  courseId: string;
+};
+export type OjSetCourseResponse = {
+  success: true;
+  title: string;
+} | {
+  success: false;
+  reason: string;
+};
+
+export type OjCommitHistoryResponse = {
+  success: true;
+  history: {
+    solutionId: string;
+  }[];
+} | {
+  success: false;
+  reason: string;
+};
+export type OjSetTypeRequest = {
+  type: OjType
+};
+export type OjSetTypeResponse = {
+  success: boolean;
+};

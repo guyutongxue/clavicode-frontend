@@ -1,9 +1,9 @@
-.demo-loadmore-list {
-    min-height: 350px;
+#sidebarProblemContainer {
+  height: 100%;
+
+  padding: 0 2em;
+
+  nz-cascader {
+    width: 100%;
   }
-  .loadmore {
-    text-align: center;
-    margin-top: 12px;
-    height: 32px;
-    line-height: 32px;
-  }
+}

@@ -1,11 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { of } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { NzCascaderOption } from 'ng-zorro-antd/cascader';
+import { OjGetProblemResponse, OjListProblemSetsResponse, OjListProblemsResponse } from 'src/app/api';
 import { ProblemsComponent } from '../../tools/problems/problems.component';
+import { environment } from '../../../environments/environment';
 
-const count = 10;
-const fakeDataUrl = 'https://randomuser.me/api/?results=5&inc=name,gender,email,nat&noinfo';
+const LIST_PROBLEM_SET_URL = `//${environment.backendHost}/oj/listProblemSets`;
+const LIST_PROBLEM_URL = `//${environment.backendHost}/oj/listProblems/`;
 
 @Component({
   selector: 'app-sidebar-problem',
@@ -13,41 +14,68 @@ const fakeDataUrl = 'https://randomuser.me/api/?results=5&inc=name,gender,email,
   styleUrls: ['./sidebar-problem.component.scss']
 })
 export class SidebarProblemComponent implements OnInit {
-  initLoading =false; // bug
-  loadingMore = false;
-  data: any[] = [];
-  list: Array<{ loading: boolean; name: any }> = [];
+  problemInfo: string[] | null = null;
+  description: {
+    title: string;
+    description: string;
+    aboutInput: string;
+    aboutOutput: string;
+    sampleInput: string;
+    sampleOutput: string;
+    hint: string;
+  } | null = null;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
-  ngOnInit(): void {
-    this.getData((res: any) => {
-      this.data = res.results;
-      this.list = res.results;
-      this.initLoading = false;
-    });
+  ngOnInit() {
+    (window as any).sbp = this;
   }
 
-  getData(callback: (res: any) => void): void {
-    this.http
-      .get(fakeDataUrl)
-      .pipe(catchError(() => of({ results: [] })))
-      .subscribe((res: any) => callback(res));
+
+  async loadProblem(node: NzCascaderOption, index: number): Promise<void> {
+    // http.get doesn't work! use fetch instead.
+    if (index === -1) {
+      // load set list
+      const res: OjListProblemSetsResponse = await fetch(LIST_PROBLEM_SET_URL).then(r => r.json());
+      if (!res.success) {
+        alert("Load set list failed");
+        return;
+      }
+      node.children = res.problemSets.map<NzCascaderOption>(set => ({
+        value: set.problemSetId,
+        label: set.title,
+        disabled: set.status !== 'ok',
+        isLeaf: false
+      }));
+    } else if (index === 0) {
+      // load problem list
+      const res: OjListProblemsResponse = await fetch(LIST_PROBLEM_URL + node.value).then(r => r.json());
+      if (!res.success) {
+        alert("Load problem list failed");
+        return;
+      }
+      node.children = res.problems.map<NzCascaderOption>(problem => ({
+        value: problem.problemId,
+        title: problem.title,
+        label: (problem.status === 'accepted' ? '✔' : problem.status === 'tried' ? '❌' : '' ) + problem.title,
+        parent: node,
+        isLeaf: true
+      }));
+    }
   }
 
-  onLoadMore(): void {
-    this.loadingMore = true;
-    this.list = this.data.concat([...Array(count)].fill({}).map(() => ({ loading: true, name: {} })));
-    this.http
-      .get(fakeDataUrl)
-      .pipe(catchError(() => of({ results: [] })))
-      .subscribe((res: any) => {
-        this.data = this.data.concat(res.results);
-        this.list = [...this.data];
-        this.loadingMore = false;
-      });
+  async updateDescription() {
+    this.description = await (async () => {
+      console.log(this.problemInfo);
+      if (this.problemInfo === null) return null;
+      const [setId, problemId] = this.problemInfo;
+      const res: OjGetProblemResponse = await fetch(`//${environment.backendHost}/oj/getProblem/${setId}/${problemId}`).then(r => r.json());
+      if (!res.success) {
+        alert("Load problem failed");
+        return null;
+      }
+      return res;
+    })();
   }
-  view(item: any): void {
-    //this.msg.success(item.email);
-  } 
+
 }

@@ -7,7 +7,7 @@
   </ul>
   <div id="asContainer">
     <as-split unit="pixel" direction="horizontal" id="horizontalAs">
-      <as-split-area [order]="0" [size]="200" id="sidebarAsArea" [visible]="currentOutletUrl('sidebar') !== null">
+      <as-split-area [order]="0" [size]="350" id="sidebarAsArea" [visible]="currentOutletUrl('sidebar') !== null">
         <router-outlet name="sidebar"></router-outlet>
       </as-split-area>
       <as-split-area [order]="1" [size]="$any('*')">
