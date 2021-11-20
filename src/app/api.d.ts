@@ -185,12 +185,12 @@ export type UserChangeUsernameResponse = UserRegisterResponse;
 //OJ
 
 
-export type OjCommitRequest = {
+export type OjSubmitRequest = {
   problemId: string;
   problemSetId: string;
   code: string;
 };
-export type OjCommitResponse = {
+export type OjSubmitResponse = {
   success: true;
   solutionId: string;
 } | {
@@ -262,7 +262,7 @@ export type OjSetCourseResponse = {
   reason: string;
 };
 
-export type OjCommitHistoryResponse = {
+export type OjSubmitHistoryResponse = {
   success: true;
   history: {
     solutionId: string;

@@ -18,7 +18,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
-import { OjGetProblemResponse, OjListProblemSetsResponse, OjListProblemsResponse } from '../api';
+import { OjGetProblemResponse, OjListProblemSetsResponse, OjListProblemsResponse, OjSubmitRequest, OjSubmitResponse } from '../api';
+import { EditorService } from './editor.service';
 
 type ProblemDescription = {
   title: string;
@@ -42,7 +43,9 @@ export class OjService {
   problemDescription: ProblemDescription | null = null;
   problemId: string[] = [];
 
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    private editorService: EditorService) { }
 
   async listProblemSets() {
     const res = await this.http.get<OjListProblemSetsResponse>(LIST_PROBLEM_SET_URL).toPromise();
@@ -62,11 +65,15 @@ export class OjService {
     return res.problems;
   }
 
+  hasProblem() {
+    return this.problemId.length > 0;
+  }
+
   async updateDescription(value: string[]) {
     this.problemId = value;
     this.problemDescription = await (async () => {
       console.log(this.problemId);
-      if (this.problemId.length === 0) return null;
+      if (!this.hasProblem()) return null;
       const [setId, problemId] = this.problemId;
       const res = await this.http.get<OjGetProblemResponse>(`//${environment.backendHost}/oj/getProblem/${setId}/${problemId}`).toPromise();
       if (!res.success) {
@@ -75,6 +82,21 @@ export class OjService {
       }
       return res;
     })();
+  }
+
+  async submit() {
+    if (!this.hasProblem()) return;
+    const [setId, problemId] = this.problemId;
+    const res = await this.http.post<OjSubmitResponse>(`//${environment.backendHost}/oj/submit`, <OjSubmitRequest>{
+      code: this.editorService.getCode(),
+      problemId: problemId,
+      problemSetId: setId
+    }).toPromise();
+    if (!res.success) {
+      alert("Submit failed");
+      return;
+    }
+    window.open(`https://programming.pku.edu.cn/programming/problem/solution.do?solutionId=${res.solutionId}&sourceCode=true`);
   }
 
 }

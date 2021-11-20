@@ -5,6 +5,7 @@ import { OjGetProblemResponse, OjListProblemSetsResponse, OjListProblemsResponse
 import { ProblemsComponent } from '../../tools/problems/problems.component';
 import { environment } from '../../../environments/environment';
 import { OjService } from 'src/app/services/oj.service';
+import { ActionService } from 'src/app/services/action.service';
 
 
 const LIST_PROBLEM_SET_URL = `//${environment.backendHost}/oj/listProblemSets`;
@@ -24,7 +25,12 @@ export class SidebarProblemComponent implements OnInit {
     return this.ojService.problemDescription;
   }
 
-  constructor(private ojService: OjService) { }
+  readonly interactiveCompileAction = this.actionService.actions['compile.interactive'];
+  readonly submitAction = this.actionService.actions['oj.submit'];
+
+  constructor(
+    private ojService: OjService,
+    private actionService: ActionService) { }
 
   ngOnInit() {
   }

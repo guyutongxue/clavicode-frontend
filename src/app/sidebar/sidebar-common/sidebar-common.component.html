@@ -1,7 +1,7 @@
 <div class="container">
   <nz-collapse [nzGhost]="true">
     <nz-collapse-panel nzHeader="常用功能" [nzActive]="true">
-      <button nz-button (click)="run()">
+      <button nz-button [disabled]="!interactiveCompileAction.enabled()" (click)="interactiveCompileAction.run()">
         <i nz-icon [nzType]="'play-circle'"></i>
         编译运行
       </button>

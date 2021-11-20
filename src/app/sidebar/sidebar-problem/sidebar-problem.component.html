@@ -1,10 +1,10 @@
 <nz-collapse [nzGhost]="true">
   <nz-collapse-panel nzHeader="常用功能" [nzActive]="true">
-    <button nz-button>
+    <button nz-button [disabled]="!interactiveCompileAction.enabled()" (click)="interactiveCompileAction.run()">
       <i nz-icon nzType="play-circle"></i>
       编译运行
     </button>
-    <button nz-button nzType="primary">
+    <button nz-button nzType="primary" [disabled]="!submitAction.enabled()" (click)="submitAction.run()">
       <i nz-icon nzType="cloud-upload"></i>
       提交
     </button>

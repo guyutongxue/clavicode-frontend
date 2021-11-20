@@ -6,6 +6,7 @@ import { CompileService } from '../../services/compile.service';
 import { EditorService } from '../../services/editor.service';
 import { DialogService } from '@ngneat/dialog';
 import { MainViewComponent } from '../../main-view/main-view.component';
+import { ActionService } from 'src/app/services/action.service';
 @Component({
   selector: 'app-sidebar-common',
   templateUrl: './sidebar-common.component.html',
@@ -13,45 +14,12 @@ import { MainViewComponent } from '../../main-view/main-view.component';
 })
 export class SidebarCommonComponent implements OnInit {
 
-  constructor(private router: Router,
-    private dialogService: DialogService,
-    private executeService: ExecuteService, 
-    private compileService: CompileService,
-    private editorService: EditorService) {
-    // this.iconService.fetchFromIconfont({
-    //   scriptUrl: 'https://at.alicdn.com/t/font_2879102_dgzdvy8za0i.js'
-    // })
+  readonly interactiveCompileAction = this.actionService.actions['compile.interactive'];
+
+  constructor(private actionService: ActionService) {
   }
 
   ngOnInit(): void {
   }
 
- 
-  panels1 = [
-    {
-      active: false,
-      disabled: false,
-      name: '编译运行'
-    }
-  ];
-  panels = [
-    {
-      active: true,
-      disabled: false,
-      name: '常用功能'
-    }
-  ];
-  panels2 = [
-    {
-      active: false,
-      disabled: false,
-      name: '代码大纲'
-    }
-  ];
-
-  async run() {
-    const token = await this.compileService.interactiveCompile();
-    if (token === null) return;
-    this.executeService.create(token);
-  }
 }
