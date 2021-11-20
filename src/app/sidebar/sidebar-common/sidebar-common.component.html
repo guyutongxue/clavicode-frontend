@@ -1,34 +1,12 @@
 <div class="container">
-<nz-collapse>
-    <nz-collapse-panel
-      *ngFor="let panel of panels"
-      [nzHeader]="panel.name"
-      [nzActive]="panel.active"
-      [nzDisabled]="panel.disabled"
-    >
+  <nz-collapse [nzGhost]="true">
+    <nz-collapse-panel nzHeader="常用功能" [nzActive]="true">
       <button nz-button (click)="run()">
-        <i nz-icon [nzType]="'play-circle'"></i>Run
+        <i nz-icon [nzType]="'play-circle'"></i>
+        编译运行
       </button>
     </nz-collapse-panel>
-</nz-collapse>
-<nz-collapse>
-    <nz-collapse-panel
-      *ngFor="let panel1 of panels1"
-      [nzHeader]="panel1.name"
-      [nzActive]="panel1.active"
-      [nzDisabled]="panel1.disabled"
-    >
-            <!-- <button (click)="MainViewComponent.compile()">Compile!</button>
-            <br /> -->
+    <nz-collapse-panel nzHeader="代码大纲" [nzActive]="true">
     </nz-collapse-panel>
-</nz-collapse>
-<nz-collapse>
-    <nz-collapse-panel
-      *ngFor="let panel2 of panels2"
-      [nzHeader]="panel2.name"
-      [nzActive]="panel2.active"
-      [nzDisabled]="panel2.disabled"
-    >
-    </nz-collapse-panel>
-</nz-collapse>
+  </nz-collapse>
 </div>

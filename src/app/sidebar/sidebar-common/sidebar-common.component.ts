@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { NzCollapseModule } from 'ng-zorro-antd/collapse';
 import { ExecuteService } from '../../services/execute.service';
 import { Router } from '@angular/router';
@@ -50,8 +50,7 @@ export class SidebarCommonComponent implements OnInit {
   ];
 
   async run() {
-    const code = this.editorService.getCode();
-    const token = await this.compileService.interactiveCompile(code);
+    const token = await this.compileService.interactiveCompile();
     if (token === null) return;
     this.executeService.create(token);
   }

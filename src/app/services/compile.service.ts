@@ -19,6 +19,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { CppCompileRequest, CppCompileResponse } from '../api';
+import { EditorService } from './editor.service';
 
 const COMPILE_URL = `//${environment.backendHost}/cpp/compile`;
 
@@ -27,15 +28,20 @@ const COMPILE_URL = `//${environment.backendHost}/cpp/compile`;
 })
 export class CompileService {
 
+  stdin: string = "";
 
-  constructor(private http: HttpClient) { 
+  constructor(private http: HttpClient, private editorService: EditorService) { 
   }
 
-  async fileCompile(code: string, stdin: string) {
+  private code() {
+    return this.editorService.getCode();
+  }
+
+  async fileCompile() {
     const result = await this.http.post<CppCompileResponse>(COMPILE_URL, <CppCompileRequest>{
-      code: code,
+      code: this.code(),
       execute: 'file',
-      stdin: stdin
+      stdin: this.stdin
     }).toPromise();
     if (result.status !== 'ok') {
       alert(result.error);
@@ -51,9 +57,9 @@ export class CompileService {
     return result.stdout;
   }
 
-  async interactiveCompile(code: string) {
+  async interactiveCompile() {
     const result = await this.http.post<CppCompileResponse>(COMPILE_URL, <CppCompileRequest>{
-      code: code,
+      code: this.code(),
       execute: 'interactive'
     }).toPromise();
     if (result.status !== 'ok') {

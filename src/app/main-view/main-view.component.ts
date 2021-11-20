@@ -143,20 +143,9 @@ export class MainViewComponent implements OnInit {
     }
   }
 
-  // send() {
-  //   this.executeService.sender?.next({
-  //     message: 'Hello from app component'
-  //   });
-  // }
-
-  // close() {
-  //   this.executeService.close();
-  // }
-
   stdin: string = "";
   stdout: string = "";
   async compile() {
-    const code = this.editorService.getCode();
-    this.stdout = await this.compileService.fileCompile(code, this.stdin) ?? "";
+    this.stdout = await this.compileService.fileCompile() ?? "";
   }
 }

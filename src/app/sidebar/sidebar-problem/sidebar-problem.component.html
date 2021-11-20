@@ -1,35 +1,46 @@
-<div id="sidebarProblemContainer">
-  <nz-cascader [nzLabelRender]="labelTmpl" [nzOptionRender]="optTempl" [ngModel]="problemId"
-    [nzLoadData]="loadProblem" (ngModelChange)="updateDescription($event)">
-  </nz-cascader>
-  <ng-template #labelTmpl let-labels="labels" let-selectedOptions="selectedOptions">
-    <ng-container *ngFor="let label of labels; let i = index; let isLast = last">
-      <span *ngIf="isLast">{{ selectedOptions[i].label }}</span>
-    </ng-container>
-  </ng-template>
-  <ng-template #optTempl let-opt>
-    <span *ngIf="opt.status">
-      <i nz-icon [nzType]="opt.status !== 'none' ? opt.status === 'accepted' ? 'check' : 'close' : 'ellipsis'"></i>
-      &nbsp;&nbsp;
-    </span>
-    <span>{{ opt.label }}</span>
-  </ng-template>
-  <div *ngIf="description as desc">
-    <h3>{{desc.title}}</h3>
-    <h4>题目描述</h4>
-    <p [innerHTML]="desc.description"></p>
-    <h4>关于输入</h4>
-    <p [innerHTML]="desc.aboutInput"></p>
-    <h4>关于输出</h4>
-    <p [innerHTML]="desc.aboutOutput"></p>
-    <div *ngIf="desc.hint">
-      <h4>提示</h4>
-      <p [innerHTML]="desc.hint"></p>
-    </div>
-    <h4>样例输入</h4>
-    <pre><code>{{desc.sampleInput}}</code></pre>
-    <h4>样例输出</h4>
-    <pre><code>{{desc.sampleOutput}}</code></pre>
+<nz-collapse [nzGhost]="true">
+  <nz-collapse-panel nzHeader="常用功能" [nzActive]="true">
+    <button nz-button>
+      <i nz-icon nzType="play-circle"></i>
+      编译运行
+    </button>
+    <button nz-button nzType="primary">
+      <i nz-icon nzType="cloud-upload"></i>
+      提交
+    </button>
+  </nz-collapse-panel>
+  <nz-collapse-panel nzHeader="题目" [nzActive]="true">
+    <div id="sidebarProblemContainer">
+      <nz-cascader [nzShowInput]="false" [nzOptionRender]="optTempl" [ngModel]="problemId"
+        [nzLoadData]="loadProblem" (ngModelChange)="updateDescription($event)">
+        <h3 title="点击切换题目"><a href="javascript: void 0">
+          {{ description ? description.title : '选择题目...' }}
+        </a></h3>
+      </nz-cascader>
+      <ng-template #optTempl let-opt>
+        <span *ngIf="opt.status">
+          <i nz-icon [nzType]="opt.status !== 'none' ? opt.status === 'accepted' ? 'check' : 'close' : 'ellipsis'"></i>
+          &nbsp;&nbsp;
+        </span>
+        <span>{{ opt.label }}</span>
+      </ng-template>
+      <div *ngIf="description as desc">
+        <h4>题目描述</h4>
+        <p [innerHTML]="desc.description"></p>
+        <h4>关于输入</h4>
+        <p [innerHTML]="desc.aboutInput"></p>
+        <h4>关于输出</h4>
+        <p [innerHTML]="desc.aboutOutput"></p>
+        <div *ngIf="desc.hint">
+          <h4>提示</h4>
+          <p [innerHTML]="desc.hint"></p>
+        </div>
+        <h4>样例输入</h4>
+        <pre><code>{{desc.sampleInput}}</code></pre>
+        <h4>样例输出</h4>
+        <pre><code>{{desc.sampleOutput}}</code></pre>
 
-  </div>
-</div>
+      </div>
+    </div>
+  </nz-collapse-panel>
+</nz-collapse>
