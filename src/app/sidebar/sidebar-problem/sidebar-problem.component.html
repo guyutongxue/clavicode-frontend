@@ -1,9 +1,18 @@
 <div id="sidebarProblemContainer">
-  <nz-cascader [nzLabelRender]="renderTpl" [(ngModel)]="problemInfo" [nzLoadData]="loadProblem" (ngModelChange)="updateDescription()"></nz-cascader>
-  <ng-template #renderTpl let-labels="labels" let-selectedOptions="selectedOptions">
+  <nz-cascader [nzLabelRender]="labelTmpl" [nzOptionRender]="optTempl" [ngModel]="problemId"
+    [nzLoadData]="loadProblem" (ngModelChange)="updateDescription($event)">
+  </nz-cascader>
+  <ng-template #labelTmpl let-labels="labels" let-selectedOptions="selectedOptions">
     <ng-container *ngFor="let label of labels; let i = index; let isLast = last">
-      <span *ngIf="isLast"> {{ selectedOptions[i].title }} </span>
+      <span *ngIf="isLast">{{ selectedOptions[i].label }}</span>
     </ng-container>
+  </ng-template>
+  <ng-template #optTempl let-opt>
+    <span *ngIf="opt.status">
+      <i nz-icon [nzType]="opt.status !== 'none' ? opt.status === 'accepted' ? 'check' : 'close' : 'ellipsis'"></i>
+      &nbsp;&nbsp;
+    </span>
+    <span>{{ opt.label }}</span>
   </ng-template>
   <div *ngIf="description as desc">
     <h3>{{desc.title}}</h3>
