@@ -35,6 +35,7 @@ export class UserService {
   }
 
   constructor(private http: HttpClient, private modal: NzModalService) {
+    this.updateUserInfo();
     this.userInfo.subscribe((v) => console.log("userinfo: ", v));
   }
 
@@ -76,5 +77,5 @@ export class UserService {
       this.userInfo.next(null);
     });
   }
-  
+
 }
