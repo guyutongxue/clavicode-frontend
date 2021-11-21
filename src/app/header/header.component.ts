@@ -42,6 +42,10 @@ export class HeaderComponent implements OnInit {
     this.actionService.runAction('user.login');
   }
 
+  logout() {
+    this.actionService.runAction('user.logout');
+  }
+
   register() {
     this.actionService.runAction('user.register');
   }

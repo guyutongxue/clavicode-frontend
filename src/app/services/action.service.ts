@@ -45,7 +45,7 @@ export class ActionService {
     'user.login': {
       name: '登录',
       icon: 'user',
-      enabled: () => true,
+      enabled: () => !this.userService.isLoggedIn,
       run: () => this.userService.login()
     },
     'user.register': {
@@ -53,6 +53,11 @@ export class ActionService {
       icon: 'user-add',
       enabled: () => true,
       run: () => this.userService.register()
+    },
+    'user.logout': {
+      name: '注销',
+      enabled: () => !!this.userService.isLoggedIn,
+      run: () => this.userService.logout()
     }
   }
 

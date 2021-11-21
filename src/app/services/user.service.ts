@@ -30,7 +30,11 @@ export class UserService {
 
   userInfo = new BehaviorSubject<null | string>(null);
 
-  constructor(private http: HttpClient, private modal: NzModalService) { 
+  get isLoggedIn() {
+    return this.userInfo.value !== null;
+  }
+
+  constructor(private http: HttpClient, private modal: NzModalService) {
     this.userInfo.subscribe((v) => console.log("userinfo: ", v));
   }
 
@@ -64,4 +68,13 @@ export class UserService {
       }
     });
   }
+
+  logout() {
+    this.http.get<any>(`//${environment.backendHost}/user/logout`, {
+      withCredentials: true
+    }).subscribe((res) => {
+      this.userInfo.next(null);
+    });
+  }
+  
 }

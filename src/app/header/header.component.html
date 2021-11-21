@@ -2,10 +2,15 @@
   <div id="headerTitle">clavicode</div>
   <div id="userButtons">
     <ng-container *ngIf="userInfo; else loginTmpl">
-      <button nz-button nzType="text">
+      <button nz-button nz-dropdown nzType="text" [nzDropdownMenu]="menu">
         <i nz-icon nzType="user"></i>
         {{userInfo}}
       </button>
+      <nz-dropdown-menu #menu="nzDropdownMenu">
+        <ul nz-menu>
+          <li nz-menu-item (click)="logout()">注销</li>
+        </ul>
+      </nz-dropdown-menu>
     </ng-container>
     <ng-template #loginTmpl>
       <button nz-button nzType="text" (click)="login()">登录</button>
