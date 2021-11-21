@@ -32,5 +32,15 @@
   
   #asContainer {
     flex-grow: 1;
+
+    #toolsAsArea {
+      display: flex;
+      flex-direction: column;
+
+      #toolsContainer {
+        flex-grow: 1;
+      }
+    }
+
   }
 }

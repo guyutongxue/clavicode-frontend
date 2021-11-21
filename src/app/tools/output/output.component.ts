@@ -1,11 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { NzCollapseModule } from 'ng-zorro-antd/collapse';
 import { ExecuteService } from '../../services/execute.service';
 import { Router } from '@angular/router';
 import { CompileService } from '../../services/compile.service';
 import { EditorService } from '../../services/editor.service';
 import { DialogService } from '@ngneat/dialog';
-import { MainViewComponent } from '../../main-view/main-view.component';
 import { NzUploadChangeParam } from 'ng-zorro-antd/upload';
 @Component({
   selector: 'app-output',
@@ -28,7 +26,14 @@ export class OutputComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  stdin: string = "";
+  get stdin() {
+    return this.compileService.stdin;
+  }
+  set stdin(value: string) {
+    this.compileService.stdin = value;
+  }
+  
+
   stdout: string = "";
   async compile() {
     this.stdout = await this.compileService.fileCompile() ?? "";
