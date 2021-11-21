@@ -6,7 +6,7 @@ import { CompileService } from '../../services/compile.service';
 import { EditorService } from '../../services/editor.service';
 import { DialogService } from '@ngneat/dialog';
 import { MainViewComponent } from '../../main-view/main-view.component';
-
+import { NzUploadChangeParam } from 'ng-zorro-antd/upload';
 @Component({
   selector: 'app-output',
   templateUrl: './output.component.html',
@@ -24,10 +24,13 @@ export class OutputComponent implements OnInit {
     // })
   }
 
-  stdin: string = "";
-  stdout: string = "";
 
   ngOnInit(): void {
   }
 
+  stdin: string = "";
+  stdout: string = "";
+  async compile() {
+    this.stdout = await this.compileService.fileCompile() ?? "";
+  }
 }

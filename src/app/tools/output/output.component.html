@@ -1,16 +1,18 @@
 
 <as-split unit="pixel" direction="horizontal" id="horizontalAs">
-    <as-split-area [order]="0" [size]="900" id="stdinAsArea">
-                    
+    <as-split-area [order]="0" [size]="500" id="stdinAsArea">
+        
         <div style="display: flex; flex-direction: column;">
           <div>
-            <textarea nz-input [(ngModel)]="stdin" nzBorderless></textarea>
+            <textarea nz-input [nzAutosize]="{ minRows: 6,maxRows: 10}" [(ngModel)]="stdin"></textarea>
           </div>
         </div>
     </as-split-area>
     <as-split-area [order]="1" [size]="$any('*')" id="stdoutAsArea">
-          
-        <div style="display: flex; flex-direction: row;">
+      <div id="Container">
+        <button nz-button nzsize="large" (click)="compile()"><i nz-icon nzType="play-circle"></i>文件编译运行</button>
+       </div>
+        <div id="Output" style="display: flex; flex-direction: row;">
           <div>
             <p>{{stdout}}</p>
           </div>

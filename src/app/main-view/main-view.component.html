@@ -15,13 +15,15 @@
           <as-split-area [order]="0" [size]="$any('*')" id="tabsAsArea">
             <app-tabs></app-tabs>
           </as-split-area>
-          <as-split-area [order]="1" [size]="50" id="toolsAsArea">
+          <as-split-area [order]="1" [size]="300" id="toolsAsArea">
             <nz-tabset nzType="card">
               <nz-tab *ngFor="let i of toolsItems" [nzTitle]="i.title" (nzSelect)="showTools(i.url)"
                 (nzSelectChange)="showTools(i.url)">
               </nz-tab>
             </nz-tabset>
+            <div>
             <router-outlet name="tools"></router-outlet>
+          </div>
           </as-split-area>
         </as-split>
       </as-split-area>
