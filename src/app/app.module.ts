@@ -54,6 +54,8 @@ import { XtermComponent } from './execute-dialog/xterm/xterm.component';
 import { ExecuteDialogComponent } from './execute-dialog/execute-dialog.component';
 import { LoginPageComponent } from './login-page/login-page.component';
 import { SidebarModule } from './sidebar/sidebar.module';
+import { NzModalModule } from 'ng-zorro-antd/modal';
+import { RegisterPageComponent } from './register-page/register-page.component';
 
 registerLocaleData(zh);
 
@@ -67,6 +69,7 @@ registerLocaleData(zh);
     XtermComponent,
     ExecuteDialogComponent,
     LoginPageComponent,
+    RegisterPageComponent,
   ],
   imports: [
     BrowserModule,
@@ -81,6 +84,9 @@ registerLocaleData(zh);
     NzIconModule,
     NzButtonModule,
     NzTabsModule,
+    NzModalModule,
+    NzInputModule,
+    NzCheckboxModule,
     DialogModule.forRoot(),
     TabsModule,
     ToolsModule,

@@ -15,7 +15,10 @@
 // You should have received a copy of the GNU General Public License
 // along with clavicode-frontend.  If not, see <http://www.gnu.org/licenses/>.
 
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewContainerRef } from '@angular/core';
+import { NzModalService } from 'ng-zorro-antd/modal';
+import { LoginPageComponent } from '../login-page/login-page.component';
+import { RegisterPageComponent } from '../register-page/register-page.component';
 
 @Component({
   selector: 'app-header',
@@ -24,9 +27,28 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HeaderComponent implements OnInit {
 
-  constructor() { }
+  constructor(private modal: NzModalService, private viewContainerRef: ViewContainerRef) { }
 
   ngOnInit(): void {
   }
 
+  login() {
+    this.modal.create({
+      nzTitle: '',
+      nzContent: LoginPageComponent,
+      nzWidth: '400px',
+      nzViewContainerRef: this.viewContainerRef,
+      nzFooter: null
+    });
+  }
+
+  register() {
+    this.modal.create({
+      nzTitle: '',
+      nzContent: RegisterPageComponent,
+      nzWidth: '400px',
+      nzViewContainerRef: this.viewContainerRef,
+      nzFooter: null
+    });
+  }
 }

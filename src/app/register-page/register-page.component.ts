@@ -1,14 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
-
-
 @Component({
-  selector: 'app-login-page',
-  templateUrl: './login-page.component.html',
-  styleUrls: ['./login-page.component.scss']
+  selector: 'app-register-page',
+  templateUrl: './register-page.component.html',
+  styleUrls: ['./register-page.component.scss']
 })
-export class LoginPageComponent implements OnInit {
+export class RegisterPageComponent implements OnInit {
   validateForm: FormGroup;
   checked = true;
 
@@ -29,8 +27,8 @@ export class LoginPageComponent implements OnInit {
   constructor(private fb: FormBuilder) {
     this.validateForm = this.fb.group({
       email: [null, [Validators.required]],
-      password: [null, [Validators.required]],
-      remember: [true]
+      username: [null, [Validators.required]],
+      password: [null, [Validators.required]]
     });
   }
 
