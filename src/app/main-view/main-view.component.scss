@@ -33,9 +33,24 @@
   #asContainer {
     flex-grow: 1;
 
+    #tabsAsArea {
+      position: relative;
+
+      #showToolsFab {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+      }
+    }
+
     #toolsAsArea {
       display: flex;
       flex-direction: column;
+
+      #outputSelect {
+        margin-right: 2em;
+        min-width: 160px;
+      }
 
       #toolsContainer {
         flex-grow: 1;

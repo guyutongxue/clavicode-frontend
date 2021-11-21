@@ -1,24 +1,47 @@
-#fileioContainer {
-  height: 100%;
+#outputContainer {
+  display       : flex;
+  flex-direction: column;
+  height        : 100%;
 
-
-  [nz-input] {
-    width        : 450px;
-    margin-top   : 0px;
-    margin-bottom: 0px;
-    margin-left  : 20px;
-    display      : block;
-    font-family  : Consolas, Courier New, Courier, monospace;
-    font-size    : 16px;
+  #fileioButtons {
+    padding      : 10px;
+    padding-top  : 0;
+    border-bottom: 1px solid #f3f3f3;
   }
 
-  #Output {
-    font-family: Consolas, Courier New, Courier, monospace;
-  }
+  #fileioTexts {
+    flex-grow: 1;
 
-  #Container {
-    margin-left  : 50px;
-    margin-bottom: 20px;
+    $monospace: "等距更纱黑体 SC", "Cascadia Code", Consolas, "Courier New", Courier, monospace;
+
+
+    #stdinContent,
+    #stdoutContent {
+      width      : 100%;
+      height     : 100%;
+      font-family: $monospace;
+      font-size  : 16px;
+      padding    : 0 5px;
+    }
+
+    #stdinContent {
+      display: block;
+      border : 0;
+      resize: none;
+    }
+
+    #stdinContent:focus-visible {
+      outline: none;
+    }
+
+    #stdoutContent {
+      white-space: pre-line;
+      word-break: break-all; 
+    }
+
+    #stdoutContent.gray {
+      color: #757575;
+    }
   }
 
 }

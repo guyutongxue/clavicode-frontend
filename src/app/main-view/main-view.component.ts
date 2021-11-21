@@ -86,9 +86,6 @@ export class MainViewComponent implements OnInit {
     private executeService: ExecuteService, 
     private compileService: CompileService,
     private editorService: EditorService) {
-    // this.iconService.fetchFromIconfont({
-    //   scriptUrl: 'https://at.alicdn.com/t/font_2879102_dgzdvy8za0i.js'
-    // })
   }
 
   ngOnInit(): void {
@@ -110,7 +107,7 @@ export class MainViewComponent implements OnInit {
     }
     return null;
   }
-  showSidebar(who: string): void {
+  showSidebar(who: string | null): void {
     if (who === this.currentOutletUrl("sidebar") || who === null) {
       this.router.navigate([{
         outlets: {
@@ -126,7 +123,7 @@ export class MainViewComponent implements OnInit {
       }]);
     }
   }
-  showTools(who: string): void {
+  showTools(who: string | null): void {
     if (who === this.currentOutletUrl("tools") || who === null) {
       this.router.navigate([{
         outlets: {
@@ -141,11 +138,5 @@ export class MainViewComponent implements OnInit {
         }
       }]);
     }
-  }
-
-  stdin: string = "";
-  stdout: string = "";
-  async compile() {
-    this.stdout = await this.compileService.fileCompile() ?? "";
   }
 }

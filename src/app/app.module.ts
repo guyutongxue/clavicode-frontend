@@ -57,6 +57,7 @@ import { SidebarModule } from './sidebar/sidebar.module';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { RegisterPageComponent } from './register-page/register-page.component';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
+import { NzSelectModule } from 'ng-zorro-antd/select';
 
 registerLocaleData(zh);
 
@@ -89,6 +90,7 @@ registerLocaleData(zh);
     NzInputModule,
     NzCheckboxModule,
     NzDropDownModule,
+    NzSelectModule,
     DialogModule.forRoot(),
     TabsModule,
     ToolsModule,

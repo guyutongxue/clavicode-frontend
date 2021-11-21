@@ -21,7 +21,7 @@ import { Terminal } from 'xterm';
 import { ExecuteService } from 'src/app/services/execute.service';
 import { filter, map } from 'rxjs/operators';
 
-const TERM_FONT_FAMILY = `"等距更纱黑体 SC", "Cascadia Code", Consolas, "New Courier", monospace`;
+const TERM_FONT_FAMILY = `"等距更纱黑体 SC", "Cascadia Code", Consolas, "Courier New", Courier, monospace`;
 const TERM_FONT_SIZE = 14;
 const TERM_COLS = 80;
 const TERM_ROWS = 25;
@@ -31,7 +31,8 @@ export function terminalWidth() {
   const canvas = _canvas ?? (_canvas = document.createElement('canvas'));
   const context = canvas.getContext('2d')!;
   context.font = `${TERM_FONT_SIZE}px ${TERM_FONT_FAMILY}`;
-  return context.measureText('m').width * TERM_COLS;
+  const ratio = window.devicePixelRatio;
+  return Math.floor(context.measureText('m').width * ratio) * TERM_COLS / ratio;
 }
 
 @Component({

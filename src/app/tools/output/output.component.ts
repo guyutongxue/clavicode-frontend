@@ -17,9 +17,6 @@ export class OutputComponent implements OnInit {
     private executeService: ExecuteService, 
     private compileService: CompileService,
     private editorService: EditorService) {
-    // this.iconService.fetchFromIconfont({
-    //   scriptUrl: 'https://at.alicdn.com/t/font_2879102_dgzdvy8za0i.js'
-    // })
   }
 
 
