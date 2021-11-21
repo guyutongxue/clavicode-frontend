@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { CompileService } from './compile.service';
 import { ExecuteService } from './execute.service';
 import { OjService } from './oj.service';
+import { UserService } from './user.service';
 
 type Action = {
   name: string;
@@ -19,7 +20,8 @@ export class ActionService {
   constructor(
     private compileService: CompileService,
     private executeService: ExecuteService,
-    private ojService: OjService) { }
+    private ojService: OjService,
+    private userService: UserService) { }
 
   readonly actions: Record<string, Action> = {
     'compile.interactive': {
@@ -39,7 +41,24 @@ export class ActionService {
       shortcut: 'f7',
       enabled: () => this.ojService.hasProblem(),
       run: () => this.ojService.submit()
+    },
+    'user.login': {
+      name: '登录',
+      icon: 'user',
+      enabled: () => true,
+      run: () => this.userService.login()
+    },
+    'user.register': {
+      name: '注册',
+      icon: 'user-add',
+      enabled: () => true,
+      run: () => this.userService.register()
     }
+  }
+
+  runAction(id: string): void {
+    const action = this.actions[id];
+    if (action?.enabled()) action.run();
   }
 
 }

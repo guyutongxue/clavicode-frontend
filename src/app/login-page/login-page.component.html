@@ -2,7 +2,7 @@
   <nz-form-item>
     <nz-form-control nzErrorTip="请输入邮箱">
       <nz-input-group nzPrefixIcon="mail">
-        <input type="text" nz-input formControlName="email" placeholder="邮箱" />
+        <input type="text" nz-input formControlName="email" autocomplete="username" placeholder="邮箱" />
       </nz-input-group>
     </nz-form-control>
   </nz-form-item>
@@ -24,5 +24,5 @@
       </div> -->
   </div>
   <button nz-button class="login-form-button login-form-margin" [nzType]="'primary'">登录</button>
-  或者<a>立即注册</a>
+  或者<a href="javascript: void 0" (click)="register()">立即注册</a>
 </form>

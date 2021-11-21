@@ -19,6 +19,8 @@ import { Component, OnInit, ViewContainerRef } from '@angular/core';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { LoginPageComponent } from '../login-page/login-page.component';
 import { RegisterPageComponent } from '../register-page/register-page.component';
+import { ActionService } from '../services/action.service';
+import { UserService } from '../services/user.service';
 
 @Component({
   selector: 'app-header',
@@ -27,28 +29,20 @@ import { RegisterPageComponent } from '../register-page/register-page.component'
 })
 export class HeaderComponent implements OnInit {
 
-  constructor(private modal: NzModalService, private viewContainerRef: ViewContainerRef) { }
+  constructor(private actionService: ActionService, private userService: UserService) { }
 
   ngOnInit(): void {
   }
 
+  get userInfo() {
+    return this.userService.userInfo.value;
+  }
+
   login() {
-    this.modal.create({
-      nzTitle: '',
-      nzContent: LoginPageComponent,
-      nzWidth: '400px',
-      nzViewContainerRef: this.viewContainerRef,
-      nzFooter: null
-    });
+    this.actionService.runAction('user.login');
   }
 
   register() {
-    this.modal.create({
-      nzTitle: '',
-      nzContent: RegisterPageComponent,
-      nzWidth: '400px',
-      nzViewContainerRef: this.viewContainerRef,
-      nzFooter: null
-    });
+    this.actionService.runAction('user.register');
   }
 }

@@ -1,7 +1,15 @@
 <div id="headerContainer">
   <div id="headerTitle">clavicode</div>
   <div id="userButtons">
-    <button nz-button nzType="text" (click)="login()">登录</button>
-    <button nz-button nzType="text" (click)="register()">注册</button>
+    <ng-container *ngIf="userInfo; else loginTmpl">
+      <button nz-button nzType="text">
+        <i nz-icon nzType="user"></i>
+        {{userInfo}}
+      </button>
+    </ng-container>
+    <ng-template #loginTmpl>
+      <button nz-button nzType="text" (click)="login()">登录</button>
+      <button nz-button nzType="text" (click)="register()">注册</button>
+    </ng-template>
   </div>
 </div>
