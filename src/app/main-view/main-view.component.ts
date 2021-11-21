@@ -65,8 +65,8 @@ export class MainViewComponent implements OnInit {
     ];
   readonly toolsItems = [
     {
-      title: '问题',
-      url: 'problems',
+      title: '输出',
+      url: 'output',
       disabled: false
     },
     {
@@ -75,8 +75,8 @@ export class MainViewComponent implements OnInit {
       disabled: false
     },
     {
-      title: '输出',
-      url: 'output',
+      title: '问题',
+      url: 'problems',
       disabled: false
     }
   ]

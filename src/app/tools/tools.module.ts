@@ -23,10 +23,11 @@ import { OutputComponent } from './output/output.component';
 import { DebugComponent } from './debug/debug.component';
 import { AngularSplitModule } from 'angular-split';
 import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzUploadModule } from 'ng-zorro-antd/upload';
 import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
-
-
-
+import { NzDividerModule } from 'ng-zorro-antd/divider';
+import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzButtonModule } from 'ng-zorro-antd/button';
 @NgModule({
   declarations: [
     ProblemsComponent,
@@ -36,9 +37,13 @@ import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
   imports: [
     CommonModule,
     FormsModule,
+    NzUploadModule,
     NzInputModule,
     NzSkeletonModule,
-    AngularSplitModule
+    AngularSplitModule,
+    NzDividerModule ,
+    NzIconModule,
+    NzButtonModule
   ]
 })
 export class ToolsModule { }

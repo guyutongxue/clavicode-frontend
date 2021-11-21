@@ -1,7 +1,16 @@
 [nz-input]{
-    width: 850px;
-    margin-top: 20px;
-    margin-bottom: 20px;
+    width: 450px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    margin-left: 20px;
     display: block;
+    font-family: Consolas,Courier New,Courier,monospace;
+    font-size: 16px;
   }
-  
+#Output{
+  font-family: Consolas,Courier New,Courier,monospace;
+}
+#Container{
+  margin-left: 50px;
+  margin-bottom: 20px;
+}
