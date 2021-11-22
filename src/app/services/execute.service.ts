@@ -45,7 +45,8 @@ export class ExecuteService {
     if (this.sender !== null || this.receiver !== null) {
       throw new Error('Connection already established');
     }
-    const EXECUTE_URL =  `ws://${environment.backendHost}/ws/execute/${token}`;
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const EXECUTE_URL =  `${protocol}//${environment.backendHost}/ws/execute/${token}`;
     const wrapper = this.wsService.create(EXECUTE_URL);
     this.sender = {
       next: (data: WsExecuteC2S) => wrapper.sender.next(JSON.stringify(data)),

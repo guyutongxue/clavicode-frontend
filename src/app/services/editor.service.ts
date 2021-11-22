@@ -151,11 +151,10 @@ export class EditorService {
       // });
 
       // Language Server Handlers
-      // TODO
       // this.electronService.ipcRenderer.on('ng:langServer/started', (_, port) => {
       // create the web socket
-      const TEMP_CLANGD_TOKEN = "15bf2a54-f439-4874-a252-6a5164a0f559";
-      const socketUrl = `ws://${environment.backendHost}/ws/languageServer/clangd/${TEMP_CLANGD_TOKEN}`;
+      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const socketUrl = `${protocol}//${environment.backendHost}/ws/languageServer/cpp`;
       const socketOptions = {
         maxReconnectionDelay: 10000,
         minReconnectionDelay: 1000,
