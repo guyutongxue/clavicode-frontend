@@ -22,12 +22,14 @@ import { ProblemsComponent } from './problems/problems.component';
 import { OutputComponent } from './output/output.component';
 import { DebugComponent } from './debug/debug.component';
 import { AngularSplitModule } from 'angular-split';
+import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzUploadModule } from 'ng-zorro-antd/upload';
 import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzNotificationModule } from 'ng-zorro-antd/notification';
 @NgModule({
   declarations: [
     ProblemsComponent,
@@ -41,7 +43,9 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
     NzInputModule,
     NzSkeletonModule,
     AngularSplitModule,
-    NzDividerModule ,
+    NzTableModule,
+    NzNotificationModule,
+    NzDividerModule,
     NzIconModule,
     NzButtonModule
   ]

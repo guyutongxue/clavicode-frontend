@@ -18,6 +18,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { GccDiagnostics } from '../api';
+export { GccDiagnostic, GccDiagnosticPosition } from '../api';
 
 @Injectable({
   providedIn: 'root'

@@ -1,6 +1,6 @@
 import { GdbResponse } from 'tsgdbmi';
 
-interface GccDiagnosticPosition {
+export interface GccDiagnosticPosition {
   file: string;
   line: number;
   column: number;
@@ -53,8 +53,12 @@ export type CppCompileResponse =
 
 export type CppCompileErrorResponse = {
   status: 'error';
-  errorType: 'compile' | 'link' | 'other';
-  error: GccDiagnostics | string;
+  errorType: 'compile';
+  error: GccDiagnostics;
+} | {
+  status: 'error';
+  errorType: 'link' | 'other';
+  error: string;
 };
 
 type CppCompileOkResponseBase<T extends CppCompileRequest.execute> = {
@@ -182,8 +186,7 @@ export type UserChangeUsernameRequest = {
 export type UserChangeUsernameResponse = UserRegisterResponse;
 
 
-//OJ
-
+// OJ
 
 export type OjSubmitRequest = {
   problemId: string;

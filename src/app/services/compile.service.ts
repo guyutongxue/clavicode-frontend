@@ -21,7 +21,7 @@ import { environment } from 'src/environments/environment';
 import { CppCompileRequest, CppCompileResponse , GccDiagnostics } from '../api';
 import { NzNotificationDataOptions, NzNotificationService } from 'ng-zorro-antd/notification';
 import { EditorService } from './editor.service';
-import { ProblemsService } from './problems-service';
+import { ProblemsService } from './problems.service';
 import { Router } from '@angular/router';
 
 const COMPILE_URL = `//${environment.backendHost}/cpp/compile`;
@@ -55,7 +55,7 @@ export class CompileService {
       stdin: this.stdin
     }).toPromise();
     if (result.status !== 'ok') {
-      alert(result.error);
+      this.showError(result);
       return null;
     }
     if (result.execute !== 'file') {
@@ -74,7 +74,7 @@ export class CompileService {
       execute: 'interactive'
     }).toPromise();
     if (result.status !== 'ok') {
-      alert(result.error);
+      this.showError(result);
       return null;
     }
     if (result.execute !== 'interactive') {
@@ -84,34 +84,29 @@ export class CompileService {
     return result.executeToken;
   }
 
-  async ShowError() {
-    const result = await this.http.post<CppCompileResponse>(COMPILE_URL, <CppCompileRequest>{
-      code: this.code(),
-      execute: 'none'
-    }).toPromise();
-
-    console.log("Compile result: ", result);
-      if (result.status ==='ok') {
-        if (result.error.length === 0) {
+  private async showError(res: CppCompileResponse) {
+    console.log("Compile result: ", res);
+      if (res.status ==='ok') {
+        if (res.error.length === 0) {
           this.notification.success("编译成功", "", this.notifyOption);
           this.problemsService.linkerr.next("");
           this.problemsService.problems.next([]);
         } else {
-          this.showProblems(result.error);
+          this.showProblems(res.error);
           this.notification.warning("编译成功，但存在警告", "", this.notifyOption);
         }
       } else {
-        switch (result.errorType) {
+        switch (res.errorType) {
           case "compile":
-            this.showProblems(result.error);
+            this.showProblems(res.error);
             this.notification.error("编译错误", "", this.notifyOption);
             break;
           case "link":
-            this.showProblems(result.error);
+            // this.showProblems(result.error);
             this.notification.error("链接错误", "", this.notifyOption);
             break;
           default:
-            this.showOutput(result);
+            this.showOutput(res);
             this.notification.error("未知错误", "" ,this.notifyOption);
             break;
         }
