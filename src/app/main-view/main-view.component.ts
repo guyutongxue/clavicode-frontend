@@ -44,21 +44,15 @@ export class MainViewComponent implements OnInit {
         disabled: false
       },
       {
-        title: '文件',
-        url: 'file',
-        icon: 'file',
-        disabled: false
-      },
-      {
         title: '题目列表',
         url: 'problem',
         icon: 'unordered-list',
         disabled: false
       },
       {
-        title: '搜索',
+        title: '帮助',
         url: 'search',
-        icon: 'search',
+        icon: 'question-circle',
         disabled: false
 
       }
