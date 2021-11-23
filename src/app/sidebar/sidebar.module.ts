@@ -34,6 +34,7 @@ import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzCascaderModule } from 'ng-zorro-antd/cascader';
+import { NzTreeViewModule } from 'ng-zorro-antd/tree-view';
 
 
 @NgModule({
@@ -57,7 +58,8 @@ import { NzCascaderModule } from 'ng-zorro-antd/cascader';
     NzSkeletonModule,
     NzCheckboxModule,
     NzIconModule,
-    NzCascaderModule
+    NzCascaderModule,
+    NzTreeViewModule
   ]
 })
 export class SidebarModule { }
