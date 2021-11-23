@@ -1,5 +1,5 @@
 
-import { NgModule } from '@angular/core';
+import { NgModule, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Routes, RouterModule } from '@angular/router';
 
@@ -7,6 +7,7 @@ import { ProblemsComponent } from './problems/problems.component'
 import { OutputComponent } from './output/output.component';
 import { DebugComponent } from './debug/debug.component';
 import { EmptyPageComponent } from '../empty-page/empty-page.component';
+import { FileioComponent } from './output/fileio/fileio.component';
 
 const routes: Routes = [
   {
@@ -17,7 +18,18 @@ const routes: Routes = [
   {
     path: 'output',
     component: OutputComponent,
-    outlet: 'tools'
+    outlet: 'tools',
+    children: [
+      {
+        path: 'fileio',
+        component: FileioComponent
+      },
+      {
+        path: '',
+        pathMatch: 'full',
+        redirectTo: 'fileio'
+      }
+    ]
   },
   {
     path: 'debug',

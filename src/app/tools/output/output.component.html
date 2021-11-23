@@ -1,15 +1,1 @@
-<div id="outputContainer">
-  <div id="fileioButtons">
-    <button nz-button (click)="compile()">文件编译运行</button>
-    <button nz-button (click)="stdin = ''" nzType="link">清空输入</button>
-    <button nz-button (click)="stdout = ''" nzType="link">清空输出</button>
-  </div>
-  <as-split unit="percent" direction="horizontal" id="fileioTexts">
-    <as-split-area [order]="0" [size]="50" id="stdinAsArea">
-      <textarea id="stdinContent" [(ngModel)]="stdin" placeholder="在此键入输入"></textarea>
-    </as-split-area>
-    <as-split-area [order]="1" [size]="50" id="stdoutAsArea">
-      <div id="stdoutContent" [ngClass]=" stdout ? [] : ['gray']">{{stdout ? stdout : '输出在此显示'}}</div>
-    </as-split-area>
-  </as-split>
-</div>
+<router-outlet></router-outlet>
