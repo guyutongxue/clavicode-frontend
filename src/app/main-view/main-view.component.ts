@@ -80,6 +80,9 @@ export class MainViewComponent implements OnInit {
       disabled: false
     }
   ]
+  get currentToolsIndex() {
+    return this.toolsItems.findIndex(i => i.url === this.currentOutletUrl("tools"));
+  }
 
   constructor(private router: Router,
     private dialogService: DialogService,

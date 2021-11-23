@@ -30,6 +30,7 @@ import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzNotificationModule } from 'ng-zorro-antd/notification';
+import { RouterModule } from '@angular/router';
 @NgModule({
   declarations: [
     ProblemsComponent,
@@ -38,6 +39,7 @@ import { NzNotificationModule } from 'ng-zorro-antd/notification';
   ],
   imports: [
     CommonModule,
+    RouterModule,
     FormsModule,
     NzUploadModule,
     NzInputModule,
