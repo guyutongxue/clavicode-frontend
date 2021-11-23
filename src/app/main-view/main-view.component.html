@@ -19,7 +19,7 @@
             </button>
           </as-split-area>
           <as-split-area [order]="1" [size]="300" id="toolsAsArea" [visible]="currentOutletUrl('tools') !== null">
-            <nz-tabset nzType="card" [nzTabBarExtraContent]="outputSelect" [nzSelectedIndex]="currentToolsIndex">
+            <nz-tabset [nzTabBarExtraContent]="outputSelect" [nzSelectedIndex]="currentToolsIndex">
               <nz-tab *ngFor="let i of toolsItems" [nzTitle]="i.title" (nzClick)="showTools(i.url)">
               </nz-tab>
             </nz-tabset>
