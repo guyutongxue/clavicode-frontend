@@ -19,7 +19,7 @@ import { DOCUMENT } from '@angular/common';
 import { Component, Inject, OnInit, ViewEncapsulation } from '@angular/core';
 import { Terminal } from 'xterm';
 import { ExecuteService } from 'src/app/services/execute.service';
-import { filter, map } from 'rxjs/operators';
+import { filter, map, timeout } from 'rxjs/operators';
 
 const TERM_FONT_FAMILY = `"等距更纱黑体 SC", "Cascadia Code", Consolas, "Courier New", Courier, monospace`;
 const TERM_FONT_SIZE = 14;
@@ -67,7 +67,23 @@ export class XtermComponent implements OnInit {
       if (data.type === 'tout') {
         this.term.write(data.content);
       } else if (data.type === 'closed') {
-        this.term.write('\r-------\rClosed.\r');
+        this.term.write('\r\n----------\r\n');
+        this.term.write('运行结束\r\n退出代码为: '+(data.exitCode).toString()+'\r\n');
+      }
+      else if(data.type === 'error'){
+        if(data.reason==='timeout'){
+          this.term.write('\r\n----------\r\n');
+          this.term.write('程序运行时间超时\r\n');
+        }else if(data.reason==='memout'){
+          this.term.write('\r\n----------\r\n');
+          this.term.write('程序运行内存超出限制\r\n');
+        }else if(data.reason==='violate'){
+          this.term.write('\r\n----------\r\n');
+          this.term.write('程序行为被禁止\r\n');
+        }else if(data.reason=='system'){
+          this.term.write('\r\n----------\r\n');
+          this.term.write('服务器异常，请及时联系我们\r\n');
+        }
       }
     })
   }
