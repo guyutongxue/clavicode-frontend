@@ -58,7 +58,6 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
 import { RegisterPageComponent } from './register-page/register-page.component';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { NzSelectModule } from 'ng-zorro-antd/select';
-import { FileioComponent } from './tools/output/fileio/fileio.component';
 
 registerLocaleData(zh);
 
@@ -73,7 +72,6 @@ registerLocaleData(zh);
     ExecuteDialogComponent,
     LoginPageComponent,
     RegisterPageComponent,
-    FileioComponent,
   ],
   imports: [
     BrowserModule,

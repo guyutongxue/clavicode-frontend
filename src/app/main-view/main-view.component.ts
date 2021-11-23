@@ -31,32 +31,32 @@ import { filter, take } from 'rxjs/operators';
 export class MainViewComponent implements OnInit {
 
   readonly sidebarItems = [
-      {
-        title: '常用',
-        url: 'common',
-        icon: 'star',
-        disabled: false
-      },
-      {
-        title: '调试',
-        url: 'debug',
-        icon: 'control',
-        disabled: false
-      },
-      {
-        title: '题目列表',
-        url: 'problem',
-        icon: 'unordered-list',
-        disabled: false
-      },
-      {
-        title: '帮助',
-        url: 'search',
-        icon: 'question-circle',
-        disabled: false
+    {
+      title: '常用',
+      url: 'common',
+      icon: 'star',
+      disabled: false
+    },
+    {
+      title: '调试',
+      url: 'debug',
+      icon: 'control',
+      disabled: false
+    },
+    {
+      title: '题目列表',
+      url: 'problem',
+      icon: 'unordered-list',
+      disabled: false
+    },
+    {
+      title: '帮助',
+      url: 'search',
+      icon: 'question-circle',
+      disabled: false
 
-      }
-    ];
+    }
+  ];
   readonly toolsItems = [
     {
       title: '输出',
@@ -73,14 +73,25 @@ export class MainViewComponent implements OnInit {
       url: 'problems',
       disabled: false
     }
-  ]
+  ];
+  readonly outputItems = [
+    {
+      title: '文件输入输出',
+      url: 'fileio'
+    },
+    {
+      title: '评测结果',
+      url: 'solution'
+    }
+  ];
+
   get currentToolsIndex() {
     return this.toolsItems.findIndex(i => i.url === this.currentOutletUrl("tools"));
   }
 
   constructor(private router: Router,
     private dialogService: DialogService,
-    private executeService: ExecuteService, 
+    private executeService: ExecuteService,
     private compileService: CompileService,
     private editorService: EditorService) {
   }
@@ -88,7 +99,7 @@ export class MainViewComponent implements OnInit {
   ngOnInit(): void {
     // show common sidebar on startup if no other sidebar is selected
     this.router.events.pipe(
-      filter((event) : event is NavigationEnd => event instanceof NavigationEnd),
+      filter((event): event is NavigationEnd => event instanceof NavigationEnd),
       take(1)
     ).subscribe(() => {
       if (this.currentOutletUrl("sidebar") === null) {
@@ -97,10 +108,10 @@ export class MainViewComponent implements OnInit {
     })
   }
 
-  currentOutletUrl(name: string) {
+  currentOutletUrl(name: string, depth = 0) {
     const routerChildren = this.router.parseUrl(this.router.url).root.children;
     if (name in routerChildren) {
-      return routerChildren[name].segments[0].path;
+      return routerChildren[name].segments[depth].path;
     }
     return null;
   }
@@ -120,8 +131,8 @@ export class MainViewComponent implements OnInit {
       }]);
     }
   }
-  showTools(who: string | null): void {
-    if (who === this.currentOutletUrl("tools") || who === null) {
+  showTools(who: string | null, ...children: string[]): void {
+    if (who === null) {
       this.router.navigate([{
         outlets: {
           tools: null
@@ -131,7 +142,7 @@ export class MainViewComponent implements OnInit {
       if (this.toolsItems.find(i => i.url === who)?.disabled) return;
       this.router.navigate([{
         outlets: {
-          tools: who
+          tools: [who, ...children]
         }
       }]);
     }

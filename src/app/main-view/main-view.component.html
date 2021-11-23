@@ -14,19 +14,20 @@
         <as-split unit="pixel" direction="vertical" id="verticalAs">
           <as-split-area [order]="0" [size]="$any('*')" id="tabsAsArea">
             <app-tabs></app-tabs>
-            <button nz-button *ngIf="currentOutletUrl('tools') === null" id="showToolsFab" nzShape="circle" (click)="showTools('output')">
+            <button nz-button *ngIf="currentOutletUrl('tools') === null" id="showToolsFab" nzShape="circle"
+              (click)="showTools('output')">
               <i nz-icon nzType="plus"></i>
             </button>
           </as-split-area>
           <as-split-area [order]="1" [size]="300" id="toolsAsArea" [visible]="currentOutletUrl('tools') !== null">
-            <nz-tabset [nzTabBarExtraContent]="outputSelect" [nzSelectedIndex]="currentToolsIndex">
+            <nz-tabset [nzTabBarExtraContent]="outputSelect" [nzSelectedIndex]="currentToolsIndex" id="toolsTabset">
               <nz-tab *ngFor="let i of toolsItems" [nzTitle]="i.title" (nzClick)="showTools(i.url)">
               </nz-tab>
             </nz-tabset>
             <ng-template #outputSelect>
-              <nz-select id="outputSelect" *ngIf="currentOutletUrl('tools') === 'output'" ngModel="fileio">
-                <nz-option nzValue="fileio" nzLabel="文件输入输出"></nz-option>
-                <nz-option nzValue="solution" nzLabel="评测结果"></nz-option>
+              <nz-select id="outputSelect" *ngIf="currentOutletUrl('tools') === 'output'"
+                [ngModel]="currentOutletUrl('tools', 1)" (ngModelChange)="showTools('output', $any($event))">
+                <nz-option *ngFor="let i of outputItems" [nzValue]="i.url" [nzLabel]="i.title"></nz-option>
               </nz-select>
               <button nz-button nzType="text" nzShape="circle" (click)="showTools(null)">
                 <i nz-icon nzType="close"></i>

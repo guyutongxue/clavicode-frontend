@@ -8,6 +8,7 @@ import { OutputComponent } from './output/output.component';
 import { DebugComponent } from './debug/debug.component';
 import { EmptyPageComponent } from '../empty-page/empty-page.component';
 import { FileioComponent } from './output/fileio/fileio.component';
+import { SolutionComponent } from './output/solution/solution.component';
 
 const routes: Routes = [
   {
@@ -23,6 +24,10 @@ const routes: Routes = [
       {
         path: 'fileio',
         component: FileioComponent
+      },
+      {
+        path: 'solution',
+        component: SolutionComponent
       },
       {
         path: '',

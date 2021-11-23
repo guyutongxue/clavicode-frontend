@@ -1,0 +1,14 @@
+<div *ngIf="currentStatus" id="solutionWrapper">
+  <div id="solutionStatus">
+    <div id="solutionStatusBlock" [ngStyle]="{ 'background-color': colorMap[currentStatus] }">
+      <span id="solutionStatusAbbr">{{abbrMap[currentStatus]}}</span>
+      <div id="solutionStatusNote"></div>
+    </div>
+    <div id="solutionStatusText" [ngStyle]="{ color: colorMap[currentStatus] }">{{currentStatus}}</div>
+    <button nz-button nzShape="circle"><i nz-icon nzType="redo"></i></button>
+  </div>
+  <div id="solutionHint">
+    <h4>提示</h4>
+    <pre><code [innerHtml]="currentHint"></code></pre>
+  </div>
+</div>

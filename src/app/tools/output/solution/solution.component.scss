@@ -1,0 +1,53 @@
+#solutionWrapper {
+  display       : flex;
+  flex-direction: row;
+  height        : 100%;
+  padding       : 16px;
+  padding-top   : 0;
+
+  #solutionStatus {
+    display       : flex;
+    flex-direction: column;
+    align-items   : center;
+
+    #solutionStatusBlock {
+      background-color: rgb(255, 0, 0);
+      color           : white;
+      font-size       : 24px;
+      height          : 100px;
+      width           : 100px;
+      display         : flex;
+      flex-direction  : column;
+      justify-content : center;
+      align-items     : center;
+    }
+
+    #solutionStatusNote {
+      font-size: 11px;
+    }
+
+    #solutionStatusText {
+      font-weight: bold;
+      flex-grow  : 1;
+    }
+  }
+
+  #solutionHint {
+    flex-grow  : 1;
+    margin-left: 16px;
+    overflow: auto;
+
+    .highin {
+      background-color: #ffa;
+    }
+
+    .highout {
+      background-color: bisque;
+    }
+
+    .highstd {
+      background-color: #eef;
+    }
+
+  }
+}

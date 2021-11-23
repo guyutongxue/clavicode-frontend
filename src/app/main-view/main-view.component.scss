@@ -47,6 +47,10 @@
       display: flex;
       flex-direction: column;
 
+      #toolsTabset {
+        flex-shrink: 0;
+      }
+
       #outputSelect {
         margin-right: 2em;
         min-width: 160px;
@@ -54,6 +58,7 @@
 
       #toolsContainer {
         flex-grow: 1;
+        overflow: auto;
       }
     }
 

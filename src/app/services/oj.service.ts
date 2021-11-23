@@ -17,8 +17,10 @@
 
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
+import { BehaviorSubject } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { OjGetProblemResponse, OjListProblemSetsResponse, OjListProblemsResponse, OjSubmitRequest, OjSubmitResponse } from '../api';
+import { OjGetProblemResponse, OjGetSolutionResponse, OjListProblemSetsResponse, OjListProblemsResponse, OjSubmitRequest, OjSubmitResponse } from '../api';
 import { EditorService } from './editor.service';
 
 type ProblemDescription = {
@@ -31,6 +33,13 @@ type ProblemDescription = {
   hint: string;
 };
 
+type Solution = {
+  status: string;
+  hint?: string;
+  memory?: string;
+  time?: string;
+}
+
 const LIST_PROBLEM_SET_URL = `//${environment.backendHost}/oj/listProblemSets`;
 const LIST_PROBLEM_URL = `//${environment.backendHost}/oj/listProblems/`;
 
@@ -42,8 +51,10 @@ export class OjService {
 
   problemDescription: ProblemDescription | null = null;
   problemId: string[] = [];
+  solution = new BehaviorSubject<Solution | null>(null);
 
   constructor(
+    private router: Router,
     private http: HttpClient,
     private editorService: EditorService) { }
 
@@ -87,6 +98,8 @@ export class OjService {
   async submit() {
     if (!this.hasProblem()) return;
     const [setId, problemId] = this.problemId;
+    this.solution.next({ status: 'Waiting' });
+    this.showSolution();
     const res = await this.http.post<OjSubmitResponse>(`//${environment.backendHost}/oj/submit`, <OjSubmitRequest>{
       code: this.editorService.getCode(),
       problemId: problemId,
@@ -96,7 +109,29 @@ export class OjService {
       alert("Submit failed");
       return;
     }
-    window.open(`https://programming.pku.edu.cn/programming/problem/solution.do?solutionId=${res.solutionId}&sourceCode=true`);
+    this.getSolution(res.solutionId);
+  }
+
+  async getSolution(id: string) {
+    const res = await this.http.get<OjGetSolutionResponse>(`//${environment.backendHost}/oj/getSolution/${id}`).toPromise();
+    if (!res.success) {
+      alert("Get solution failed");
+      return;
+    }
+    this.solution.next({
+      status: res.status,
+      hint: res.hint,
+      memory: res.memory,
+      time: res.time
+    });
+  }
+
+  showSolution() {
+    this.router.navigate([{
+      outlets: {
+        tools: ['output', 'solution']
+      }
+    }]);
   }
 
 }
