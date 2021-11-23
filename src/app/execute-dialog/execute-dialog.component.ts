@@ -30,4 +30,8 @@ export class ExecuteDialogComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  close() {
+    this.dialogRef.close();
+  }
+
 }
