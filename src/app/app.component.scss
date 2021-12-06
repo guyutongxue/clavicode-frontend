@@ -2,9 +2,9 @@
   height: 100vh;
 
   #header {
-    width: 100%;
+    width           : 100%;
     background-color: #dddddd;
-    text-align: center;
+    text-align      : center;
   }
 
   #mainView {
@@ -17,5 +17,6 @@
     line-height     : 20px;
     background-color: #eeeeee;
     padding         : 0 20px;
+    text-align      : right;
   }
 }
