@@ -19,7 +19,7 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { map, tap } from 'rxjs/operators';
-import { BehaviorSubject, EMPTY, firstValueFrom, Observable, Observer, Subject, throwError, TimeoutError } from 'rxjs';
+import { BehaviorSubject, EMPTY,  Observable, Observer, Subject, throwError, TimeoutError } from 'rxjs';
 import { GdbArray, GdbResponse, GdbVal } from '@gytx/tsgdbmi';
 import { environment } from 'src/environments/environment';
 import { EditorBreakpointInfo, EditorService } from './editor.service';
@@ -184,7 +184,7 @@ export class DebugService {
           type: 'request' ,
           request: `${token}${command}`
         });
-        return firstValueFrom(this.requestResults.pipe(
+        (this.requestResults.pipe(
           filter(result => result.token === token),
           timeout(2000),
           catchError(err => {
@@ -196,7 +196,7 @@ export class DebugService {
               return throwError(() => err);
             }
           })
-        ));
+        )).toPromise();
       }
     
      
