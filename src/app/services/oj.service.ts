@@ -54,7 +54,7 @@ export class OjService {
   solution = new BehaviorSubject<Solution | null>(null);
 
   constructor(
-    private router: Router,
+    public router: Router,
     private http: HttpClient,
     private editorService: EditorService) { }
 

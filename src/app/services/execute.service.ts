@@ -36,7 +36,7 @@ export class ExecuteService {
   public receiver: Observable<WsExecuteS2C> | null = null;
 
   constructor(
-    private dialogService: DialogService,
+    public dialogService: DialogService,
     private wsService: WebsocketService) {
 
   }

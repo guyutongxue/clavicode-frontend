@@ -28,6 +28,7 @@ import { FormsModule , ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MonacoEditorModule } from '@materia-ui/ngx-monaco-editor';
+import { RouterModule } from '@angular/router';
 
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -94,7 +95,12 @@ registerLocaleData(zh);
     DialogModule.forRoot(),
     TabsModule,
     ToolsModule,
-    SidebarModule
+    SidebarModule,
+    NzUploadModule,
+    NzCollapseModule,
+    NzListModule,
+    NzSkeletonModule,
+    RouterModule
   ],
   providers: [{ provide: NZ_I18N, useValue: zh_CN }],
   bootstrap: [AppComponent]

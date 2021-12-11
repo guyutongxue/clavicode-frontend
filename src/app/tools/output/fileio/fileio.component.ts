@@ -5,7 +5,7 @@ import { CompileService } from '../../../services/compile.service';
 import { EditorService } from '../../../services/editor.service';
 import { DialogService } from '@ngneat/dialog';
 import { NzUploadChangeParam } from 'ng-zorro-antd/upload';
-
+import { RouterModule } from '@angular/router';
 @Component({
   selector: 'app-fileio',
   templateUrl: './fileio.component.html',
@@ -13,8 +13,8 @@ import { NzUploadChangeParam } from 'ng-zorro-antd/upload';
 })
 export class FileioComponent implements OnInit {
 
-  constructor(private router: Router,
-    private dialogService: DialogService,
+  constructor(public router: Router,
+    public dialogService: DialogService,
     private executeService: ExecuteService, 
     private compileService: CompileService,
     private editorService: EditorService) {

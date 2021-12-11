@@ -22,6 +22,7 @@ import { CompileService } from '../services/compile.service';
 import { EditorService } from '../services/editor.service';
 import { DialogService } from '@ngneat/dialog';
 import { filter, take } from 'rxjs/operators';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-main-view',
@@ -89,8 +90,8 @@ export class MainViewComponent implements OnInit {
     return this.toolsItems.findIndex(i => i.url === this.currentOutletUrl("tools"));
   }
 
-  constructor(private router: Router,
-    private dialogService: DialogService,
+  constructor(public router: Router,
+    public dialogService: DialogService,
     private executeService: ExecuteService,
     private compileService: CompileService,
     private editorService: EditorService) {

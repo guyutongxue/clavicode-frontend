@@ -17,6 +17,7 @@
 
 import { AppRoutingModule } from '../app-routing.module';
 import { NgModule } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
@@ -35,7 +36,8 @@ import { MonacoEditorModule } from '@materia-ui/ngx-monaco-editor';
     CommonModule,
     FormsModule,
     NzTabsModule,
-    MonacoEditorModule
+    MonacoEditorModule,
+    RouterModule
   ],
   exports: [TabsComponent]
 })

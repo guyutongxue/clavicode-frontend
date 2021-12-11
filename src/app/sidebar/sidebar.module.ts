@@ -26,7 +26,6 @@ import { SidebarProblemComponent } from './sidebar-problem/sidebar-problem.compo
 import { NzListModule } from 'ng-zorro-antd/list';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzInputModule } from 'ng-zorro-antd/input';
-import { NzUploadModule } from 'ng-zorro-antd/upload';
 import { NzCollapseModule } from 'ng-zorro-antd/collapse';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { NzFormModule } from 'ng-zorro-antd/form';
@@ -50,7 +49,6 @@ import { NzTreeViewModule } from 'ng-zorro-antd/tree-view';
     FormsModule,
     NzButtonModule,
     NzInputModule,
-    NzUploadModule,
     NzCollapseModule,
     NzListModule,
     NzTabsModule,

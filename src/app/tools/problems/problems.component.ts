@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { ProblemsService, GccDiagnostic, GccDiagnosticPosition } from 'src/app/services/problems.service';
 import { FileService } from 'src/app/services/file.service';
 import { map } from 'rxjs/operators';
-
+import { Routes, RouterModule } from '@angular/router';
 export interface ITreeNode extends GccDiagnostic {
   level: number;
   expand: boolean;

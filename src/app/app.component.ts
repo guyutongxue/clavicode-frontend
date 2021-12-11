@@ -26,7 +26,7 @@ import { ExecuteService } from './services/execute.service';
 export class AppComponent implements OnInit {
 
   private windowHeight: number;
-
+  public title='my-app';
   constructor() {
     this.windowHeight = window.innerHeight;
   }

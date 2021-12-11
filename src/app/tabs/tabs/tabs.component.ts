@@ -20,7 +20,7 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Router } from '@angular/router';
 import { Tab, TabsService } from '../../services/tabs.service';
 import { FileService } from 'src/app/services/file.service';
-
+import { RouterModule } from '@angular/router';
 @Component({
   selector: 'app-tabs',
   templateUrl: './tabs.component.html',
@@ -29,7 +29,7 @@ import { FileService } from 'src/app/services/file.service';
 export class TabsComponent implements OnInit {
 
   constructor(
-    private router: Router, 
+    public router: Router, 
     private tabsService: TabsService,
     private fileService: FileService
     ) { }

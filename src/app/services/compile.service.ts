@@ -38,7 +38,7 @@ export class CompileService {
   stdin: string = "";
 
   constructor(private http: HttpClient, private editorService: EditorService,
-              private router: Router,
+              public router: Router,
               private notification: NzNotificationService,
               private problemsService: ProblemsService 
               ) { 

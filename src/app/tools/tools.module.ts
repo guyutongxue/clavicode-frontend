@@ -33,7 +33,6 @@ import { NzNotificationModule } from 'ng-zorro-antd/notification';
 import { RouterModule } from '@angular/router';
 import { FileioComponent } from './output/fileio/fileio.component';
 import { SolutionComponent } from './output/solution/solution.component';
-
 @NgModule({
   declarations: [
     ProblemsComponent,

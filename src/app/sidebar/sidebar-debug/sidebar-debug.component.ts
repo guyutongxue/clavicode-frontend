@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { NzCollapseModule } from 'ng-zorro-antd/collapse';
 import { ExecuteService } from '../../services/execute.service';
 import { Router } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { CompileService } from '../../services/compile.service';
 import { EditorService } from '../../services/editor.service';
 import { DialogService } from '@ngneat/dialog';
@@ -12,8 +13,8 @@ import { DialogService } from '@ngneat/dialog';
 })
 export class SidebarDebugComponent implements OnInit {
 
-  constructor(private router: Router,
-    private dialogService: DialogService,
+  constructor(public router: Router,
+    public dialogService: DialogService,
     private executeService: ExecuteService, 
     private compileService: CompileService,
     private editorService: EditorService) {
