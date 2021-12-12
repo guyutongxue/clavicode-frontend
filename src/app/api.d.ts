@@ -1,4 +1,14 @@
-import { GdbResponse } from 'tsgdbmi';
+export declare type GdbDict = {
+  [key: string]: GdbVal;
+};
+export declare type GdbArray = GdbVal[];
+export declare type GdbVal = GdbArray | GdbDict | string;
+export interface GdbResponse {
+  type: "notify" | "result" | "console" | "log" | "target" | "done" | "output";
+  message: string | null;
+  payload: GdbVal | null;
+  token?: number | null;
+}
 
 export interface GccDiagnosticPosition {
   file: string;
@@ -173,7 +183,7 @@ export type UserLoginRequest = {
 export type UserLoginResponse = UserRegisterResponse;
 
 export type UserChangePasswordRequest = {
-  email: string; 
+  email: string;
   oldPassword: string;
   newPassword: string;
 }

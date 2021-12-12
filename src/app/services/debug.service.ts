@@ -20,13 +20,13 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { map, tap } from 'rxjs/operators';
 import { BehaviorSubject, EMPTY,  Observable, Observer, Subject, throwError, TimeoutError } from 'rxjs';
-import { GdbArray, GdbResponse, GdbVal } from '@gytx/tsgdbmi';
 import { environment } from 'src/environments/environment';
 import { EditorBreakpointInfo, EditorService } from './editor.service';
 import { FileService } from './file.service';
 import { catchError, debounceTime, filter, switchMap, timeout } from 'rxjs/operators';
 import { WebsocketService } from './websocket.service';
-import { WsDebugGdbC2S, WsDebugGdbS2C } from '../api';
+import { WsDebugGdbC2S, WsDebugGdbS2C ,GdbArray, GdbVal, GdbResponse } from '../api';
+
 
 function escape(src: string) {
   return src.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n').replace(/\t/g, '\\t');
