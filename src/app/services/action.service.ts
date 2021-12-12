@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 import { CompileService } from './compile.service';
 import { ExecuteService } from './execute.service';
 import { OjService } from './oj.service';
@@ -11,6 +12,8 @@ type Action = {
   enabled: () => boolean;
   run: () => void;
 };
+
+type GlobalStatus = 'ready' | 'executing' | 'compiling' | 'debugging';
 
 @Injectable({
   providedIn: 'root'
@@ -65,5 +68,7 @@ export class ActionService {
     const action = this.actions[id];
     if (action?.enabled()) action.run();
   }
+
+  status = new BehaviorSubject<GlobalStatus>('ready');
 
 }

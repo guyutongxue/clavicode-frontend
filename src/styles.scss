@@ -29,3 +29,42 @@ ngneat-dialog {
 #toolsAsArea .ant-tabs-tab:first-child {
   margin-left: 16px;
 }
+
+:root {
+  --breakpoint-background-color: #f08080;
+  --debug-step-background-color: #add8e6;
+}
+
+.editor-container {
+  overflow: overlay !important;
+
+  .bkpt-line-decoration {
+    background: var(--breakpoint-background-color);
+  }
+
+  .bkpt-glyph-margin {
+    color : red // $font-size: 14px;
+    // $icon-size: $font-size * 0.8;
+    // $padding: $font-size * 0.3;
+
+    // background: red;
+    // width: $icon-size !important;
+    // height: $icon-size !important;
+    // margin: $padding;
+    // border-radius: $icon-size / 2;
+  }
+
+  .trace-line-decoration {
+    background: var(--debug-step-background-color);
+  }
+
+  .trace-glyph-margin {
+    color: blue;
+  }
+
+  .bkpt-glyph-margin.codicon,
+  .trace-glyph-margin.codicon {
+    // Disable global translateY(15%)
+    transform: none;
+  }
+}

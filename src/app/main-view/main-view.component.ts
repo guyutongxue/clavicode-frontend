@@ -47,7 +47,7 @@ export class MainViewComponent implements OnInit {
       title: '题目列表',
       url: 'problem',
       icon: 'unordered-list',
-      disabled: false
+      disabled: true
     },
     {
       title: '帮助',

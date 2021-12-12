@@ -20,7 +20,7 @@ import { Observable, Observer, Subject } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { WebsocketService } from './websocket.service';
-import { WsExecuteC2S, WsExecuteS2C } from '../api';
+import { RuntimeError, WsDebugGdbS2C, WsExecuteC2S, WsExecuteS2C } from '../api';
 import { DialogService } from '@ngneat/dialog';
 import { ExecuteDialogComponent } from '../execute-dialog/execute-dialog.component';
 import { terminalWidth } from '../execute-dialog/xterm/xterm.component';
@@ -28,10 +28,15 @@ import { terminalWidth } from '../execute-dialog/xterm/xterm.component';
 // export const TEMP_EXECUTE_TOKEN = "0344a132-6e41-46c9-81b1-08fcb795b0cd";
 // const EXECUTE_URL = `ws://${environment.backendHost}/ws/execute/${TEMP_EXECUTE_TOKEN}`;
 
+export interface ITerminalService {
+  sender: Observer<{ type: 'tin', content: string }> | null;
+  receiver: Observable<WsExecuteS2C | WsDebugGdbS2C> | null;
+}
+
 @Injectable({
   providedIn: 'root'
 })
-export class ExecuteService {
+export class ExecuteService implements ITerminalService {
   public sender: Observer<WsExecuteC2S> | null = null;
   public receiver: Observable<WsExecuteS2C> | null = null;
 
@@ -62,6 +67,7 @@ export class ExecuteService {
     })
     this.receiver.subscribe((data) => {
       if (data.type === 'closed') this.close();
+      else if (data.type === 'error') this.close();
     })
     this.openDialog();
   }

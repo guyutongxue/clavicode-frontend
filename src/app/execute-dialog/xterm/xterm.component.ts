@@ -18,8 +18,10 @@
 import { DOCUMENT } from '@angular/common';
 import { Component, EventEmitter, Inject, OnInit, Output, ViewEncapsulation } from '@angular/core';
 import { Terminal } from 'xterm';
-import { ExecuteService } from 'src/app/services/execute.service';
+import { ExecuteService, ITerminalService } from 'src/app/services/execute.service';
 import { filter, map, timeout } from 'rxjs/operators';
+import { DebugService } from 'src/app/services/debug.service';
+import { ActionService } from 'src/app/services/action.service';
 
 const TERM_FONT_FAMILY = `"等距更纱黑体 SC", "Cascadia Code", Consolas, "Courier New", Courier, monospace`;
 const TERM_FONT_SIZE = 14;
@@ -45,10 +47,14 @@ export class XtermComponent implements OnInit {
 
   constructor(
     @Inject(DOCUMENT) private document: Document,
-    private executeService: ExecuteService) { }
+    private actionService: ActionService,
+    private executeService: ExecuteService,
+    private debugService: DebugService) { }
 
   private closing = false;
   @Output() close = new EventEmitter();
+
+  private currentService: ITerminalService = this.actionService.status.value === 'debugging' ? this.debugService : this.executeService;
 
   private readonly term = new Terminal({
     fontFamily: TERM_FONT_FAMILY,
@@ -64,13 +70,13 @@ export class XtermComponent implements OnInit {
       if (this.closing) {
         this.close.emit();
       } else {
-        this.executeService.sender?.next({
+        this.currentService.sender?.next({
           type: 'tin',
           content: data
         });
       }
     });
-    this.executeService.receiver?.subscribe(data => {
+    this.currentService.receiver?.subscribe(data => {
       if (data.type === 'tout') {
         this.term.write(data.content);
       } else if (data.type === 'closed' || data.type === 'error') {

@@ -84,6 +84,22 @@ export class CompileService {
     return result.executeToken;
   }
 
+  async debugCompile() {
+    const result = await this.http.post<CppCompileResponse>(COMPILE_URL, <CppCompileRequest>{
+      code: this.code(),
+      execute: 'debug'
+    }).toPromise();
+    if (result.status !== 'ok') {
+      this.showError(result);
+      return null;
+    }
+    if (result.execute !== 'debug') {
+      alert("non debug response");
+      return null;
+    }
+    return result.debugToken;
+  }
+
   private async showError(res: CppCompileResponse) {
     console.log("Compile result: ", res);
       if (res.status ==='ok') {
