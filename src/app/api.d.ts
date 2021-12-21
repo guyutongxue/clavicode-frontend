@@ -1,14 +1,4 @@
-export declare type GdbDict = {
-  [key: string]: GdbVal;
-};
-export declare type GdbArray = GdbVal[];
-export declare type GdbVal = GdbArray | GdbDict | string;
-export interface GdbResponse {
-  type: "notify" | "result" | "console" | "log" | "target" | "done" | "output";
-  message: string | null;
-  payload: GdbVal | null;
-  token?: number | null;
-}
+import { GdbResponse } from './api.debug';
 
 export interface GccDiagnosticPosition {
   file: string;
@@ -168,6 +158,13 @@ export type UserRegisterRequest = {
   username: string;
   password: string;
 };
+export type UserGetVeriCodeRequest={
+  email: string;
+};
+export type UserVerifyVeriCodeRequest={
+  email: string;
+  veriCode: string;
+};
 export type UserRegisterResponse = {
   success: true;
 } | {
@@ -180,10 +177,39 @@ export type UserLoginRequest = {
   password: string;
 };
 
+export type UserGetInfoResponse = {
+  success: true;
+  username: string;
+  authorized: Map<string, string[]> | undefined;
+} | {
+  success: false;
+}
+
+export type OjSetCourseRequest = {
+  url: string;
+} | {
+  courseId: string;
+};
+
+
+export type OjSetCourseResponse = {
+  success: true;
+  // title: string;
+} | {
+  success: false;
+  reason: string;
+};
+
 export type UserLoginResponse = UserRegisterResponse;
 
+export type UserLogoutResponse = UserRegisterResponse;
+
+export type UserGetVeriCodeResponse = UserRegisterResponse;
+
+export type UserVerifyVeriCodeResponse = UserRegisterResponse;
+
 export type UserChangePasswordRequest = {
-  email: string;
+  email: string; 
   oldPassword: string;
   newPassword: string;
 }
@@ -266,13 +292,6 @@ export type OjSetCourseRequest = {
   url: string;
 } | {
   courseId: string;
-};
-export type OjSetCourseResponse = {
-  success: true;
-  title: string;
-} | {
-  success: false;
-  reason: string;
 };
 
 export type OjSubmitHistoryResponse = {

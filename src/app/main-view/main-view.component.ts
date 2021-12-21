@@ -54,7 +54,12 @@ export class MainViewComponent implements OnInit {
       url: 'search',
       icon: 'question-circle',
       disabled: false
-
+    },
+    {
+      title: '设置',
+      url: 'settings',
+      icon: 'setting',
+      disabled: false
     }
   ];
   readonly toolsItems = [

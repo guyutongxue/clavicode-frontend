@@ -355,11 +355,17 @@ export class EditorService {
   }
 
   setEditorTheme(theme: monaco.editor.IStandaloneThemeData): void {
+    if (this.monacoEditorLoaderService.isMonacoLoaded$.value) {
+      monaco.editor.defineTheme('mytheme', theme);
+      monaco.editor.setTheme('mytheme');
+      return;
+    }
     this.monacoEditorLoaderService.isMonacoLoaded$.pipe(
       filter(isLoaded => isLoaded),
       take(1)
     ).subscribe(() => {
       monaco.editor.defineTheme('mytheme', theme);
+      monaco.editor.setTheme('mytheme');
     });
   }
 

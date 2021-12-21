@@ -16,7 +16,7 @@
 // along with clavicode-frontend.  If not, see <http://www.gnu.org/licenses/>.
 
 import { Component, HostListener, OnInit } from '@angular/core';
-import { ExecuteService } from './services/execute.service';
+import { ThemeService } from './services/theme.service';
 
 @Component({
   selector: 'app-root',
@@ -27,11 +27,12 @@ export class AppComponent implements OnInit {
 
   private windowHeight: number;
 
-  constructor() {
+  constructor(private themeService: ThemeService) {
     this.windowHeight = window.innerHeight;
   }
 
   ngOnInit() {
+    this.themeService.setTheme('classic');
   }
 
   @HostListener('window:resize', ['$event'])

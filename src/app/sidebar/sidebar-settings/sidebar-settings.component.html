@@ -1,0 +1,9 @@
+<div id="sidebarSettings">
+  <h3>主题</h3>
+  <nz-radio-group [(ngModel)]="theme" (ngModelChange)="onThemeChange()">
+    <label nz-radio nzValue="classic">经典</label>
+    <label nz-radio nzValue="dark_plus">vsc暗色</label>
+    <label nz-radio nzValue="light_plus">vsc浅色</label>
+    <label nz-radio nzValue="monokai">Monokai</label>
+  </nz-radio-group>
+</div>

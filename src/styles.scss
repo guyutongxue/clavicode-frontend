@@ -21,18 +21,13 @@ ngneat-dialog {
     }
   }
 }
-.ant-collapse>.ant-collapse-item>.ant-collapse-header { 
+#sidebarAsArea .ant-collapse>.ant-collapse-item>.ant-collapse-header { 
   padding: 2px 1em; 
   color: #616161;
   background-color: #f3f3f3;
 }
 #toolsAsArea .ant-tabs-tab:first-child {
   margin-left: 16px;
-}
-
-:root {
-  --breakpoint-background-color: #f08080;
-  --debug-step-background-color: #add8e6;
 }
 
 .editor-container {
