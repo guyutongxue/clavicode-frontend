@@ -22,6 +22,7 @@ import { BehaviorSubject } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { LoginPageComponent } from '../login-page/login-page.component';
 import { RegisterPageComponent } from '../register-page/register-page.component';
+import { UserGetInfoResponse } from '../api';
 
 @Injectable({
   providedIn: 'root'
@@ -58,7 +59,7 @@ export class UserService {
   }
 
   updateUserInfo() {
-    this.http.get<any>(`//${environment.backendHost}/user/username`, {
+    this.http.get<UserGetInfoResponse>(`//${environment.backendHost}/user/getInfo`, {
       withCredentials: true
     }).subscribe((res) => {
       console.log(res);
