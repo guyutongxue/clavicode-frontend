@@ -9,22 +9,22 @@
     <nz-collapse-panel nzHeader="代码大纲" [nzActive]="true">
       <nz-tree-view [nzTreeControl]="treeControl" [nzDataSource]="dataSource" [nzDirectoryTree]="true">
         <nz-tree-node *nzTreeNodeDef="let node" nzTreeNodePadding>
-            <nz-tree-node-toggle nzTreeNodeNoopToggle></nz-tree-node-toggle>
-            <nz-tree-node-option (nzClick)="selectNode(node)">
-                <i class='codicon' [ngClass]="'codicon-' + iconData[node.kind].class"></i>
-                {{ node.name }}
-            </nz-tree-node-option>
+          <nz-tree-node-toggle nzTreeNodeNoopToggle></nz-tree-node-toggle>
+          <nz-tree-node-option (nzClick)="selectNode(node)">
+            <i class='codicon' [ngClass]="'codicon-' + iconData[node.kind].class"></i>
+            {{ node.name }}
+          </nz-tree-node-option>
         </nz-tree-node>
         <nz-tree-node *nzTreeNodeDef="let node; when: hasChild" nzTreeNodePadding>
-            <nz-tree-node-toggle>
-                <i nz-icon nzType="caret-down" nzTreeNodeToggleRotateIcon></i>
-            </nz-tree-node-toggle>
-            <nz-tree-node-option (nzClick)="selectNode(node)">
-                <i class='codicon' [ngClass]="'codicon-' + iconData[node.kind].class"></i>
-                {{ node.name }}
-            </nz-tree-node-option>
+          <nz-tree-node-toggle>
+            <i nz-icon nzType="caret-down" nzTreeNodeToggleRotateIcon></i>
+          </nz-tree-node-toggle>
+          <nz-tree-node-option (nzClick)="selectNode(node)">
+            <i class='codicon' [ngClass]="'codicon-' + iconData[node.kind].class"></i>
+            {{ node.name }}
+          </nz-tree-node-option>
         </nz-tree-node>
-    </nz-tree-view>
+      </nz-tree-view>
     </nz-collapse-panel>
   </nz-collapse>
 </div>

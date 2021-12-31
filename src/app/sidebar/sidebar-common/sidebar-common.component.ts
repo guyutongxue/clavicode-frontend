@@ -56,7 +56,6 @@ export class SidebarCommonComponent implements OnInit {
 
   readonly interactiveCompileAction = this.actionService.actions['compile.interactive'];
   private symbols$: Observable<DocumentSymbol[]>;
-  private symbolsSubscription: Subscription;
   iconData = iconData;
 
   constructor(private editorService: EditorService, private actionService: ActionService) {
@@ -66,7 +65,7 @@ export class SidebarCommonComponent implements OnInit {
       switchMap(_ => this.editorService.getSymbols()),
       tap(console.log)
     );
-    this.symbolsSubscription = this.symbols$.subscribe(e => {
+    this.symbols$.subscribe(e => {
       if (e === null) this.dataSource.setData([]);
       else this.dataSource.setData(e);
     });

@@ -29,10 +29,10 @@ export class AppComponent implements OnInit {
 
   constructor(private themeService: ThemeService) {
     this.windowHeight = window.innerHeight;
+    this.themeService.setTheme('classic');
   }
 
   ngOnInit() {
-    this.themeService.setTheme('classic');
   }
 
   @HostListener('window:resize', ['$event'])

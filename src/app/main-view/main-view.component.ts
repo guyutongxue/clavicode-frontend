@@ -38,6 +38,12 @@ export class MainViewComponent implements OnInit {
       disabled: false
     },
     {
+      title: '文件',
+      url: 'file',
+      icon: 'folder',
+      disabled: false
+    },
+    {
       title: '调试',
       url: 'debug',
       icon: 'control',
