@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { NzContextMenuService, NzDropdownMenuComponent } from 'ng-zorro-antd/dropdown';
 import { FsNode, FileLocalService } from '../../services/file-local.service';
 
 
@@ -8,7 +9,9 @@ import { FsNode, FileLocalService } from '../../services/file-local.service';
   styleUrls: ['./sidebar-file.component.scss']
 })
 export class SidebarFileComponent implements OnInit {
-  constructor(private flService: FileLocalService) {}
+  constructor(
+    private nzContextMenuService: NzContextMenuService,
+    private flService: FileLocalService) {}
 
   enabled = "showDirectoryPicker" in window;
 
@@ -23,12 +26,34 @@ export class SidebarFileComponent implements OnInit {
   loadFolder() {
     this.flService.init();
   }
+
+  newFile(root = false) {
+    const filename = prompt();
+    if (!filename) return;
+    this.flService.createFile(filename, root ? undefined : this.selectedNode.value);
+  }
+  newFolder(root = false) {
+    const filename = prompt();
+    if (!filename) return;
+    this.flService.createFolder(filename, root ? undefined : this.selectedNode.value);
+  }
   
-  async selectNode(node: FsNode) {
+  async onSelected(node: FsNode) {
     if (node.expandable) {
       this.treeControl.toggle(node);
     } else {
       this.flService.getFileContent(node.value);
     }
+  }
+
+  selectedNode: FsNode = null!;
+
+  showContextMenu($event: MouseEvent, menu: NzDropdownMenuComponent, node: FsNode) {
+    this.selectedNode = node;
+    this.nzContextMenuService.create($event, menu);
+  }
+
+  remove() {
+    this.flService.remove(this.selectedNode);
   }
 }

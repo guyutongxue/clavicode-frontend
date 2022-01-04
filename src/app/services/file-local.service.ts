@@ -66,6 +66,12 @@ class FsDataSource<T extends { expanded: boolean }> implements DataSource<T> {
   disconnect(): void { }
 }
 
+
+const REQ_RW_OPT = {
+  writable: true,
+  mode: 'readwrite'
+};
+
 @Injectable({
   providedIn: 'root'
 })
@@ -83,61 +89,132 @@ export class FileLocalService {
     (node) => { this.loadChildren(node); },
     (node) => { node.expanded = false; })
 
-  private async loadChildren(node: FsNode) {
+  private rootHandle: any;
+
+  private async getChildren(handle: any, level: number) {
+    const children: FsNode[] = [];
+    for await (const [key, value] of handle.entries()) {
+      children.push({
+        name: key,
+        value: value,
+        level: level + 1,
+        expandable: value.kind === "directory",
+        expanded: false,
+        loaded: 'no'
+      });
+    }
+    return children;
+  }
+
+  private async loadChildren(node: FsNode, index?: number) {
     if (node.loaded === 'yes') {
       node.expanded = true;
       return;
     }
     node.loaded = 'doing';
     const handle = node.value;
-    const children: FsNode[] = [];
-    for await (const [key, value] of handle.entries()) {
-      children.push({
-        name: key,
-        value: value,
-        level: node.level + 1,
-        expandable: value.kind === "directory",
-        expanded: false,
-        loaded: 'no'
-      });
-    }
+    const children = await this.getChildren(handle, node.level);
     node.loaded = 'yes';
     const data = this.flattenedData.value;
-    const index = data.findIndex(v => v === node);
+    if (typeof index === "undefined") {
+      index = data.findIndex(v => v === node);
+    }
     data.splice(index + 1, 0, ...children);
     data[index].expanded = true;
+    this.flattenedData.next(data);
+  }
+
+  /**
+   * 
+   * @param handle handle of the node to be refreshed
+   * @returns 
+   */
+  private async refresh(handle: any) {
+    const data = this.flattenedData.value;
+    const index = data.findIndex(v => v.value === handle);
+    const node = data[index];
+    if (node) {
+      if (!node.expandable) return;
+      if (node.loaded !== "yes") return;
+      node.loaded = "no";
+      if (!node.expanded) return;
+      node.loaded = "doing";
+    }
+    // 找到此目录下的所有子文件
+    const level = node?.level ?? -1;
+    let endIndex = index + 1;
+    while (endIndex < data.length && data[endIndex].level > level) {
+      endIndex++;
+    }
+    endIndex--;
+    // Try to expand originally expanded children. Hard to impl..
+    // const expandedChildren = data.slice(index, endIndex)
+    //   .filter(v => v.level === level - 1 && v.expanded)
+    //   .map(v => v.name);
+    const newChildren = await this.getChildren(node?.value ?? this.rootHandle, node?.level ?? -1);
+    data.splice(index + 1, endIndex - index, ...newChildren);
+    if (node) {
+      node.loaded = "yes";
+    }
     this.flattenedData.next(data);
   }
 
   async init() {
     const handle = await (window as any).showDirectoryPicker().catch(() => null);
     if (!handle) return;
-    const data: FsNode[] = [];
-    for await (const [key, value] of handle.entries()) {
-      data.push({
-        name: key,
-        value: value,
-        level: 0,
-        expandable: value.kind === "directory",
-        expanded: false,
-        loaded: 'no'
-      });
-    }
+    const data = await this.getChildren(handle, -1);
     this.flattenedData.next(data);
+    this.rootHandle = handle;
+  }
+
+  private async requestPermission(handle: any) {
+    return !((await handle.queryPermission(REQ_RW_OPT)) !== 'granted' &&
+      await handle.requestPermission(REQ_RW_OPT) !== 'granted');
   }
 
   async getFileContent(handle: any) {
     if (handle.kind !== "file") return;
-    const opt = {
-      writable: true,
-      mode: 'readwrite'
-    };
-    if ((await handle.queryPermission(opt)) !== 'granted' && await handle.requestPermission(opt) !== 'granted') {
-
-    } else {
+    if (await this.requestPermission(handle)) {
       const file = await handle.getFile();
       const code = await file.text();
       alert(code);
+    }
+  }
+
+  async createFile(name: string, handle?: any) {
+    if (!handle) handle = this.rootHandle;
+    if (await this.requestPermission(handle)) {
+      const file = await handle.getFileHandle(name, {
+        create: true
+      });
+      // const writable = await file.createWritable();
+      // await writable.write('');
+      // await writable.close();
+      this.refresh(handle);
+    }
+  }
+
+  async createFolder(name: string, handle?: any) {
+
+  }
+
+  private getParent(node: FsNode) {
+    const data = this.flattenedData.value;
+    const index = data.findIndex(v => v === node);
+    let parent = index - 1;
+    while (parent >= 0 && data[parent].level >= node.level) {
+      parent--;
+    }
+    if (parent === -1) return this.rootHandle;
+    return data[parent].value;
+  }
+
+  async remove(node: FsNode) {
+    const name = node.name;
+    const handle = this.getParent(node);
+    if (await this.requestPermission(handle)) {
+      await handle.removeEntry(name);
+      this.refresh(handle);
     }
   }
 }
