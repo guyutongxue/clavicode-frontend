@@ -98,14 +98,16 @@ interface ModelInfo {
 })
 export class EditorService {
   isInit = false;
-  isLanguageClientStarted = false;
   editorMessage: Subject<{ type: string; arg?: any }> = new Subject();
 
   // Root path of local files
   private localPath = '/anon_workspace/';
 
   private editor: monaco.editor.IStandaloneCodeEditor | null = null;
-  private languageClient: MonacoLanguageClient | null = null;
+  private languageClient: Record<string, MonacoLanguageClient | null> = {
+    cpp: null,
+    python: null
+  };
   private editorText = new BehaviorSubject<string>("");
   editorText$ = this.editorText.asObservable();
 
@@ -165,11 +167,14 @@ export class EditorService {
       //   this.nullPath = v + '/anon_workspace/';
       // });
 
-      // Language Server Handlers
-      // this.electronService.ipcRenderer.on('ng:langServer/started', (_, port) => {
-      // create the web socket
-      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-      const socketUrl = `${protocol}//${environment.backendHost}/ws/languageServer/cpp`;
+      this.startLanguageClient('cpp');
+      this.startLanguageClient('python');
+    });
+  }
+
+  private startLanguageClient(lang: string) {
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const socketUrl = `${protocol}//${environment.backendHost}/ws/languageServer/${lang}`;
       const socketOptions = {
         maxReconnectionDelay: 10000,
         minReconnectionDelay: 1000,
@@ -184,11 +189,11 @@ export class EditorService {
         webSocket,
         onConnection: (connection: MessageConnection) => {
           // create and start the language client
-          this.languageClient = new MonacoLanguageClient({
-            name: `C++ Client`,
+          this.languageClient[lang] = new MonacoLanguageClient({
+            name: `${lang} client`,
             clientOptions: {
               // use a language id as a document selector
-              documentSelector: ['cpp'],
+              documentSelector: [lang],
               // disable the default error handler
               errorHandler: {
                 error: () => ErrorAction.Continue,
@@ -202,19 +207,13 @@ export class EditorService {
               }
             }
           });
-          const disposable = this.languageClient.start();
-          this.isLanguageClientStarted = true;
+          const disposable = this.languageClient[lang]?.start();
           connection.onClose(() => {
-            this.isLanguageClientStarted = false;
-            disposable.dispose();
+            this.languageClient[lang] = null;
+            disposable?.dispose();
           });
         }
       });
-    });
-    // this.electronService.ipcRenderer.on('ng:langServer/stopped', (_) => {
-    //   this.isLanguageClientStarted = false;
-    //   this.languageClient.stop();
-    // });
   }
 
   private getUri(tab: Tab): monaco.Uri {
@@ -440,8 +439,9 @@ export class EditorService {
     if (!this.isInit || this.editor === null) return [];
     const model = this.editor.getModel();
     if (model === null) return [];
-    if (!this.isLanguageClientStarted || this.languageClient === null) return [];
-    return this.languageClient.sendRequest("textDocument/documentSymbol", {
+    const client = this.languageClient[model.getModeId()];
+    if (client === null) return [];
+    return client.sendRequest("textDocument/documentSymbol", {
       textDocument: {
         uri: model.uri.toString()
       }
@@ -450,10 +450,11 @@ export class EditorService {
 
   private async getSemanticTokens(model?: monaco.editor.ITextModel): Promise<number[]> {
     if (!this.isInit || this.editor === null) return [];
-    if (!this.isLanguageClientStarted || this.languageClient === null) return [];
     const targetModel = model ?? this.editor.getModel();
     if (targetModel === null) return [];
-    return this.languageClient.sendRequest<SemanticTokens>("textDocument/semanticTokens/full", {
+    const client = this.languageClient[targetModel.getModeId()];
+    if (client === null) return [];
+    return client.sendRequest<SemanticTokens>("textDocument/semanticTokens/full", {
       textDocument: {
         uri: targetModel.uri.toString()
       }
