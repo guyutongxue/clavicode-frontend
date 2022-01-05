@@ -19,6 +19,7 @@ import { AppRoutingModule } from '../app-routing.module';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { EditorComponent } from './editor/editor.component';
 import { TabsComponent } from './tabs/tabs.component';
@@ -34,6 +35,7 @@ import { MonacoEditorModule } from '@materia-ui/ngx-monaco-editor';
     AppRoutingModule,
     CommonModule,
     FormsModule,
+    DragDropModule,
     NzTabsModule,
     MonacoEditorModule
   ],
