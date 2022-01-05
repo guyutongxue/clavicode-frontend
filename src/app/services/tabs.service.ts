@@ -37,33 +37,37 @@ interface TabOptions {
   path: string
 }
 
-const initTab: Tab[] = [{
-  key: "main",
-  type: "pinned",
-  title: "main.cpp",
-  code: `#include <iostream>
+const INIT_TABS: Record<string, {
+  ext: string;
+  code: string;
+}> = {
+  'cpp': {
+    ext: "cpp",
+    code: `#include <iostream>
 int main() {
-    int a, b;
-    char c;
-    do {
-        std::cout << "Please input 2 numbers: ";
-        std::cin >> a >> b;
-        std::cout << a + b << std::endl;
-
-        std::cout << "Continue? (y/n) ";
-        std::cin >> c;
-    } while (c == 'y');
+    std::cout << "Hello, world!" << std::endl;
 }`,
-  path: "/tmp/main.cpp",
-  saved: true
-}];
+  },
+  'python': {
+    ext: "py",
+    code: `# SING FOR ME!!
+def sing(b, end):
+    print(b or 'No more', 'bottle' + ('s' if b - 1 else ''), end)
+
+for i in range(99, 0, -1):
+    sing(i, 'of beer on the wall,')
+    sing(i, 'of beer,')
+    print('Take one down, pass it around,')
+    sing(i - 1, 'of beer on the wall.\\n')`
+  }
+};
 
 @Injectable({
   providedIn: 'root'
 })
 export class TabsService {
-  tabList: Tab[] = initTab;
-  private activeTabKey: string | null = null;
+  tabList: Tab[];
+  private activeTabKey: string | null = 'main';
 
   constructor(private editorService: EditorService) {
     // TabsService controls how EditorService works.
@@ -80,6 +84,15 @@ export class TabsService {
         }
       }
     });
+    const init = INIT_TABS[this.pinnedLang];
+    this.tabList = [{
+      key: 'main',
+      title: `main.${init.ext}`,
+      path: `/tmp/main.${init.ext}`,
+      type: 'pinned',
+      code: init.code,
+      saved: true
+    }];
   }
 
   syncActiveCode() {
@@ -121,6 +134,7 @@ export class TabsService {
     }
     const [newActive] = this.getActive();
     if (newActive === null) return;
+    console.log(newActive);
     if (this.editorService.isInit)
       this.editorService.switchToModel(newActive);
     // this.electronService.ipcRenderer.invoke('window/setTitle', newActive.path ?? newActive.title);
@@ -177,5 +191,22 @@ export class TabsService {
     // target.path = savePath;
     // target.title = basename(savePath);
     this.editorService.switchToModel(target);
+  }
+
+  pinnedLang: string = 'python';
+  changePinnedLang(lang: string) {
+    const [_, i] = this.getByKey('main');
+    const tab = INIT_TABS[lang];
+    this.tabList[i] = {
+      key: 'main',
+      title: `main.${tab.ext}`,
+      path: `/tmp/main.${tab.ext}`,
+      type: 'pinned',
+      code: tab.code,
+      saved: true
+    };
+    this.activeTabKey = null; // prevent sync editor code to tab
+    this.changeActive('main');
+    this.pinnedLang = lang;
   }
 }

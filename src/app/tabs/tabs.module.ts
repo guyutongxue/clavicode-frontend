@@ -23,6 +23,7 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzSelectModule } from 'ng-zorro-antd/select';
 import { EditorComponent } from './editor/editor.component';
 import { TabsComponent } from './tabs/tabs.component';
 import { MonacoEditorModule } from '@materia-ui/ngx-monaco-editor';
@@ -41,6 +42,7 @@ import { MonacoEditorModule } from '@materia-ui/ngx-monaco-editor';
     NzTabsModule,
     NzModalModule,
     NzButtonModule,
+    NzSelectModule,
     MonacoEditorModule
   ],
   exports: [TabsComponent]

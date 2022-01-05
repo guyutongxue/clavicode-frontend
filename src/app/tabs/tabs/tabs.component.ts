@@ -96,4 +96,23 @@ export class TabsComponent implements OnInit {
   private notSaveModalShow(target: Tab) {
     this.notSaveModalTab = target;
   }
+  
+  languages = [
+    {
+      id: 'cpp',
+      title: 'C++'
+    },
+    {
+      id: 'python',
+      title: 'Python'
+    }
+  ];
+
+  get currentLang() {
+    return this.tabsService.pinnedLang;
+  }
+
+  set currentLang(value: string) {
+    this.tabsService.changePinnedLang(value);
+  }
 }
