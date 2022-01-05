@@ -23,7 +23,7 @@ import { EditorService } from './editor.service';
 import { TabsService } from './tabs.service';
 
 import { v4 as uuid } from 'uuid';
-import * as path from 'path';
+import { basename } from 'path';
 
 const GET_HEADER_URL = `//${environment.backendHost}/cpp/getHeaderFile`;
 
@@ -45,7 +45,7 @@ export class FileService {
     });
   }
 
-  async open(showDialog = true, filepath: string): Promise<boolean> {
+  async openRemote(showDialog = true, filepath: string): Promise<boolean> {
     const result = await this.http.post<CppGetHeaderFileResponse>(
       GET_HEADER_URL,
       <CppGetHeaderFileRequest>{
@@ -55,15 +55,16 @@ export class FileService {
       alert(result.reason);
       return false;
     }
-    const tabList = this.tabsService.tabList.map(tab => tab.path);
-    if (tabList.includes(filepath)) {
+    const exist = this.tabsService.tabList.find(v => v.path === filepath);
+    if (exist) {
+      this.tabsService.changeActive(exist.key);
       return true;
     }
     const key = uuid();
     this.tabsService.add({
       key: key,
-      type: "file",
-      title: path.basename(filepath),
+      type: "remote",
+      title: basename(filepath),
       code: result.content,
       path: filepath,
     });
@@ -81,7 +82,7 @@ export class FileService {
   async locate(filepath: string, row: number, col: number, type: 'cursor' | 'debug' = 'cursor') {
     const target = this.tabsService.tabList.find(t => t.path === filepath);
     if (typeof target === "undefined") {
-      const result = await this.open(false, filepath);
+      const result = await this.openRemote(false, filepath);
       if (!result) return;
     } else {
       this.tabsService.changeActive(target.key);

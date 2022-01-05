@@ -21,25 +21,24 @@ import { EditorService } from './editor.service';
 
 export interface Tab {
   key: string; // An unique udid for each tab
-  type: "file" | "setting";
+  type: "pinned" | "local" | "remote",
   title: string;
   code: string;
   path: string;
-  readOnly: boolean;
-  // saved: boolean
+  saved: boolean;
 }
 
 interface TabOptions {
   key: string,
-  type: "file" | "setting",
+  type: "local" | "remote",
   title: string,
-  code?: string,
-  path?: string
+  code: string,
+  path: string
 }
 
 const initTab: Tab[] = [{
   key: "main",
-  type: "file",
+  type: "pinned",
   title: "main.cpp",
   code: `#include <iostream>
 int main() {
@@ -55,7 +54,7 @@ int main() {
     } while (c == 'y');
 }`,
   path: "/tmp/main.cpp",
-  readOnly: false
+  saved: true
 }];
 
 @Injectable({
@@ -121,14 +120,14 @@ export class TabsService {
     }
     const [newActive] = this.getActive();
     if (newActive === null) return;
-    if (newActive.type === "file" && this.editorService.isInit)
+    if (this.editorService.isInit)
       this.editorService.switchToModel(newActive);
     // this.electronService.ipcRenderer.invoke('window/setTitle', newActive.path ?? newActive.title);
   }
 
   get hasActiveFile() {
     const [activeTab] = this.getActive();
-    return activeTab !== null && activeTab.type === "file";
+    return activeTab !== null;
   }
 
   add(options: TabOptions) {
@@ -137,8 +136,7 @@ export class TabsService {
       type: options.type,
       title: options.title,
       code: options.code ?? "",
-      readOnly: true,
-      // saved: true, // !(options.type === "file" && typeof options.path === "undefined") // use this if create unsaved new file
+      saved: true,
       path: options.path ?? `/tmp/${options.title}`
     };
     this.tabList.push(newTab);
@@ -165,8 +163,7 @@ export class TabsService {
         newIndex = index;
       }
     }
-    if (target.type === "file")
-      this.editorService.destroy(target);
+    this.editorService.destroy(target);
     return newIndex;
   }
 

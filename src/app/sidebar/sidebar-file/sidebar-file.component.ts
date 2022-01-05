@@ -42,7 +42,7 @@ export class SidebarFileComponent implements OnInit {
     if (node.expandable) {
       this.treeControl.toggle(node);
     } else {
-      this.flService.getFileContent(node.value);
+      this.flService.openLocal(node.value);
     }
   }
 

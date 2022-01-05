@@ -93,8 +93,8 @@ export class EditorService {
   isLanguageClientStarted = false;
   editorMessage: Subject<{ type: string; arg?: any }> = new Subject();
 
-  // Root path of new files, `extraResources/anon_workspace`
-  private nullPath = '/anon_workspace/';
+  // Root path of local files
+  private localPath = '/anon_workspace/';
 
   private editor: monaco.editor.IStandaloneCodeEditor | null = null;
   private languageClient: MonacoLanguageClient | null = null;
@@ -203,10 +203,11 @@ export class EditorService {
   }
 
   private getUri(tab: Tab): monaco.Uri {
-    let uri = tab.type + "://";
-    if (tab.path === null) uri += this.nullPath + tab.title;
-    else uri += tab.path;
-    return monaco.Uri.parse(uri);
+    if (tab.type === "local") {
+      return monaco.Uri.file(this.localPath + tab.path);
+    } else {
+      return monaco.Uri.parse(tab.path);
+    }
   }
 
   /** Turn breakpoint info to editor decoration */
@@ -384,13 +385,15 @@ export class EditorService {
     if (newModel === null) {
       newModel = monaco.editor.createModel(tab.code, 'cpp', uri);
       newModel.onDidChangeContent(_ => {
-        // tab.saved = false;
+        if (tab.type === "local" && tab.saved) {
+          tab.saved = false;
+        }
         this.editorText.next(newModel!.getValue());
       });
       this.modelInfos[newUri] = {
         cursor: { column: 1, lineNumber: 1 },
         scrollTop: 0,
-        readOnly: tab.readOnly,
+        readOnly: tab.type === "remote",
         bkptDecs: [],
       };
       if (replace && oldModel !== null && oldUri) {

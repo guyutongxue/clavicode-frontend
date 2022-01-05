@@ -3,6 +3,10 @@ import { FlatTreeControl, TreeControl } from '@angular/cdk/tree';
 import { CollectionViewer, DataSource, SelectionChange } from '@angular/cdk/collections';
 import { BehaviorSubject, merge, Observable, scheduled } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
+import { TabsService } from './tabs.service';
+
+import { v4 as uuid } from 'uuid';
+import { basename } from 'path';
 
 export type FsNode = {
   name: string;
@@ -77,7 +81,7 @@ const REQ_RW_OPT = {
 })
 export class FileLocalService {
 
-  constructor() { }
+  constructor(private tabsService: TabsService) { }
 
   private flattenedData = new BehaviorSubject<FsNode[]>([]);
   treeControl = new FlatTreeControl<FsNode>(
@@ -172,12 +176,29 @@ export class FileLocalService {
       await handle.requestPermission(REQ_RW_OPT) !== 'granted');
   }
 
-  async getFileContent(handle: any) {
-    if (handle.kind !== "file") return;
+  async openLocal(handle: any) {
+    if (handle.kind !== "file") return false;
     if (await this.requestPermission(handle)) {
+      const path: string = (await this.rootHandle.resolve(handle)).join('/');
+      const exist = this.tabsService.tabList.find(v => v.path === path);
+      if (exist) {
+        this.tabsService.changeActive(exist.key);
+        return true;
+      }
       const file = await handle.getFile();
+      const key = uuid();
       const code = await file.text();
-      alert(code);
+      this.tabsService.add({
+        key: key,
+        type: "local",
+        title: basename(path),
+        code: code,
+        path: path,
+      });
+      this.tabsService.changeActive(key);
+      return true;
+    } else {
+      return false;
     }
   }
 
@@ -187,15 +208,18 @@ export class FileLocalService {
       const file = await handle.getFileHandle(name, {
         create: true
       });
-      // const writable = await file.createWritable();
-      // await writable.write('');
-      // await writable.close();
       this.refresh(handle);
     }
   }
 
   async createFolder(name: string, handle?: any) {
-
+    if (!handle) handle = this.rootHandle;
+    if (await this.requestPermission(handle)) {
+      const dir = await handle.getDirectoryHandle(name, {
+        create: true
+      });
+      this.refresh(handle);
+    }
   }
 
   private getParent(node: FsNode) {
