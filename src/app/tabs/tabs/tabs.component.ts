@@ -19,6 +19,7 @@ import { Component, OnInit } from '@angular/core';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Router } from '@angular/router';
 import { Tab, TabsService } from '../../services/tabs.service';
+import { FileLocalService } from 'src/app/services/file-local.service';
 import { FileService } from 'src/app/services/file.service';
 
 @Component({
@@ -31,7 +32,8 @@ export class TabsComponent implements OnInit {
   constructor(
     private router: Router, 
     private tabsService: TabsService,
-    private fileService: FileService
+    private fileService: FileService,
+    private flService: FileLocalService
     ) { }
 
   ngOnInit(): void {
@@ -61,11 +63,11 @@ export class TabsComponent implements OnInit {
 
   closeTab(e: { index: number }) {
     const target = this.tabList[e.index];
-    // if (target.saved === false) {
-    //   this.notSaveModalShow(target);
-    // } else {
+    if (target.saved === false) {
+      this.notSaveModalShow(target);
+    } else {
       this.doRemoveTab(target);
-    // }
+    }
   }
 
   // https://github.com/NG-ZORRO/ng-zorro-antd/issues/3461
@@ -74,4 +76,24 @@ export class TabsComponent implements OnInit {
     // this.activeIndex = event.currentIndex;
   }
 
+
+  notSaveModalTab: Tab | null = null;
+  async notSaveModalYes() {
+    if (!this.notSaveModalTab) return;
+    if (this.notSaveModalTab.type === "local" && await this.flService.save(this.notSaveModalTab))
+      this.doRemoveTab(this.notSaveModalTab);
+    this.notSaveModalTab = null;
+  }
+  notSaveModalNo() {
+    if (!this.notSaveModalTab) return;
+    this.doRemoveTab(this.notSaveModalTab);
+    this.notSaveModalTab = null;
+  }
+  notSaveModalCancel() {
+    this.notSaveModalTab = null;
+  }
+
+  private notSaveModalShow(target: Tab) {
+    this.notSaveModalTab = target;
+  }
 }

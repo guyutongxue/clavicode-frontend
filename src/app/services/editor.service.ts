@@ -26,19 +26,27 @@ import { BehaviorSubject, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter, take } from 'rxjs/operators';
 
 import { Tab } from './tabs.service';
-// import { ElectronService } from '../core/services';
-import { cppLang, cppLangConf } from '../cppLanguageConfig';
+import { cppLang, cppLangConf } from '../configs/cpp';
+import { pyLang, pyLangConf } from '../configs/py';
 import { environment } from '../../environments/environment';
+import { basename, extname } from 'path';
 
 // All standard C++ headers filename
-const stdCppHeaders = [
-  'concepts', 'coroutine', 'cstdlib', 'csignal', 'csetjmp', 'cstdarg', 'typeinfo', 'typeindex', 'type_traits', 'bitset', 'functional', 'utility', 'ctime', 'chrono', 'cstddef', 'initializer_list', 'tuple', 'any', 'optional', 'variant', 'compare', 'version', 'source_location', 'new', 'memory', 'scoped_allocator', 'memory_resource', 'climits', 'cfloat', 'cstdint', 'cinttypes', 'limits', 'exception', 'stdexcept', 'cassert', 'system_error', 'cerrno', 'cctype', 'cwctype', 'cstring', 'cwchar', 'cuchar', 'string', 'string_view', 'charconv', 'format', 'array', 'vector', 'deque', 'list', 'forward_list', 'set', 'map', 'unordered_set', 'unordered_map', 'stack', 'queue', 'span', 'iterator', 'ranges', 'algorithm', 'execution', 'cmath', 'complex', 'valarray', 'random', 'numeric', 'ratio', 'cfenv', 'bit', 'numbers', 'locale', 'clocale', 'codecvt', 'iosfwd', 'ios', 'istream', 'ostream', 'iostream', 'fstream', 'sstream', 'syncstream', 'strstream', 'iomanip', 'streambuf', 'cstdio', 'filesystem', 'regex', 'atomic', 'thread', 'stop_token', 'mutex', 'shared_mutex', 'future', 'condition_variable', 'semaphore', 'latch', 'barrier'
-];
+// Generate on https://eel.is/c++draft/headerindex, run js below:
+/*
+Array.from(document.querySelectorAll("span.texttt"))
+  .map(i => i.innerHTML)
+  .filter(i => /^&lt;[^.]*&gt;/g.test(i))
+  .map(i => i.substring(4, i.length - 4).replace(/\uad/, ''))
+*/
+const stdCppHeaders = ['algorithm', 'any', 'array', 'atomic', 'barrier', 'bit', 'bitset', 'cassert', 'cctype', 'cerrno', 'cfenv', 'cfloat', 'charconv', 'chrono', 'cinttypes', 'climits', 'clocale', 'cmath', 'codecvt', 'compare', 'complex', 'concepts', 'condition_variable', 'coroutine', 'csetjmp', 'csignal', 'cstdarg', 'cstddef', 'cstdint', 'cstdio', 'cstdlib', 'cstring', 'ctime', 'cuchar', 'cwchar', 'cwctype', 'deque', 'exception', 'execution', 'filesystem', 'format', 'forward_list', 'fstream', 'functional', 'future', 'initializer_list', 'iomanip', 'ios', 'iosfwd', 'iostream', 'istream', 'iterator', 'latch', 'limits', 'list', 'locale', 'map', 'memory', 'memory_resource', 'mutex', 'new', 'numbers', 'numeric', 'optional', 'ostream', 'queue', 'random', 'ranges', 'ratio', 'regex', 'scoped_allocator', 'semaphore', 'set', 'shared_mutex', 'source_location', 'span', 'spanstream', 'sstream', 'stack', 'stacktrace', 'stdexcept', 'stop_token', 'streambuf', 'string', 'string_view', 'strstream', 'syncstream', 'system_error', 'thread', 'tuple', 'type_traits', 'typeindex', 'typeinfo', 'unordered_map', 'unordered_set', 'utility', 'valarray', 'variant', 'vector', 'version']
 
-function isCpp(filename: string) {
-  if (stdCppHeaders.includes(filename)) return true;
-  const ext = filename.split('.').pop() ?? '';
-  return ['cc', 'cxx', 'cpp', 'h'].includes(ext);
+function getLanguage(path: string) {
+  if (extname(path) === '' && stdCppHeaders.includes(basename(path))) {
+    return 'cpp';
+  } else {
+    return undefined;
+  }
 }
 
 const clangdSemanticTokensLegend: monaco.languages.SemanticTokensLegend = {
@@ -126,12 +134,19 @@ export class EditorService {
       monaco.languages.register({
         id: 'cpp',
         extensions: [
-          '.cc', '.cxx', '.cpp', '.h'
+          '.cc', '.cxx', '.cpp', '.h', '.hpp'
         ],
         aliases: ['C++', 'Cpp', 'cpp']
       });
       monaco.languages.setMonarchTokensProvider('cpp', cppLang);
       monaco.languages.setLanguageConfiguration('cpp', cppLangConf);
+      monaco.languages.register({
+        id: 'python',
+        extensions: ['.py'],
+        aliases: ['Python']
+      });
+      monaco.languages.setMonarchTokensProvider('python', pyLang);
+      monaco.languages.setLanguageConfiguration('python', pyLangConf);
       monaco.languages.registerDocumentSemanticTokensProvider('cpp', {
         getLegend() {
           return clangdSemanticTokensLegend;
@@ -206,7 +221,7 @@ export class EditorService {
     if (tab.type === "local") {
       return monaco.Uri.file(this.localPath + tab.path);
     } else {
-      return monaco.Uri.parse(tab.path);
+      return monaco.Uri.file(tab.path);
     }
   }
 
@@ -383,7 +398,7 @@ export class EditorService {
       this.modelInfos[oldUri].scrollTop = this.editor.getScrollTop();
     }
     if (newModel === null) {
-      newModel = monaco.editor.createModel(tab.code, 'cpp', uri);
+      newModel = monaco.editor.createModel(tab.code, getLanguage(tab.path), uri);
       newModel.onDidChangeContent(_ => {
         if (tab.type === "local" && tab.saved) {
           tab.saved = false;

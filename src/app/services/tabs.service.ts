@@ -16,7 +16,8 @@
 // along with clavicode-frontend.  If not, see <http://www.gnu.org/licenses/>.
 
 import { Injectable } from '@angular/core';
-// import * as path from 'path';
+import { basename } from 'path';
+
 import { EditorService } from './editor.service';
 
 export interface Tab {
@@ -167,13 +168,14 @@ export class TabsService {
     return newIndex;
   }
 
-  // saveCode(key: string, savePath: string): void {
-  //   if (!this.editorService.isInit) return;
-  //   const target = this.getByKey(key).value;
-  //   const oldPath = target.path;
-  //   target.saved = true;
-  //   target.path = savePath;
-  //   target.title = path.basename(savePath);
-  //   this.editorService.switchToModel(target, savePath !== oldPath);
-  // }
+  saveCode(key: string): void {
+    if (!this.editorService.isInit) return;
+    const [target] = this.getByKey(key);
+    if (target === null) return;
+    // const oldPath = target.path;
+    // target.saved = true;
+    // target.path = savePath;
+    // target.title = basename(savePath);
+    this.editorService.switchToModel(target);
+  }
 }

@@ -1,9 +1,26 @@
+// Copyright (C) 2022 Clavicode Team
+// 
+// This file is part of clavicode-frontend.
+// 
+// clavicode-frontend is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// clavicode-frontend is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with clavicode-frontend.  If not, see <http://www.gnu.org/licenses/>.
+
 import { Injectable } from '@angular/core';
 import { FlatTreeControl, TreeControl } from '@angular/cdk/tree';
 import { CollectionViewer, DataSource, SelectionChange } from '@angular/cdk/collections';
 import { BehaviorSubject, merge, Observable, scheduled } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
-import { TabsService } from './tabs.service';
+import { Tab, TabsService } from './tabs.service';
 
 import { v4 as uuid } from 'uuid';
 import { basename } from 'path';
@@ -186,7 +203,9 @@ export class FileLocalService {
         return true;
       }
       const file = await handle.getFile();
+      // TODO: Avoid opening big files
       const key = uuid();
+      // TODO: Use package "chardet" to detect encoding
       const code = await file.text();
       this.tabsService.add({
         key: key,
@@ -240,5 +259,9 @@ export class FileLocalService {
       await handle.removeEntry(name);
       this.refresh(handle);
     }
+  }
+
+  async save(tab: Tab) {
+    // TODO
   }
 }
