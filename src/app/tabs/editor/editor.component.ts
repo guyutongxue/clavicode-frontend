@@ -35,10 +35,9 @@ export class EditorComponent implements OnInit {
     glyphMargin: true,
     wordBasedSuggestions: false,
     lightbulb: {
-        enabled: true
+      enabled: true
     },
-    theme: "vs",
-    language: "cpp"
+    'semanticHighlighting.enabled': true
   };
   editorLoaded: boolean = false;
 

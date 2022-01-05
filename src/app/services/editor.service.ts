@@ -161,11 +161,6 @@ export class EditorService {
         releaseDocumentSemanticTokens() { }
       });
       MonacoServices.install(require('monaco-editor-core/esm/vs/platform/commands/common/commands').CommandsRegistry);
-      // this.startLanguageClient();
-      // });
-      // this.electronService.ipcRenderer.invoke('window/getExtraResourcePath')?.then(v => {
-      //   this.nullPath = v + '/anon_workspace/';
-      // });
 
       this.startLanguageClient('cpp');
       this.startLanguageClient('python');
@@ -481,7 +476,6 @@ export class EditorService {
   }
 
   runAction(id: string) {
-    // console.log(id);
     if (!this.isInit || this.editor === null) return;
     this.editor.getAction(id).run();
   }
