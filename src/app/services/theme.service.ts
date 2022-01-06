@@ -96,7 +96,6 @@ export class ThemeService {
     private http: HttpClient,
     private editorService: EditorService
   ) {
-    console.log(this);
   }
 
   private currentTheme: ThemeType = undefined!;

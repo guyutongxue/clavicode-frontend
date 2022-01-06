@@ -169,46 +169,49 @@ export class EditorService {
 
   private startLanguageClient(lang: string) {
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-      const socketUrl = `${protocol}//${environment.backendHost}/ws/languageServer/${lang}`;
-      const socketOptions = {
-        maxReconnectionDelay: 10000,
-        minReconnectionDelay: 1000,
-        reconnectionDelayGrowFactor: 1.3,
-        connectionTimeout: 10000,
-        maxRetries: 8,
-        debug: false
-      };
-      const webSocket = new ReconnectingWebSocket(socketUrl, [], socketOptions) as any;
-      // listen when the web socket is opened
-      listen({
-        webSocket,
-        onConnection: (connection: MessageConnection) => {
-          // create and start the language client
-          this.languageClient[lang] = new MonacoLanguageClient({
-            name: `${lang} client`,
-            clientOptions: {
-              // use a language id as a document selector
-              documentSelector: [lang],
-              // disable the default error handler
-              errorHandler: {
-                error: () => ErrorAction.Continue,
-                closed: () => CloseAction.DoNotRestart
-              }
-            },
-            // create a language client connection from the JSON RPC connection on demand
-            connectionProvider: {
-              get: (errorHandler, closeHandler) => {
-                return Promise.resolve(createConnection(<any>connection, errorHandler, closeHandler));
-              }
+    const socketUrl = `${protocol}//${environment.backendHost}/ws/languageServer/${lang}`;
+    const socketOptions = {
+      maxReconnectionDelay: 10000,
+      minReconnectionDelay: 1000,
+      reconnectionDelayGrowFactor: 1.3,
+      connectionTimeout: 10000,
+      maxRetries: 8,
+      debug: false
+    };
+    const webSocket = new ReconnectingWebSocket(socketUrl, [], socketOptions) as any;
+    let client: MonacoLanguageClient;
+    // listen when the web socket is opened
+    listen({
+      webSocket,
+      onConnection: (connection: MessageConnection) => {
+        // create and start the language client
+        client = new MonacoLanguageClient({
+          name: `${lang} client`,
+          clientOptions: {
+            // use a language id as a document selector
+            documentSelector: [lang],
+            // disable the default error handler
+            errorHandler: {
+              error: () => ErrorAction.Continue,
+              closed: () => CloseAction.DoNotRestart
             }
-          });
-          const disposable = this.languageClient[lang]?.start();
-          connection.onClose(() => {
-            this.languageClient[lang] = null;
-            disposable?.dispose();
-          });
-        }
-      });
+          },
+          // create a language client connection from the JSON RPC connection on demand
+          connectionProvider: {
+            get: (errorHandler, closeHandler) => {
+              return Promise.resolve(createConnection(<any>connection, errorHandler, closeHandler));
+            }
+          }
+        });
+        const disposable = client.start();
+        // When client is ready, assign it to global
+        client.onReady().then(() => this.languageClient[lang] = client);
+        connection.onClose(() => {
+          this.languageClient[lang] = null;
+          disposable?.dispose();
+        });
+      }
+    });
   }
 
   private getUri(tab: Tab): monaco.Uri {
@@ -293,12 +296,6 @@ export class EditorService {
       }
     });
   }
-
-  // async startLanguageClient() {
-  //   if (this.isLanguageClientStarted) return;
-  //   if (await this.electronService.getConfig('env.clangdPath') === null) return;
-  //   await this.electronService.ipcRenderer.invoke('langServer/start');
-  // }
 
   // https://github.com/microsoft/monaco-editor/issues/2000
   private interceptOpenEditor() {
@@ -456,9 +453,19 @@ export class EditorService {
     }).then(res => res.data);
   }
 
+  /**
+   * Get the code in current editor model.
+   * @returns Code. "" if no model available.
+   */
   getCode() {
     if (!this.isInit || this.editor === null) return "";
     return this.editor.getValue();
+  }
+
+  /** Get the language id of current editor model. */
+  getLanguage() {
+    if (!this.isInit || this.editor === null) return null;
+    return this.editor.getModel()?.getLanguageId();
   }
   setSelection(range: monaco.IRange) {
     if (this.editor === null) return;

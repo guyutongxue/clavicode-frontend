@@ -134,7 +134,6 @@ export class TabsService {
     }
     const [newActive] = this.getActive();
     if (newActive === null) return;
-    console.log(newActive);
     if (this.editorService.isInit)
       this.editorService.switchToModel(newActive);
     // this.electronService.ipcRenderer.invoke('window/setTitle', newActive.path ?? newActive.title);

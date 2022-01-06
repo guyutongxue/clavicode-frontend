@@ -62,7 +62,6 @@ export class UserService {
     this.http.get<UserGetInfoResponse>(`//${environment.backendHost}/user/getInfo`, {
       withCredentials: true
     }).subscribe((res) => {
-      console.log(res);
       if (res.success) {
         this.userInfo.next(res.username);
       } else {
