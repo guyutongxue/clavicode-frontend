@@ -23,6 +23,7 @@ import { NzNotificationDataOptions, NzNotificationService } from 'ng-zorro-antd/
 import { EditorService } from './editor.service';
 import { ProblemsService } from './problems.service';
 import { Router } from '@angular/router';
+import { PyodideService } from './pyodide.service';
 
 const COMPILE_URL = `//${environment.backendHost}/cpp/compile`;
 
@@ -40,7 +41,8 @@ export class CompileService {
   constructor(private http: HttpClient, private editorService: EditorService,
               private router: Router,
               private notification: NzNotificationService,
-              private problemsService: ProblemsService 
+              private problemsService: ProblemsService,
+              private pyodideService: PyodideService
               ) { 
   }
 
@@ -84,7 +86,8 @@ export class CompileService {
     return result.executeToken;
   }
 
-  async debugCompile() {
+  async debugCompile(): Promise<string | null> {
+    if (this.editorService.getLanguage() !== "cpp") return null;
     const result = await this.http.post<CppCompileResponse>(COMPILE_URL, <CppCompileRequest>{
       code: this.code(),
       execute: 'debug'

@@ -57,7 +57,8 @@
               "mergeStrategies": {
                 "externals": "append"
               }
-            }
+            },
+            "webWorkerTsConfig": "tsconfig.worker.json"
           },
           "configurations": {
             "production": {
@@ -99,7 +100,11 @@
               "browserTarget": "clavicode-frontend:build:production"
             },
             "development": {
-              "browserTarget": "clavicode-frontend:build:development"
+              "browserTarget": "clavicode-frontend:build:development",
+              "headers": {
+                "Cross-Origin-Opener-Policy": "same-origin",
+                "Cross-Origin-Embedder-Policy": "require-corp"
+              }
             }
           },
           "defaultConfiguration": "development"
@@ -131,7 +136,8 @@
               "mergeStrategies": {
                 "externals": "append"
               }
-            }
+            },
+            "webWorkerTsConfig": "tsconfig.worker.json"
           }
         }
       }
