@@ -27,15 +27,11 @@ import zh from '@angular/common/locales/zh';
 import { FormsModule , ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MonacoEditorModule } from '@materia-ui/ngx-monaco-editor';
+import { MonacoEditorModule, MONACO_PATH } from '@gytx/ngx-monaco-editor';
 
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzInputModule } from 'ng-zorro-antd/input';
-import { NzUploadModule } from 'ng-zorro-antd/upload';
-import { NzCollapseModule } from 'ng-zorro-antd/collapse';
-import { NzListModule } from 'ng-zorro-antd/list';
-import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { NzFormModule  } from 'ng-zorro-antd/form';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
@@ -96,7 +92,10 @@ registerLocaleData(zh);
     ToolsModule,
     SidebarModule
   ],
-  providers: [{ provide: NZ_I18N, useValue: zh_CN }],
+  providers: [
+    { provide: NZ_I18N, useValue: zh_CN },
+    { provide: MONACO_PATH, useValue: 'https://cdn.jsdelivr.net/npm/monaco-editor-core@0.30.1/min/vs'}
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

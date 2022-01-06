@@ -26,7 +26,7 @@ module.exports = (config, options) => {
   //  }
 
   config.resolve.alias = {
-    'vscode': path.resolve(__dirname, './node_modules/monaco-languageclient/lib/vscode-compatibility')
+    'vscode': path.resolve(__dirname, './node_modules/@codingame/monaco-languageclient/lib/vscode-compatibility')
   };
   config.resolve.fallback = {
     "path": require.resolve("path-browserify"),

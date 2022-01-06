@@ -26,7 +26,7 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { EditorComponent } from './editor/editor.component';
 import { TabsComponent } from './tabs/tabs.component';
-import { MonacoEditorModule } from '@materia-ui/ngx-monaco-editor';
+import { MonacoEditorModule } from '@gytx/ngx-monaco-editor';
 
 
 @NgModule({

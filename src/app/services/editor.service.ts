@@ -19,8 +19,8 @@
 import { Injectable } from '@angular/core';
 import { listen, MessageConnection } from 'vscode-ws-jsonrpc';
 import ReconnectingWebSocket from 'reconnecting-websocket';
-import { MonacoEditorLoaderService } from '@materia-ui/ngx-monaco-editor';
-import { MonacoLanguageClient, CloseAction, ErrorAction, MonacoServices, createConnection } from 'monaco-languageclient';
+import { MonacoEditorLoaderService } from '@gytx/ngx-monaco-editor';
+import { MonacoLanguageClient, CloseAction, ErrorAction, MonacoServices, createConnection } from '@codingame/monaco-languageclient';
 import { DocumentSymbol, SemanticTokens } from 'vscode-languageserver-protocol';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter, take } from 'rxjs/operators';
@@ -160,7 +160,7 @@ export class EditorService {
         },
         releaseDocumentSemanticTokens() { }
       });
-      MonacoServices.install(require('monaco-editor-core/esm/vs/platform/commands/common/commands').CommandsRegistry);
+      MonacoServices.install(monaco as any);
 
       this.startLanguageClient('cpp');
       this.startLanguageClient('python');
@@ -434,7 +434,7 @@ export class EditorService {
     if (!this.isInit || this.editor === null) return [];
     const model = this.editor.getModel();
     if (model === null) return [];
-    const client = this.languageClient[model.getModeId()];
+    const client = this.languageClient[model.getLanguageId()];
     if (client === null) return [];
     return client.sendRequest("textDocument/documentSymbol", {
       textDocument: {
@@ -447,7 +447,7 @@ export class EditorService {
     if (!this.isInit || this.editor === null) return [];
     const targetModel = model ?? this.editor.getModel();
     if (targetModel === null) return [];
-    const client = this.languageClient[targetModel.getModeId()];
+    const client = this.languageClient[targetModel.getLanguageId()];
     if (client === null) return [];
     return client.sendRequest<SemanticTokens>("textDocument/semanticTokens/full", {
       textDocument: {

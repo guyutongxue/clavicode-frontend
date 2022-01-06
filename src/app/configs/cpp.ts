@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with clavicode-frontend.  If not, see <http://www.gnu.org/licenses/>.
 
-import * as monaco from 'monaco-editor-core';
+import type * as monaco from 'monaco-editor-core';
 
 export const cppLangConf: monaco.languages.LanguageConfiguration = {
   comments: {

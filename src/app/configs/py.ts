@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with clavicode-frontend.  If not, see <http://www.gnu.org/licenses/>.
 
-import * as monaco from 'monaco-editor-core';
+import type * as monaco from 'monaco-editor-core';
 
 export const pyLangConf: monaco.languages.LanguageConfiguration = {
   comments: {
@@ -46,7 +46,7 @@ export const pyLangConf: monaco.languages.LanguageConfiguration = {
       beforeText: new RegExp(
         '^\\s*(?:def|class|for|if|elif|else|while|try|with|finally|except|async).*?:\\s*$'
       ),
-      action: { indentAction: monaco.languages.IndentAction.Indent }
+      action: { indentAction: /* monaco.languages.IndentAction.Indent */ 1 }
     }
   ],
   folding: {
