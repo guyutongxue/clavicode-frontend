@@ -31,7 +31,7 @@ import { DialogService } from '@ngneat/dialog';
 import { terminalWidth } from '../execute-dialog/xterm/xterm.component';
 import { ExecuteDialogComponent } from '../execute-dialog/execute-dialog.component';
 import { ITerminalService } from './execute.service';
-import { ActionService } from './action.service';
+import { StatusService } from './status.service';
 
 
 function escape(src: string) {
@@ -104,7 +104,7 @@ export class DebugService implements ITerminalService {
     private dialogService: DialogService,
     private fileService: FileService,
     private editorService: EditorService,
-    private actionService: ActionService,
+    private statusService: StatusService,
     private wsService: WebsocketService) {
 
     this.traceLine.pipe(
@@ -124,7 +124,7 @@ export class DebugService implements ITerminalService {
     if (this.sender !== null || this.receiver !== null) {
       throw new Error('Debugging already established');
     }
-    this.actionService.status.next('debugging');
+    this.statusService.next('debugging');
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     const EXECUTE_URL = `${protocol}//${environment.backendHost}/ws/debug/gdb/${token}`;
     const wrapper = this.wsService.create(EXECUTE_URL);
@@ -207,7 +207,7 @@ export class DebugService implements ITerminalService {
 
     this.traceLine.next(null);
     this.programStop.next();
-    this.actionService.status.next('ready');
+    this.statusService.next('ready');
   }
 
   private async start() {

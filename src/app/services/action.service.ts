@@ -68,7 +68,5 @@ export class ActionService {
     const action = this.actions[id];
     if (action?.enabled()) action.run();
   }
-
-  status = new BehaviorSubject<GlobalStatus>('ready');
-
+  
 }

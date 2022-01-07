@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import { ActionService } from 'src/app/services/action.service';
 import { CompileService } from 'src/app/services/compile.service';
 import { DebugService, FrameInfo } from 'src/app/services/debug.service';
+import { StatusService } from 'src/app/services/status.service';
 
 @Component({
   selector: 'app-debug',
@@ -15,7 +16,7 @@ export class DebugComponent implements OnInit {
   @ViewChild("cOutput") private cOutput!: ElementRef ;
 
   constructor(
-    private actionService: ActionService,
+    private statusService: StatusService,
     private compileService: CompileService,
     private debugService: DebugService) {}
   
@@ -45,7 +46,7 @@ export class DebugComponent implements OnInit {
 
   ngOnInit(): void {
     this.consoleOutput$;
-    this.actionService.status.subscribe(status => {
+    this.statusService.subscribe(status => {
       if (status === 'debugging') {
         this.isDebugging = true;
       } else {

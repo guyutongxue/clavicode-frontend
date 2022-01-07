@@ -24,6 +24,7 @@ import { RuntimeError, WsDebugGdbS2C, WsExecuteC2S, WsExecuteS2C } from '../api'
 import { DialogService } from '@ngneat/dialog';
 import { ExecuteDialogComponent } from '../execute-dialog/execute-dialog.component';
 import { terminalWidth } from '../execute-dialog/xterm/xterm.component';
+import { StatusService } from './status.service';
 
 // export const TEMP_EXECUTE_TOKEN = "0344a132-6e41-46c9-81b1-08fcb795b0cd";
 // const EXECUTE_URL = `ws://${environment.backendHost}/ws/execute/${TEMP_EXECUTE_TOKEN}`;
@@ -41,9 +42,9 @@ export class ExecuteService implements ITerminalService {
   public receiver: Observable<WsExecuteS2C> | null = null;
 
   constructor(
+    private statusService: StatusService,
     private dialogService: DialogService,
     private wsService: WebsocketService) {
-
   }
 
   create(token: string) {
@@ -69,6 +70,7 @@ export class ExecuteService implements ITerminalService {
       if (data.type === 'closed') this.close();
       else if (data.type === 'error') this.close();
     })
+    this.statusService.next('remote-executing');
     this.openDialog();
   }
 
@@ -88,6 +90,7 @@ export class ExecuteService implements ITerminalService {
     this.sender.complete();
     this.sender = null;
     this.receiver = null;
+    this.statusService.next('ready');
   }
 
 }

@@ -21,7 +21,7 @@ import { Terminal } from 'xterm';
 import { ExecuteService, ITerminalService } from 'src/app/services/execute.service';
 import { filter, map, timeout } from 'rxjs/operators';
 import { DebugService } from 'src/app/services/debug.service';
-import { ActionService } from 'src/app/services/action.service';
+import { StatusService } from 'src/app/services/status.service';
 
 const TERM_FONT_FAMILY = `"等距更纱黑体 SC", "Cascadia Code", Consolas, "Courier New", Courier, monospace`;
 const TERM_FONT_SIZE = 14;
@@ -47,14 +47,12 @@ export class XtermComponent implements OnInit {
 
   constructor(
     @Inject(DOCUMENT) private document: Document,
-    private actionService: ActionService,
+    private statusService: StatusService,
     private executeService: ExecuteService,
     private debugService: DebugService) { }
 
   private closing = false;
-  @Output() close = new EventEmitter();
-
-  private currentService: ITerminalService = this.actionService.status.value === 'debugging' ? this.debugService : this.executeService;
+  @Output() close = new EventEmitter<void>();
 
   private readonly term = new Terminal({
     fontFamily: TERM_FONT_FAMILY,
@@ -63,20 +61,20 @@ export class XtermComponent implements OnInit {
     rows: TERM_ROWS
   });
 
-  ngOnInit(): void {
+  private registerRemote(service: ITerminalService) {
     this.term.open(this.document.getElementById('executeXterm')!);
     this.term.focus();
     this.term.onData(data => {
       if (this.closing) {
         this.close.emit();
       } else {
-        this.currentService.sender?.next({
+        service.sender?.next({
           type: 'tin',
           content: data
         });
       }
     });
-    this.currentService.receiver?.subscribe(data => {
+    service.receiver?.subscribe(data => {
       if (data.type === 'tout') {
         this.term.write(data.content);
       } else if (data.type === 'closed' || data.type === 'error') {
@@ -102,6 +100,19 @@ export class XtermComponent implements OnInit {
         this.closing = true;
       }
     })
+  }
+
+  ngOnInit(): void {
+    switch (this.statusService.value) {
+      case 'debugging':
+        this.registerRemote(this.debugService);
+        break;
+      case 'remote-executing':
+        this.registerRemote(this.executeService);
+        break;
+      default:
+        break;
+    }
   }
 
 }
