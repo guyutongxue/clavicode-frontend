@@ -25,23 +25,19 @@ declare let loadPyodide: any;
 
 const Self: any = self;
 
-async function loadPyodideAndPackages() {
+async function loadPyodideAndPackages(inCb: () => void, outCb: (s: string) => void, errCb: (s: string) => void) {
   Self.pyodide = await loadPyodide({
     indexURL: "https://cdn.jsdelivr.net/pyodide/dev/full/",
+    stdin: inCb,
+    stdout: outCb,
+    stderr: errCb
   });
   // await Self.pyodide.loadPackage(["numpy", "pytz"]);
 }
-const pyodideReadyPromise = loadPyodideAndPackages();
 
 const decoder = new TextDecoder();
 
-// https://github.com/pyodide/pyodide/blob/main/src/js/module.js
-function setStandardStreams(inCb: () => void, outCb: (s: string) => void, errCb: (s: string) => void) {
-  Self.pyodide._module.preRun.push(() => Self.pyodide.FS.init(inCb, outCb, errCb));
-}
-
 async function setIo(inCb: () => void, inBuf: Uint8Array, inMeta: Int32Array, outCb: (s: string) => void, errCb: (s: string) => void) {
-  await pyodideReadyPromise;
   const inputCallback = () => {
     inCb();
     while (true) {
@@ -56,12 +52,11 @@ async function setIo(inCb: () => void, inBuf: Uint8Array, inMeta: Int32Array, ou
     const bytes = inBuf.slice(0, size);
     return decoder.decode(bytes);
   }
-  setStandardStreams(inputCallback, outCb, errCb);
+  await loadPyodideAndPackages(inputCallback, outCb, errCb);
   console.log(Self.pyodide);
 }
 
 async function runCode(code: string) {
-  await pyodideReadyPromise;
   try {
     await Self.pyodide.loadPackagesFromImports(code);
     let result = await Self.pyodide.runPythonAsync(code);
