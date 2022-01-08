@@ -23,7 +23,6 @@ import { NzNotificationDataOptions, NzNotificationService } from 'ng-zorro-antd/
 import { EditorService } from './editor.service';
 import { ProblemsService } from './problems.service';
 import { Router } from '@angular/router';
-import { PyodideService } from './pyodide.service';
 
 const COMPILE_URL = `//${environment.backendHost}/cpp/compile`;
 
@@ -41,8 +40,7 @@ export class CompileService {
   constructor(private http: HttpClient, private editorService: EditorService,
               private router: Router,
               private notification: NzNotificationService,
-              private problemsService: ProblemsService,
-              private pyodideService: PyodideService
+              private problemsService: ProblemsService
               ) { 
   }
 

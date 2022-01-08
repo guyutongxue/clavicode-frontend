@@ -17,6 +17,7 @@
 
 import { Component, OnInit, TemplateRef } from '@angular/core';
 import { DialogRef } from '@ngneat/dialog';
+import { StatusService } from '../services/status.service';
 
 @Component({
   selector: 'app-execute-dialog',
@@ -25,7 +26,13 @@ import { DialogRef } from '@ngneat/dialog';
 })
 export class ExecuteDialogComponent implements OnInit {
 
-  constructor(private dialogRef: DialogRef) { }
+  constructor(
+    private dialogRef: DialogRef,
+    private statusService: StatusService) { }
+
+  get remote() {
+    return ["remote-executing", "debugging"].includes(this.statusService.value);
+  }
 
   ngOnInit(): void {
   }

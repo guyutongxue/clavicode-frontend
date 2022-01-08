@@ -29,7 +29,7 @@ import { StatusService } from './status.service';
 // export const TEMP_EXECUTE_TOKEN = "0344a132-6e41-46c9-81b1-08fcb795b0cd";
 // const EXECUTE_URL = `ws://${environment.backendHost}/ws/execute/${TEMP_EXECUTE_TOKEN}`;
 
-export interface ITerminalService {
+export interface IRemoteTermService {
   sender: Observer<{ type: 'tin', content: string }> | null;
   receiver: Observable<WsExecuteS2C | WsDebugGdbS2C> | null;
 }
@@ -37,7 +37,7 @@ export interface ITerminalService {
 @Injectable({
   providedIn: 'root'
 })
-export class ExecuteService implements ITerminalService {
+export class ExecuteService implements IRemoteTermService {
   public sender: Observer<WsExecuteC2S> | null = null;
   public receiver: Observable<WsExecuteS2C> | null = null;
 

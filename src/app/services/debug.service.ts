@@ -30,7 +30,7 @@ import {  GdbArray, GdbVal, GdbResponse } from '../api.debug';
 import { DialogService } from '@ngneat/dialog';
 import { terminalWidth } from '../execute-dialog/xterm/xterm.component';
 import { ExecuteDialogComponent } from '../execute-dialog/execute-dialog.component';
-import { ITerminalService } from './execute.service';
+import { IRemoteTermService } from './execute.service';
 import { StatusService } from './status.service';
 
 
@@ -65,7 +65,7 @@ export interface GdbVarInfo {
   providedIn: 'root'
 })
 
-export class DebugService implements ITerminalService {
+export class DebugService implements IRemoteTermService {
   public sender: Observer<WsDebugGdbC2S> | null = null;
   public receiver: Observable<WsDebugGdbS2C> | null = null;
 

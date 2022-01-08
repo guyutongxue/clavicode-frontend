@@ -18,10 +18,13 @@
 import { DOCUMENT } from '@angular/common';
 import { Component, EventEmitter, Inject, OnInit, Output, ViewEncapsulation } from '@angular/core';
 import { Terminal } from 'xterm';
-import { ExecuteService, ITerminalService } from 'src/app/services/execute.service';
+import { ExecuteService, IRemoteTermService } from 'src/app/services/execute.service';
 import { filter, map, timeout } from 'rxjs/operators';
+import { LocalEchoAddon } from '@gytx/xterm-local-echo';
+
 import { DebugService } from 'src/app/services/debug.service';
 import { StatusService } from 'src/app/services/status.service';
+import { ILocalTermService, PyodideService } from 'src/app/services/pyodide.service';
 
 const TERM_FONT_FAMILY = `"等距更纱黑体 SC", "Cascadia Code", Consolas, "Courier New", Courier, monospace`;
 const TERM_FONT_SIZE = 14;
@@ -49,9 +52,9 @@ export class XtermComponent implements OnInit {
     @Inject(DOCUMENT) private document: Document,
     private statusService: StatusService,
     private executeService: ExecuteService,
+    private pyodideService: PyodideService,
     private debugService: DebugService) { }
 
-  private closing = false;
   @Output() close = new EventEmitter<void>();
 
   private readonly term = new Terminal({
@@ -61,11 +64,10 @@ export class XtermComponent implements OnInit {
     rows: TERM_ROWS
   });
 
-  private registerRemote(service: ITerminalService) {
-    this.term.open(this.document.getElementById('executeXterm')!);
-    this.term.focus();
+  private registerRemote(service: IRemoteTermService) {
+    let closing = false;
     this.term.onData(data => {
-      if (this.closing) {
+      if (closing) {
         this.close.emit();
       } else {
         service.sender?.next({
@@ -97,18 +99,57 @@ export class XtermComponent implements OnInit {
           }
         }
         this.term.write('按任意键关闭窗口。\r\n');
-        this.closing = true;
+        closing = true;
       }
     })
   }
 
+  private registerLocal(service: ILocalTermService) {
+    const localEcho = new LocalEchoAddon({
+      enableAutocomplete: false,
+      enableIncompleteInput: false
+    });
+    this.term.loadAddon(localEcho);
+    service.readRequest.subscribe(async () => {
+      let input = "";
+      while (!input) {
+        input = await localEcho.read("").catch(() => "");
+      }
+      // console.log(`INPUT: ${JSON.stringify(input)}`);
+      service.readResponse.next(input);
+    });
+    service.writeRequest.subscribe(async (str) => {
+      await localEcho.print(str);
+      // console.log(`OUTPUT: ${JSON.stringify(str)}`);
+      service.writeResponse.next();
+    })
+    service.closed.subscribe(async (result) => {
+      await localEcho.println("----------");
+      if (result === null) {
+        await localEcho.println("代码运行完成。\n按任意键关闭窗口。");
+      } else {
+        await localEcho.println("代码运行出错：");
+        await localEcho.println(result.message);
+        await localEcho.println("按任意键关闭窗口。");
+      }
+      localEcho.abortRead();
+      await new Promise((resolve) => this.term.onData(resolve))
+      this.close.emit();
+    })
+  }
+
   ngOnInit(): void {
+    this.term.open(this.document.getElementById('executeXterm')!);
+    this.term.focus();
     switch (this.statusService.value) {
       case 'debugging':
         this.registerRemote(this.debugService);
         break;
       case 'remote-executing':
         this.registerRemote(this.executeService);
+        break;
+      case 'local-executing':
+        this.registerLocal(this.pyodideService);
         break;
       default:
         break;

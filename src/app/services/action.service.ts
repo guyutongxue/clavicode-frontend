@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { CompileService } from './compile.service';
+import { EditorService } from './editor.service';
 import { ExecuteService } from './execute.service';
 import { OjService } from './oj.service';
+import { PyodideService } from './pyodide.service';
 import { UserService } from './user.service';
 
 type Action = {
@@ -23,6 +25,8 @@ export class ActionService {
   constructor(
     private compileService: CompileService,
     private executeService: ExecuteService,
+    private pyodideService: PyodideService,
+    private editorService: EditorService,
     private ojService: OjService,
     private userService: UserService) { }
 
@@ -33,9 +37,22 @@ export class ActionService {
       shortcut: 'control.b',
       enabled: () => true,
       run: async () => {
-        const token = await this.compileService.interactiveCompile();
-        if (token === null) return;
-        this.executeService.create(token);
+        const lang = this.editorService.getLanguage();
+        switch (lang) {
+          case "cpp": {
+            const token = await this.compileService.interactiveCompile();
+            if (token === null) return;
+            this.executeService.create(token);
+            break;
+          }
+          case "python": {
+            this.pyodideService.runCode(this.editorService.getCode());
+            break;
+          }
+          default:
+            break;
+        }
+
       }
     },
     'oj.submit': {
@@ -68,5 +85,5 @@ export class ActionService {
     const action = this.actions[id];
     if (action?.enabled()) action.run();
   }
-  
+
 }

@@ -25,7 +25,7 @@ declare let loadPyodide: any;
 
 const Self: any = self;
 
-async function loadPyodideAndPackages(inCb: () => void, outCb: (s: string) => void, errCb: (s: string) => void) {
+async function loadPyodideAndPackages(inCb: () => string | null, outCb: (s: string) => void, errCb: (s: string) => void) {
   Self.pyodide = await loadPyodide({
     indexURL: "https://cdn.jsdelivr.net/pyodide/dev/full/",
     stdin: inCb,
@@ -50,7 +50,8 @@ async function setIo(inCb: () => void, inBuf: Uint8Array, inMeta: Int32Array, ou
     Atomics.store(inMeta, 1, 0);
     const size = Atomics.exchange(inMeta, 0, 0);
     const bytes = inBuf.slice(0, size);
-    return decoder.decode(bytes);
+    const line = decoder.decode(bytes);
+    return line ? line : null;
   }
   await loadPyodideAndPackages(inputCallback, outCb, errCb);
   console.log(Self.pyodide);
