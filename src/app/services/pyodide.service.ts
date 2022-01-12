@@ -30,10 +30,16 @@ const encoder = new TextEncoder();
 
 export interface ILocalTermService {
   readRequest: Subject<void>;
-  readResponse: Subject<string>;
+  /** Responsing `null` for EOF. */
+  readResponse: Subject<string | null>;
   writeRequest: Subject<string>;
   writeResponse: Subject<void>;
-  closed: Subject<any>;
+
+  /** Emit value when Ctrl-C. */
+  // interrupt: Subject<void>;
+  
+  /** Emit value when code execution complete. */
+  closed: Subject<Error>;
 }
 
 @Injectable({
@@ -44,10 +50,11 @@ export class PyodideService implements ILocalTermService {
   worker: Comlink.Remote<PyodideRemote>;
 
   readRequest = new Subject<void>();
-  readResponse = new Subject<string>();
+  readResponse = new Subject<string | null>();
   writeRequest = new Subject<string>();
   writeResponse = new Subject<void>();
-  closed = new Subject<void>();
+  // interrupt = new Subject<void>();
+  closed = new Subject<Error>();
 
   private initPromise: Promise<void>;
 
@@ -60,13 +67,20 @@ export class PyodideService implements ILocalTermService {
     const worker = new Worker(new URL('../pyodide/pyodide.worker.ts', import.meta.url));
     this.worker = Comlink.wrap(worker);
     this.initPromise = this.initIo();
+    // this.interrupt.subscribe(() => {
+    //   // https://pyodide.org/en/stable/usage/keyboard-interrupts.html
+    //   // 2 represents SIGINT
+    //   this.interruptBuffer[0] = 2;
+    // });
   }
 
   private inputBuffer = new Uint8Array(new SharedArrayBuffer(INPUT_BUF_SIZE));
-  // [ len, hasWritten ]
+  // [ input_len, written ]
   private inputMeta = new Int32Array(new SharedArrayBuffer(Int32Array.BYTES_PER_ELEMENT * 2));
 
-  private async input(): Promise<string> {
+  private interruptBuffer = new Uint8Array(new SharedArrayBuffer(1));
+
+  private async input(): Promise<string | null> {
     this.readRequest.next();
     return this.readResponse.pipe(
       take(1)
@@ -83,28 +97,34 @@ export class PyodideService implements ILocalTermService {
   private async initIo() {
     const inputCb = () => {
       this.input().then((str) => {
-        let bytes = encoder.encode(str);
-        if (bytes.length > this.inputBuffer.length) {
-          alert("Input is too long");
-          bytes = bytes.slice(0, this.inputBuffer.length);
+        if (str === null) {
+          Atomics.store(this.inputMeta, 0, -1);
+        } else {
+          let bytes = encoder.encode(str);
+          if (bytes.length > this.inputBuffer.length) {
+            alert("Input is too long");
+            bytes = bytes.slice(0, this.inputBuffer.length);
+          }
+          this.inputBuffer.set(bytes, 0);
+          Atomics.store(this.inputMeta, 0, bytes.length);
         }
-        this.inputBuffer.set(bytes, 0);
-        Atomics.store(this.inputMeta, 0, bytes.length);
         Atomics.store(this.inputMeta, 1, 1);
         Atomics.notify(this.inputMeta, 1);
       });
     }
-    await this.worker.setIo(
+    await this.worker.init(
       Comlink.proxy(inputCb),
       this.inputBuffer,
       this.inputMeta,
       Comlink.proxy((s) => this.output(s + '\n')),
-      Comlink.proxy((s) => this.output(s + '\n'))
+      Comlink.proxy((s) => this.output(s + '\n')),
+      this.interruptBuffer
     );
   }
 
   async runCode(code: string) {
     await this.initPromise;
+    this.interruptBuffer[0] = 0;
     this.statusService.next('local-executing');
     this.openDialog();
     const result = await this.worker.runCode(code);
@@ -117,6 +137,7 @@ export class PyodideService implements ILocalTermService {
 
   private close(result: any = null) {
     this.statusService.next('ready');
+    this.interruptBuffer[0] = 2;
     this.closed.next(result);
   }
 

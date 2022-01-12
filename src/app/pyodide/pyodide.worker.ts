@@ -20,40 +20,40 @@
 import * as Comlink from 'comlink';
 import type { PyodideRemote } from "./type";
 
-importScripts('https://cdn.jsdelivr.net/pyodide/dev/full/pyodide.js');
+const PYODIDE_VERSION = "v0.19.0"
+
+importScripts(`https://cdn.jsdelivr.net/pyodide/${PYODIDE_VERSION}/full/pyodide.js`);
 declare let loadPyodide: any;
 
 const Self: any = self;
 
-async function loadPyodideAndPackages(inCb: () => string | null, outCb: (s: string) => void, errCb: (s: string) => void) {
+const decoder = new TextDecoder();
+
+async function init(
+  inCb: () => void,
+  inBuf: Uint8Array,
+  inMeta: Int32Array,
+  outCb: (s: string) => void,
+  errCb: (s: string) => void,
+  int: Uint8Array) {
+  const inputCallback = () => {
+    inCb();
+    Atomics.wait(inMeta, 1, 0);
+    Atomics.store(inMeta, 1, 0);
+    const size = Atomics.exchange(inMeta, 0, 0);
+    if (size === -1) return null;
+    const bytes = inBuf.slice(0, size);
+    const line = decoder.decode(bytes);
+    return line;
+  }
   Self.pyodide = await loadPyodide({
-    indexURL: "https://cdn.jsdelivr.net/pyodide/dev/full/",
-    stdin: inCb,
+    indexURL: `https://cdn.jsdelivr.net/pyodide/${PYODIDE_VERSION}/full/`,
+    stdin: inputCallback,
     stdout: outCb,
     stderr: errCb
   });
+  Self.pyodide.setInterruptBuffer(int);
   // await Self.pyodide.loadPackage(["numpy", "pytz"]);
-}
-
-const decoder = new TextDecoder();
-
-async function setIo(inCb: () => void, inBuf: Uint8Array, inMeta: Int32Array, outCb: (s: string) => void, errCb: (s: string) => void) {
-  const inputCallback = () => {
-    inCb();
-    while (true) {
-      if (Atomics.wait(inMeta, 1, 0, 50) === "timed-out") {
-        // Check EOF?
-      } else {
-        break;
-      }
-    }
-    Atomics.store(inMeta, 1, 0);
-    const size = Atomics.exchange(inMeta, 0, 0);
-    const bytes = inBuf.slice(0, size);
-    const line = decoder.decode(bytes);
-    return line ? line : null;
-  }
-  await loadPyodideAndPackages(inputCallback, outCb, errCb);
   console.log(Self.pyodide);
 }
 
@@ -73,4 +73,4 @@ async function runCode(code: string) {
   }
 }
 
-Comlink.expose(<PyodideRemote>{ setIo, runCode });
+Comlink.expose(<PyodideRemote>{ init, runCode });

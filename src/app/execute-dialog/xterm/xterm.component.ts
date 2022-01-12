@@ -110,12 +110,15 @@ export class XtermComponent implements OnInit {
       enableIncompleteInput: false
     });
     this.term.loadAddon(localEcho);
+    localEcho.onEof(() => {
+      service.readResponse.next(null);
+    });
+    // localEcho.onInterrupt(() => {
+    //   localEcho.abortRead();
+    //   service.interrupt.next();
+    // });
     service.readRequest.subscribe(async () => {
-      let input = "";
-      while (!input) {
-        input = await localEcho.read("").catch(() => "");
-      }
-      // console.log(`INPUT: ${JSON.stringify(input)}`);
+      const input = await localEcho.read("").catch(() => "");
       service.readResponse.next(input);
     });
     service.writeRequest.subscribe(async (str) => {

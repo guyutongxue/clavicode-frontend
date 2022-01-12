@@ -24,6 +24,21 @@ export type PyodideExecutionResult = {
 }
 
 export type PyodideRemote = {
-  setIo(inCb: () => void, inBuf: Uint8Array, inMeta: Int32Array, outCb: (s: string) => void, errCb: (s: string) => void): void;
+  /**
+   * 
+   * @param inCb Callback when input requested
+   * @param inBuf Write input value to this buffer
+   * @param inMeta [ input_len | written ]
+   * @param outCb Callback when a line is written to stdout
+   * @param errCb Callback when a line is written to stderr
+   * @param int Write '\0x2' to this buffer when Ctrl-C
+   */
+  init(
+    inCb: () => void,
+    inBuf: Uint8Array,
+    inMeta: Int32Array,
+    outCb: (s: string) => void,
+    errCb: (s: string) => void,
+    int: Uint8Array): void;
   runCode(code: string): Promise<PyodideExecutionResult>;
 }

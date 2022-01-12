@@ -87,6 +87,9 @@ export class ExecuteService implements IRemoteTermService {
 
   close() {
     if (this.sender === null) return;
+    this.sender.next({
+      type: 'shutdown'
+    });
     this.sender.complete();
     this.sender = null;
     this.receiver = null;
