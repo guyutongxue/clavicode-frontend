@@ -15,10 +15,12 @@
 // You should have received a copy of the GNU General Public License
 // along with clavicode-frontend.  If not, see <http://www.gnu.org/licenses/>.
 
+/// <reference types="wicg-file-system-access" />
+
 import { Injectable } from '@angular/core';
 import { FlatTreeControl, TreeControl } from '@angular/cdk/tree';
 import { CollectionViewer, DataSource, SelectionChange } from '@angular/cdk/collections';
-import { BehaviorSubject, merge, Observable, scheduled } from 'rxjs';
+import { BehaviorSubject, merge, Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { Tab, TabsService } from './tabs.service';
 
@@ -27,7 +29,7 @@ import { basename } from 'path';
 
 export type FsNode = {
   name: string;
-  value: any;
+  value: FileSystemHandle;
   level: number;
   expandable: boolean;
   expanded: boolean;
@@ -43,7 +45,7 @@ class FsDataSource<T extends { expanded: boolean }> implements DataSource<T> {
   }
 
   connect(collectionViewer: CollectionViewer): Observable<T[]> {
-    const changes: Observable<any>[] = [
+    const changes: Observable<unknown>[] = [
       collectionViewer.viewChange,
       this.treeControl.expansionModel.changed.pipe(tap(change => this.handleExpansionChange(change))),
       this.flattenedData
@@ -88,7 +90,7 @@ class FsDataSource<T extends { expanded: boolean }> implements DataSource<T> {
 }
 
 
-const REQ_RW_OPT = {
+const REQ_RW_OPT: FileSystemHandlePermissionDescriptor = {
   writable: true,
   mode: 'readwrite'
 };
@@ -110,9 +112,9 @@ export class FileLocalService {
     (node) => { this.loadChildren(node); },
     (node) => { node.expanded = false; })
 
-  private rootHandle: any;
+  private rootHandle: FileSystemDirectoryHandle | null = null;
 
-  private async getChildren(handle: any, level: number) {
+  private async getChildren(handle: FileSystemDirectoryHandle, level: number) {
     const children: FsNode[] = [];
     for await (const [key, value] of handle.entries()) {
       children.push({
@@ -134,6 +136,7 @@ export class FileLocalService {
     }
     node.loaded = 'doing';
     const handle = node.value;
+    if (handle instanceof FileSystemFileHandle) return;
     const children = await this.getChildren(handle, node.level);
     node.loaded = 'yes';
     const data = this.flattenedData.value;
@@ -150,10 +153,10 @@ export class FileLocalService {
    * @param handle handle of the node to be refreshed
    * @returns 
    */
-  private async refresh(handle: any) {
+  private async refresh(handle: FileSystemDirectoryHandle) {
     const data = this.flattenedData.value;
     const index = data.findIndex(v => v.value === handle);
-    const node = data[index];
+    const node = data[index] as FsNode | undefined;
     if (node) {
       if (!node.expandable) return;
       if (node.loaded !== "yes") return;
@@ -172,7 +175,8 @@ export class FileLocalService {
     // const expandedChildren = data.slice(index, endIndex)
     //   .filter(v => v.level === level - 1 && v.expanded)
     //   .map(v => v.name);
-    const newChildren = await this.getChildren(node?.value ?? this.rootHandle, node?.level ?? -1);
+    const newChildren = await this.getChildren(handle, node?.level ?? -1);
+    // 移除原有子节点，更换为新的子节点
     data.splice(index + 1, endIndex - index, ...newChildren);
     if (node) {
       node.loaded = "yes";
@@ -181,22 +185,23 @@ export class FileLocalService {
   }
 
   async init() {
-    const handle = await (window as any).showDirectoryPicker().catch(() => null);
+    const handle = await window.showDirectoryPicker().catch(() => null);
     if (!handle) return;
     const data = await this.getChildren(handle, -1);
     this.flattenedData.next(data);
     this.rootHandle = handle;
   }
 
-  private async requestPermission(handle: any) {
+  private async requestPermission(handle: FileSystemHandle) {
     return !((await handle.queryPermission(REQ_RW_OPT)) !== 'granted' &&
       await handle.requestPermission(REQ_RW_OPT) !== 'granted');
   }
 
-  async openLocal(handle: any) {
+  async openLocal(handle: FileSystemHandle) {
     if (handle.kind !== "file") return false;
     if (await this.requestPermission(handle)) {
-      const path: string = (await this.rootHandle.resolve(handle)).join('/');
+      const path = (await this.rootHandle?.resolve(handle))?.join('/');
+      if (!path) return false;
       const exist = this.tabsService.tabList.find(v => v.path === path);
       if (exist) {
         this.tabsService.changeActive(exist.key);
@@ -221,7 +226,8 @@ export class FileLocalService {
     }
   }
 
-  async createFile(name: string, handle?: any) {
+  async createFile(name: string, handle?: FileSystemDirectoryHandle) {
+    if (!this.rootHandle) return;
     if (!handle) handle = this.rootHandle;
     if (await this.requestPermission(handle)) {
       const file = await handle.getFileHandle(name, {
@@ -231,7 +237,8 @@ export class FileLocalService {
     }
   }
 
-  async createFolder(name: string, handle?: any) {
+  async createFolder(name: string, handle?: FileSystemDirectoryHandle) {
+    if (!this.rootHandle) return;
     if (!handle) handle = this.rootHandle;
     if (await this.requestPermission(handle)) {
       const dir = await handle.getDirectoryHandle(name, {
@@ -241,7 +248,7 @@ export class FileLocalService {
     }
   }
 
-  private getParent(node: FsNode) {
+  private getParent(node: FsNode): FileSystemDirectoryHandle | null {
     const data = this.flattenedData.value;
     const index = data.findIndex(v => v === node);
     let parent = index - 1;
@@ -249,13 +256,18 @@ export class FileLocalService {
       parent--;
     }
     if (parent === -1) return this.rootHandle;
-    return data[parent].value;
+    const handle = data[parent].value;
+    if (handle instanceof FileSystemFileHandle) {
+      // should unreachable
+      return null;
+    }
+    return handle;
   }
 
   async remove(node: FsNode) {
     const name = node.name;
     const handle = this.getParent(node);
-    if (await this.requestPermission(handle)) {
+    if (handle && await this.requestPermission(handle)) {
       await handle.removeEntry(name);
       this.refresh(handle);
     }

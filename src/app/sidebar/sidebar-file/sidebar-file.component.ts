@@ -1,4 +1,25 @@
+// Copyright (C) 2022 Clavicode Team
+// 
+// This file is part of clavicode-frontend.
+// 
+// clavicode-frontend is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+// 
+// clavicode-frontend is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with clavicode-frontend.  If not, see <http://www.gnu.org/licenses/>.
+
+/// <reference types="wicg-file-system-access" />
+
 import { Component, OnInit } from '@angular/core';
+import type { FlatTreeControl } from '@angular/cdk/tree';
+import type { DataSource } from '@angular/cdk/collections';
 import { NzContextMenuService, NzDropdownMenuComponent } from 'ng-zorro-antd/dropdown';
 import { FsNode, FileLocalService } from '../../services/file-local.service';
 
@@ -11,15 +32,18 @@ import { FsNode, FileLocalService } from '../../services/file-local.service';
 export class SidebarFileComponent implements OnInit {
   constructor(
     private nzContextMenuService: NzContextMenuService,
-    private flService: FileLocalService) {}
+    private flService: FileLocalService) {
+      this.treeControl = this.flService.treeControl;
+      this.dataSource = this.flService.dataSource;
+    }
 
   enabled = "showDirectoryPicker" in window;
 
   ngOnInit(): void {
   }
 
-  treeControl = this.flService.treeControl;
-  dataSource = this.flService.dataSource;
+  treeControl: FlatTreeControl<FsNode>;
+  dataSource: DataSource<FsNode>;
 
   hasChild = (_: number, node: FsNode) => node.expandable;
 
@@ -30,11 +54,13 @@ export class SidebarFileComponent implements OnInit {
   newFile(root = false) {
     const filename = prompt();
     if (!filename) return;
+    if (this.selectedNode.value instanceof FileSystemFileHandle) return;
     this.flService.createFile(filename, root ? undefined : this.selectedNode.value);
   }
   newFolder(root = false) {
     const filename = prompt();
     if (!filename) return;
+    if (this.selectedNode.value instanceof FileSystemFileHandle) return;
     this.flService.createFolder(filename, root ? undefined : this.selectedNode.value);
   }
   

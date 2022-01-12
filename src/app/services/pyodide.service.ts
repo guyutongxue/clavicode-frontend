@@ -102,7 +102,6 @@ export class PyodideService implements ILocalTermService {
         if (str === null) {
           Atomics.store(this.inputMeta, 0, -1);
         } else {
-          console.log(str);
           let bytes = encoder.encode(str);
           if (bytes.length > this.inputBuffer.length) {
             alert("Input is too long");
