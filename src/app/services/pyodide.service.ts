@@ -19,7 +19,7 @@ import { Injectable } from '@angular/core';
 import { PyodideRemote } from '../pyodide/type';
 import * as Comlink from 'comlink';
 import { Subject } from 'rxjs';
-import { take } from 'rxjs/operators';
+import { take, tap } from 'rxjs/operators';
 import { DialogService } from '@ngneat/dialog';
 import { ExecuteDialogComponent } from '../execute-dialog/execute-dialog.component';
 import { terminalWidth } from '../execute-dialog/xterm/xterm.component';
@@ -39,7 +39,7 @@ export interface ILocalTermService {
   // interrupt: Subject<void>;
   
   /** Emit value when code execution complete. */
-  closed: Subject<Error>;
+  closed: Subject<Error | null>;
 }
 
 @Injectable({
@@ -54,7 +54,7 @@ export class PyodideService implements ILocalTermService {
   writeRequest = new Subject<string>();
   writeResponse = new Subject<void>();
   // interrupt = new Subject<void>();
-  closed = new Subject<Error>();
+  closed = new Subject<Error | null>();
 
   private initPromise: Promise<void>;
 
@@ -81,17 +81,19 @@ export class PyodideService implements ILocalTermService {
   private interruptBuffer = new Uint8Array(new SharedArrayBuffer(1));
 
   private async input(): Promise<string | null> {
-    this.readRequest.next();
-    return this.readResponse.pipe(
+    const r = this.readResponse.pipe(
       take(1)
     ).toPromise();
+    this.readRequest.next();
+    return r;
   }
 
   private async output(str: string) {
-    this.writeRequest.next(str);
-    return this.writeResponse.pipe(
+    const r = this.writeResponse.pipe(
       take(1)
     ).toPromise();
+    this.writeRequest.next(str);
+    return r;
   }
 
   private async initIo() {
@@ -100,6 +102,7 @@ export class PyodideService implements ILocalTermService {
         if (str === null) {
           Atomics.store(this.inputMeta, 0, -1);
         } else {
+          console.log(str);
           let bytes = encoder.encode(str);
           if (bytes.length > this.inputBuffer.length) {
             alert("Input is too long");
@@ -122,11 +125,13 @@ export class PyodideService implements ILocalTermService {
     );
   }
 
-  async runCode(code: string) {
+  async runCode(code: string, showDialog = true) {
     await this.initPromise;
     this.interruptBuffer[0] = 0;
     this.statusService.next('local-executing');
-    this.openDialog();
+    if (showDialog) {
+      this.openDialog();
+    }
     const result = await this.worker.runCode(code);
     if (result.success) {
       this.close();
@@ -135,7 +140,7 @@ export class PyodideService implements ILocalTermService {
     }
   }
 
-  private close(result: any = null) {
+  private close(result: Error | null = null) {
     this.statusService.next('ready');
     this.interruptBuffer[0] = 2;
     this.closed.next(result);

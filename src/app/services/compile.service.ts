@@ -23,6 +23,9 @@ import { NzNotificationDataOptions, NzNotificationService } from 'ng-zorro-antd/
 import { EditorService } from './editor.service';
 import { ProblemsService } from './problems.service';
 import { Router } from '@angular/router';
+import { PyodideService } from './pyodide.service';
+import { of, Subscription } from 'rxjs';
+import { catchError, take, timeout } from 'rxjs/operators';
 
 const COMPILE_URL = `//${environment.backendHost}/cpp/compile`;
 
@@ -40,8 +43,9 @@ export class CompileService {
   constructor(private http: HttpClient, private editorService: EditorService,
               private router: Router,
               private notification: NzNotificationService,
-              private problemsService: ProblemsService
-              ) { 
+              private problemsService: ProblemsService,
+              private pyodideService: PyodideService
+              ) {
   }
 
   private code() {
@@ -49,23 +53,54 @@ export class CompileService {
   }
 
   async fileCompile() {
-    const result = await this.http.post<CppCompileResponse>(COMPILE_URL, <CppCompileRequest>{
-      code: this.code(),
-      execute: 'file',
-      stdin: this.stdin
-    }).toPromise();
-    if (result.status !== 'ok') {
-      this.showError(result);
+    const lang = this.editorService.getLanguage();
+    if (lang === "cpp") {
+      const result = await this.http.post<CppCompileResponse>(COMPILE_URL, <CppCompileRequest>{
+        code: this.code(),
+        execute: 'file',
+        stdin: this.stdin
+      }).toPromise();
+      if (result.status !== 'ok') {
+        this.showError(result);
+        return null;
+      }
+      if (result.execute !== 'file') {
+        alert("non file response");
+        return null;
+      }
+      if (result.result !== 'ok') {
+        alert(`RE: ${result.reason}`);
+      }
+      return result.stdout;
+    } else if (lang === "python") {
+      const subscriptions: Subscription[] = []
+      const stdinLines = this.stdin.split("\n");
+      let stdout = "";
+      subscriptions.push(this.pyodideService.readRequest.subscribe(() => {
+        if (stdinLines.length > 0) {
+          this.pyodideService.readResponse.next(stdinLines.shift());
+        } else {
+          this.pyodideService.readResponse.next(null);
+        }
+      }));
+      subscriptions.push(this.pyodideService.writeRequest.subscribe((v) => {
+        stdout += v;
+        this.pyodideService.writeResponse.next();
+      }));
+      this.pyodideService.runCode(this.editorService.getCode(), false);
+      const result = await this.pyodideService.closed.pipe(
+        take(1),
+        timeout(1000),
+        catchError(e => of(e as Error)),
+      ).toPromise();
+      if (result !== null) {
+        this.notification.error("运行错误", result.message);
+      }
+      subscriptions.forEach(s => s.unsubscribe());
+      return stdout;
+    } else {
       return null;
     }
-    if (result.execute !== 'file') {
-      alert("non file response");
-      return null;
-    }
-    if (result.result !== 'ok') {
-      alert(`RE: ${result.reason}`);
-    }
-    return result.stdout;
   }
 
   async interactiveCompile() {
