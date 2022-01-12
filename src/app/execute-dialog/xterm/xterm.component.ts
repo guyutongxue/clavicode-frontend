@@ -127,6 +127,7 @@ export class XtermComponent implements OnInit {
       service.writeResponse.next();
     })
     service.closed.subscribe(async (result) => {
+      await new Promise((r) => setTimeout(r, 100));
       await localEcho.println("----------");
       if (result === null) {
         await localEcho.println("代码运行完成。\n按任意键关闭窗口。");
