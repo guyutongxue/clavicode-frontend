@@ -273,7 +273,28 @@ export class FileLocalService {
     }
   }
 
-  async save(tab: Tab) {
-    // TODO
+  async save(tab: Tab | null) {
+    if (tab === null) return false;
+    this.tabsService.syncActiveCode();
+    if (this.rootHandle === null) return false;
+    const pathSeg = tab.path.split('/');
+    try {
+      let handle = this.rootHandle;
+      while (pathSeg.length > 1) {
+        const name = pathSeg.shift()!;
+        handle = await handle.getDirectoryHandle(name);
+      }
+      const filename = pathSeg[0];
+      const fileHandle = await handle.getFileHandle(filename);
+      if (!(await this.requestPermission(fileHandle))) return false;
+      const writable = await fileHandle.createWritable();
+      await writable.write(tab.code);
+      await writable.close();
+      tab.saved = true;
+      console.log(fileHandle);
+      return true;
+    } catch {
+      return false;
+    }
   }
 }

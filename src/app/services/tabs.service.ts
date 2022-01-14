@@ -95,6 +95,7 @@ export class TabsService {
     }];
   }
 
+  /** Sync tab.code from current editor. */
   syncActiveCode() {
     if (!this.editorService.isInit) return;
     const [activeTab] = this.getActive();
