@@ -60,7 +60,8 @@ async function init(
 async function runCode(code: string) {
   try {
     await Self.pyodide.loadPackagesFromImports(code);
-    let result = await Self.pyodide.runPythonAsync(code);
+    const globals = Self.pyodide.toPy({});
+    let result = await Self.pyodide.runPythonAsync(code, globals);
     return {
       success: true,
       result

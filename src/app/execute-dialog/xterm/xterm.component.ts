@@ -25,6 +25,7 @@ import { LocalEchoAddon } from '@gytx/xterm-local-echo';
 import { DebugService } from 'src/app/services/debug.service';
 import { StatusService } from 'src/app/services/status.service';
 import { ILocalTermService, PyodideService } from 'src/app/services/pyodide.service';
+import { Subscription } from 'rxjs';
 
 const TERM_FONT_FAMILY = `"等距更纱黑体 SC", "Cascadia Code", Consolas, "Courier New", Courier, monospace`;
 const TERM_FONT_SIZE = 14;
@@ -117,17 +118,17 @@ export class XtermComponent implements OnInit {
     //   localEcho.abortRead();
     //   service.interrupt.next();
     // });
-    service.readRequest.subscribe(async () => {
-      const input = await localEcho.read("").catch(() => "");
+    const subscriptions: Subscription[] = []
+    subscriptions.push(service.readRequest.subscribe(async () => {
+      const input = await localEcho.read().catch(() => "");
       service.readResponse.next(input);
-    });
-    service.writeRequest.subscribe(async (str) => {
+    }));
+    subscriptions.push(service.writeRequest.subscribe(async (str) => {
       await localEcho.print(str);
       // console.log(`OUTPUT: ${JSON.stringify(str)}`);
       service.writeResponse.next();
-    })
-    service.closed.subscribe(async (result) => {
-      await new Promise((r) => setTimeout(r, 100));
+    }));
+    subscriptions.push(service.closed.subscribe(async (result) => {
       await localEcho.println("----------");
       if (result === null) {
         await localEcho.println("代码运行完成。\n按任意键关闭窗口。");
@@ -139,7 +140,8 @@ export class XtermComponent implements OnInit {
       localEcho.abortRead();
       await new Promise((resolve) => this.term.onData(resolve))
       this.close.emit();
-    })
+      subscriptions.forEach(s => s.unsubscribe());
+    }));
   }
 
   ngOnInit(): void {

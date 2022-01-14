@@ -50,15 +50,11 @@ int main() {
   },
   'python': {
     ext: "py",
-    code: `# SING FOR ME!!
-def sing(b, end):
-    print(b or 'No more', 'bottle' + ('s' if b - 1 else ''), end)
-
-for i in range(99, 0, -1):
-    sing(i, 'of beer on the wall,')
-    sing(i, 'of beer,')
-    print('Take one down, pass it around,')
-    sing(i - 1, 'of beer on the wall.\\n')`
+    code: `# A + B problems in Python
+a = int(input("请输入 a："))
+b = int(input("请输入 b："))
+print("结果是：", end='')
+print(a + b)`
   }
 };
 

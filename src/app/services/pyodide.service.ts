@@ -28,6 +28,34 @@ import { StatusService } from './status.service';
 const INPUT_BUF_SIZE = 128 * 1024;
 const encoder = new TextEncoder();
 
+/**
+ * Make stdout "unbuffered".
+ * 
+ * Override sys.stdout, with write redefined:
+ * - If the string to be written is ends with newline, then 
+ *   output the original string.
+ * - Else, add an extra newline to the end, with a special
+ *   character `\xff` as a mark.
+ * 
+ * Pyodide only call `stdout(str)` when a newline is produced.
+ * So the above strategy make every write to stdout is 
+ * observable. When a line output ends with `\xff`, then should 
+ * not print a newline with it.
+ */
+const STDOUT_UNBUFFER_PATCH = `
+def patch_stdout():
+    import sys
+    class Wrapper:
+        def write(self, s: str):
+            if (s.endswith('\\n')):
+                return sys.__stdout__.write(s)
+            else:
+                return sys.__stdout__.write(s + '\\xff\\n')
+    sys.stdout = Wrapper()
+patch_stdout()
+del patch_stdout
+`;
+
 export interface ILocalTermService {
   readRequest: Subject<void>;
   /** Responsing `null` for EOF. */
@@ -55,6 +83,8 @@ export class PyodideService implements ILocalTermService {
   writeResponse = new Subject<void>();
   // interrupt = new Subject<void>();
   closed = new Subject<Error | null>();
+
+  enableUnbufferPatch = true;
 
   private initPromise: Promise<void>;
 
@@ -118,7 +148,13 @@ export class PyodideService implements ILocalTermService {
       Comlink.proxy(inputCb),
       this.inputBuffer,
       this.inputMeta,
-      Comlink.proxy((s) => this.output(s + '\n')),
+      Comlink.proxy((s) => {
+        if (this.enableUnbufferPatch && s.endsWith('\xff')) {
+          this.output(s.substring(0, s.length - 1));
+        } else {
+          this.output(s + '\n');
+        }
+      }),
       Comlink.proxy((s) => this.output(s + '\n')),
       this.interruptBuffer
     );
@@ -130,6 +166,9 @@ export class PyodideService implements ILocalTermService {
     this.statusService.next('local-executing');
     if (showDialog) {
       this.openDialog();
+      if (this.enableUnbufferPatch) {
+        code = STDOUT_UNBUFFER_PATCH + code;
+      }
     }
     const result = await this.worker.runCode(code);
     if (result.success) {
@@ -142,7 +181,9 @@ export class PyodideService implements ILocalTermService {
   private close(result: Error | null = null) {
     this.statusService.next('ready');
     this.interruptBuffer[0] = 2;
-    this.closed.next(result);
+    // Wait for all stdout printed.
+    // TODO: Any better solution?
+    setTimeout(() => this.closed.next(result), 100);
   }
 
   private openDialog() {
