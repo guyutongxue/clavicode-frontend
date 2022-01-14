@@ -112,7 +112,7 @@ export class FileLocalService {
     (node) => { this.loadChildren(node); },
     (node) => { node.expanded = false; })
 
-  private rootHandle: FileSystemDirectoryHandle | null = null;
+  rootHandle: FileSystemDirectoryHandle | null = null;
 
   private async getChildren(handle: FileSystemDirectoryHandle, level: number) {
     const children: FsNode[] = [];
@@ -291,7 +291,6 @@ export class FileLocalService {
       await writable.write(tab.code);
       await writable.close();
       tab.saved = true;
-      console.log(fileHandle);
       return true;
     } catch {
       return false;

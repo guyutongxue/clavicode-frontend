@@ -1,35 +1,51 @@
 <div *ngIf="enabled" class="container">
-<button nz-button (click)="loadFolder()">加载本地文件夹</button>
-<button nz-button (click)="newFile(true)">New file</button>
-<button nz-button (click)="newFolder(true)">New folder</button>
-<nz-tree-view [nzTreeControl]="treeControl" [nzDataSource]="dataSource" [nzDirectoryTree]="true">
-  <nz-tree-node *nzTreeNodeDef="let node" nzTreeNodePadding>
-    <nz-tree-node-toggle nzTreeNodeNoopToggle></nz-tree-node-toggle>
-    <nz-tree-node-option (nzClick)="onSelected(node)" (contextmenu)="showContextMenu($event, contextMenu, node)">
-      <i nz-icon nzType="file"></i>
-      {{ node.name }}
-    </nz-tree-node-option>
-  </nz-tree-node>
-  <nz-tree-node *nzTreeNodeDef="let node; when: hasChild" nzTreeNodePadding>
-    <nz-tree-node-toggle>
-      <i nz-icon nzType="caret-down" nzTreeNodeToggleRotateIcon></i>
-    </nz-tree-node-toggle>
-    <nz-tree-node-option (nzClick)="onSelected(node)" (contextmenu)="showContextMenu($event, contextMenuFolder, node)">
-      <i nz-icon [nzType]="treeControl.isExpanded(node) ? 'folder-open' : 'folder'" nzTheme="outline"></i>
-      {{ node.name }}
-    </nz-tree-node-option>
-  </nz-tree-node>
-</nz-tree-view>
-<nz-dropdown-menu #contextMenu >
-  <ul nz-menu>
-    <li nz-menu-item (click)="remove()">删除</li>
-  </ul>
-</nz-dropdown-menu>
-<nz-dropdown-menu #contextMenuFolder>
-  <ul nz-menu>
-    <li nz-menu-item (click)="remove()">删除</li>
-    <li nz-menu-item (click)="newFile()">新建文件</li>
-    <li nz-menu-item (click)="newFolder()">新建文件夹</li>
-  </ul>
-</nz-dropdown-menu>
+  <div class="control-bar">
+    <button nz-button (click)="loadFolder()">打开本地文件夹</button>
+    <div class="spacer"></div>
+    <button nz-button nzType="text" [disabled]="!loaded" (click)="newFile(true)">
+      <i nz-icon nzType="file-add"></i>
+    </button>
+    <button nz-button nzType="text" [disabled]="!loaded" (click)="newFolder(true)">
+      <i nz-icon nzType="folder-add"></i>
+    </button>
+  </div>
+  <div *ngIf="loaded" class="splitter"></div>
+  <nz-tree-view class="tree-view" [nzTreeControl]="treeControl" [nzDataSource]="dataSource" [nzDirectoryTree]="true">
+    <nz-tree-node *nzTreeNodeDef="let node" nzTreeNodePadding>
+      <nz-tree-node-toggle nzTreeNodeNoopToggle></nz-tree-node-toggle>
+      <nz-tree-node-option (nzClick)="onSelected(node)" (contextmenu)="showContextMenu($event, contextMenu, node)">
+        <i nz-icon nzType="file"></i>
+        {{ node.name }}
+      </nz-tree-node-option>
+    </nz-tree-node>
+    <nz-tree-node *nzTreeNodeDef="let node; when: hasChild" nzTreeNodePadding>
+      <nz-tree-node-toggle>
+        <i nz-icon nzType="caret-down" nzTreeNodeToggleRotateIcon></i>
+      </nz-tree-node-toggle>
+      <nz-tree-node-option (nzClick)="onSelected(node)"
+        (contextmenu)="showContextMenu($event, contextMenuFolder, node)">
+        <i nz-icon [nzType]="treeControl.isExpanded(node) ? 'folder-open' : 'folder'" nzTheme="outline"></i>
+        {{ node.name }}
+      </nz-tree-node-option>
+    </nz-tree-node>
+  </nz-tree-view>
+  <nz-dropdown-menu #contextMenu>
+    <ul nz-menu>
+      <li nz-menu-item (click)="remove()">删除</li>
+    </ul>
+  </nz-dropdown-menu>
+  <nz-dropdown-menu #contextMenuFolder>
+    <ul nz-menu>
+      <li nz-menu-item (click)="remove()">删除</li>
+      <li nz-menu-item (click)="newFile()">新建文件</li>
+      <li nz-menu-item (click)="newFolder()">新建文件夹</li>
+    </ul>
+  </nz-dropdown-menu>
+  <nz-dropdown-menu #contextMenuSpacer>
+    <ul nz-menu>
+      <li nz-menu-item (click)="newFile(true)">新建文件</li>
+      <li nz-menu-item (click)="newFolder(true)">新建文件夹</li>
+    </ul>
+  </nz-dropdown-menu>
+  <div *ngIf="loaded" class="spacer" (contextmenu)="showContextMenu($event, contextMenuSpacer)"></div>
 </div>

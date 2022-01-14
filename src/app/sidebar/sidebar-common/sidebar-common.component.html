@@ -6,7 +6,10 @@
         编译运行
       </button>
     </nz-collapse-panel>
-    <nz-collapse-panel nzHeader="代码大纲" [nzActive]="true">
+    <nz-collapse-panel nzHeader="本地文件浏览" [nzActive]="true">
+      <app-sidebar-file></app-sidebar-file>
+    </nz-collapse-panel>
+    <nz-collapse-panel nzHeader="代码大纲">
       <nz-tree-view [nzTreeControl]="treeControl" [nzDataSource]="dataSource" [nzDirectoryTree]="true">
         <nz-tree-node *nzTreeNodeDef="let node" nzTreeNodePadding>
           <nz-tree-node-toggle nzTreeNodeNoopToggle></nz-tree-node-toggle>

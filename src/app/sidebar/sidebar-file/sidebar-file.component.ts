@@ -45,6 +45,10 @@ export class SidebarFileComponent implements OnInit {
   treeControl: FlatTreeControl<FsNode>;
   dataSource: DataSource<FsNode>;
 
+  get loaded() {
+    return !!this.flService.rootHandle;
+  }
+
   hasChild = (_: number, node: FsNode) => node.expandable;
 
   loadFolder() {
@@ -54,14 +58,16 @@ export class SidebarFileComponent implements OnInit {
   newFile(root = false) {
     const filename = prompt();
     if (!filename) return;
-    if (this.selectedNode.value instanceof FileSystemFileHandle) return;
-    this.flService.createFile(filename, root ? undefined : this.selectedNode.value);
+    if (root) this.selectedNode = null;
+    if (this.selectedNode?.value instanceof FileSystemFileHandle) return;
+    this.flService.createFile(filename, this.selectedNode?.value);
   }
   newFolder(root = false) {
     const filename = prompt();
     if (!filename) return;
-    if (this.selectedNode.value instanceof FileSystemFileHandle) return;
-    this.flService.createFolder(filename, root ? undefined : this.selectedNode.value);
+    if (root) this.selectedNode = null;
+    if (this.selectedNode?.value instanceof FileSystemFileHandle) return;
+    this.flService.createFolder(filename, this.selectedNode?.value);
   }
   
   async onSelected(node: FsNode) {
@@ -72,14 +78,16 @@ export class SidebarFileComponent implements OnInit {
     }
   }
 
-  selectedNode: FsNode = null!;
+  selectedNode: FsNode | null = null;
 
-  showContextMenu($event: MouseEvent, menu: NzDropdownMenuComponent, node: FsNode) {
-    this.selectedNode = node;
+  showContextMenu($event: MouseEvent, menu: NzDropdownMenuComponent, node?: FsNode) {
+    this.selectedNode = node ?? null;
     this.nzContextMenuService.create($event, menu);
   }
 
   remove() {
-    this.flService.remove(this.selectedNode);
+    if (this.selectedNode !== null) { 
+      this.flService.remove(this.selectedNode);
+    }
   }
 }

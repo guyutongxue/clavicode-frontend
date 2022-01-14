@@ -40,11 +40,6 @@ const routes: Routes = [
     outlet: 'sidebar'
   },
   {
-    path: 'file',
-    component: SidebarFileComponent,
-    outlet: 'sidebar'
-  },
-  {
     path: 'problem',
     component: SidebarProblemComponent,
     outlet: 'sidebar'

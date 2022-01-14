@@ -62,8 +62,7 @@ export class SidebarCommonComponent implements OnInit {
     this.symbols$ = this.editorService.editorText$.pipe(
       debounceTime(300),
       distinctUntilChanged(),
-      switchMap(_ => this.editorService.getSymbols()),
-      tap(console.log)
+      switchMap(_ => this.editorService.getSymbols())
     );
     this.symbols$.subscribe(e => {
       if (e === null) this.dataSource.setData([]);

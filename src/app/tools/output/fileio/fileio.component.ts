@@ -5,6 +5,7 @@ import { CompileService } from '../../../services/compile.service';
 import { EditorService } from '../../../services/editor.service';
 import { DialogService } from '@ngneat/dialog';
 import { NzUploadChangeParam } from 'ng-zorro-antd/upload';
+import { StatusService } from 'src/app/services/status.service';
 
 @Component({
   selector: 'app-fileio',
@@ -14,10 +15,8 @@ import { NzUploadChangeParam } from 'ng-zorro-antd/upload';
 export class FileioComponent implements OnInit {
 
   constructor(private router: Router,
-    private dialogService: DialogService,
-    private executeService: ExecuteService, 
     private compileService: CompileService,
-    private editorService: EditorService) {
+    private statusService: StatusService) {
   }
 
 
@@ -30,8 +29,11 @@ export class FileioComponent implements OnInit {
   set stdin(value: string) {
     this.compileService.stdin = value;
   }
-  
 
+  get enabled() {
+    return this.statusService.value === 'ready';
+  }
+  
   stdout: string = "";
   async compile() {
     this.stdout = await this.compileService.fileCompile() ?? "";

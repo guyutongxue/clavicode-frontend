@@ -465,7 +465,7 @@ export class EditorService {
   /** Get the language id of current editor model. */
   getLanguage() {
     if (!this.isInit || this.editor === null) return null;
-    return this.editor.getModel()?.getLanguageId();
+    return this.editor.getModel()?.getLanguageId() ?? null;
   }
   setSelection(range: monaco.IRange) {
     if (this.editor === null) return;

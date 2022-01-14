@@ -8,6 +8,7 @@ import { ExecuteService } from './execute.service';
 import { FileLocalService } from './file-local.service';
 import { OjService } from './oj.service';
 import { PyodideService } from './pyodide.service';
+import { StatusService } from './status.service';
 import { TabsService } from './tabs.service';
 import { UserService } from './user.service';
 
@@ -36,7 +37,8 @@ export class ActionService {
     private flService: FileLocalService,
     private editorService: EditorService,
     private ojService: OjService,
-    private userService: UserService) {
+    private userService: UserService,
+    private statusService: StatusService) {
       for (const i in this.actions) {
         const action = this.actions[i];
         if (action.shortcut) {
@@ -52,7 +54,7 @@ export class ActionService {
       name: '编译运行',
       icon: 'play-circle',
       shortcut: 'control.b',
-      enabled: () => true,
+      enabled: () => this.statusService.value === 'ready',
       run: async () => {
         const lang = this.editorService.getLanguage();
         switch (lang) {
