@@ -45,7 +45,7 @@ export class LoginPageComponent implements OnInit {
           this.modalRef.close();
           this.userService.updateUserInfo();
         } else {
-          alert("error" + res.reason)
+          alert("error: " + res.reason);
         }
       });
     } else {

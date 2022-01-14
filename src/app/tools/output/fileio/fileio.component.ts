@@ -1,10 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { ExecuteService } from '../../../services/execute.service';
 import { Router } from '@angular/router';
 import { CompileService } from '../../../services/compile.service';
-import { EditorService } from '../../../services/editor.service';
-import { DialogService } from '@ngneat/dialog';
-import { NzUploadChangeParam } from 'ng-zorro-antd/upload';
 import { StatusService } from 'src/app/services/status.service';
 
 @Component({

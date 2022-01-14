@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, AfterViewChecked } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ActionService } from 'src/app/services/action.service';
 import { CompileService } from 'src/app/services/compile.service';
@@ -10,7 +10,7 @@ import { StatusService } from 'src/app/services/status.service';
   templateUrl: './debug.component.html',
   styleUrls: ['./debug.component.scss']
 })
-export class DebugComponent implements OnInit {
+export class DebugComponent implements OnInit, AfterViewChecked {
 
 
   @ViewChild("cOutput") private cOutput!: ElementRef ;

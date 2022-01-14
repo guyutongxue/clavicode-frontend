@@ -38,7 +38,7 @@ import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 
 
 import { AngularSplitModule } from 'angular-split';
-import { DialogModule } from '@ngneat/dialog'
+import { DialogModule } from '@ngneat/dialog';
 import { TabsModule } from './tabs/tabs.module';
 import { ToolsModule } from './tools/tools.module';
 

@@ -56,7 +56,7 @@ export class XtermComponent implements OnInit {
     private pyodideService: PyodideService,
     private debugService: DebugService) { }
 
-  @Output() close = new EventEmitter<void>();
+  @Output() dismiss = new EventEmitter<void>();
 
   private readonly term = new Terminal({
     fontFamily: TERM_FONT_FAMILY,
@@ -69,7 +69,7 @@ export class XtermComponent implements OnInit {
     let closing = false;
     this.term.onData(data => {
       if (closing) {
-        this.close.emit();
+        this.dismiss.emit();
       } else {
         service.sender?.next({
           type: 'tin',
@@ -102,7 +102,7 @@ export class XtermComponent implements OnInit {
         this.term.write('按任意键关闭窗口。\r\n');
         closing = true;
       }
-    })
+    });
   }
 
   private registerLocal(service: ILocalTermService) {
@@ -118,7 +118,7 @@ export class XtermComponent implements OnInit {
     //   localEcho.abortRead();
     //   service.interrupt.next();
     // });
-    const subscriptions: Subscription[] = []
+    const subscriptions: Subscription[] = [];
     subscriptions.push(service.readRequest.subscribe(async () => {
       const input = await localEcho.read().catch(() => "");
       service.readResponse.next(input);
@@ -138,8 +138,8 @@ export class XtermComponent implements OnInit {
         await localEcho.println("按任意键关闭窗口。");
       }
       localEcho.abortRead();
-      await new Promise((resolve) => this.term.onData(resolve))
-      this.close.emit();
+      await new Promise((resolve) => this.term.onData(resolve));
+      this.dismiss.emit();
       subscriptions.forEach(s => s.unsubscribe());
     }));
   }

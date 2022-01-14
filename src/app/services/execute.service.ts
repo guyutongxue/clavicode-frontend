@@ -58,18 +58,18 @@ export class ExecuteService implements IRemoteTermService {
       next: (data: WsExecuteC2S) => wrapper.sender.next(JSON.stringify(data)),
       error: (err: any) => wrapper.sender.error(err),
       complete: () => wrapper.sender.complete()
-    }
+    };
     this.receiver = wrapper.receiver.pipe(
       tap(console.log),
       map((data) => JSON.parse(data) as WsExecuteS2C)
     );
     this.sender.next({
       type: 'start'
-    })
+    });
     this.receiver.subscribe((data) => {
       if (data.type === 'closed') this.close();
       else if (data.type === 'error') this.close();
-    })
+    });
     this.statusService.next('remote-executing');
     this.openDialog();
   }

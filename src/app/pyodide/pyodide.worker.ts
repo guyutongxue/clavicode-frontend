@@ -20,7 +20,7 @@
 import * as Comlink from 'comlink';
 import type { PyodideRemote } from "./type";
 
-const PYODIDE_VERSION = "v0.19.0"
+const PYODIDE_VERSION = "v0.19.0";
 
 importScripts(`https://cdn.jsdelivr.net/pyodide/${PYODIDE_VERSION}/full/pyodide.js`);
 declare let loadPyodide: any;
@@ -45,7 +45,7 @@ async function init(
     const bytes = inBuf.slice(0, size);
     const line = decoder.decode(bytes);
     return line;
-  }
+  };
   Self.pyodide = await loadPyodide({
     indexURL: `https://cdn.jsdelivr.net/pyodide/${PYODIDE_VERSION}/full/`,
     stdin: inputCallback,

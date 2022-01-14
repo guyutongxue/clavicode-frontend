@@ -139,7 +139,7 @@ export class ThemeService {
   }
 
   private async changeMainTheme(theme: ThemeType) {
-    if (theme == this.currentTheme) return;
+    if (theme === this.currentTheme) return;
     this.currentTheme = theme;
     return this.loadMainTheme();
   }

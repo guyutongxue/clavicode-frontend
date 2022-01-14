@@ -132,7 +132,7 @@ export class DebugService implements IRemoteTermService {
       next: (data: WsDebugGdbC2S) => wrapper.sender.next(JSON.stringify(data)),
       error: (err: any) => wrapper.sender.error(err),
       complete: () => wrapper.sender.complete(),
-    }
+    };
     this.receiver = wrapper.receiver.pipe(
       map((data) => JSON.parse(data) as WsDebugGdbS2C)
     );
@@ -184,7 +184,7 @@ export class DebugService implements IRemoteTermService {
           this.consoleOutput.next(this.allOutput += newstr);
         }
       }
-    })
+    });
 
   }
 

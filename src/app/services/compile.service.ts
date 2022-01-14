@@ -16,7 +16,7 @@
 // along with clavicode-frontend.  If not, see <http://www.gnu.org/licenses/>.
 
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { CppCompileRequest, CppCompileResponse , GccDiagnostics } from '../api';
 import { NzNotificationDataOptions, NzNotificationService } from 'ng-zorro-antd/notification';
@@ -73,7 +73,7 @@ export class CompileService {
       }
       return result.stdout;
     } else if (lang === "python") {
-      const subscriptions: Subscription[] = []
+      const subscriptions: Subscription[] = [];
       const stdinLines = this.stdin.split("\n");
       let stdout = "";
       subscriptions.push(this.pyodideService.readRequest.subscribe(() => {

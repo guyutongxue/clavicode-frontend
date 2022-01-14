@@ -39,7 +39,7 @@ Array.from(document.querySelectorAll("span.texttt"))
   .filter(i => /^&lt;[^.]*&gt;/g.test(i))
   .map(i => i.substring(4, i.length - 4).replace(/\uad/, ''))
 */
-const stdCppHeaders = ['algorithm', 'any', 'array', 'atomic', 'barrier', 'bit', 'bitset', 'cassert', 'cctype', 'cerrno', 'cfenv', 'cfloat', 'charconv', 'chrono', 'cinttypes', 'climits', 'clocale', 'cmath', 'codecvt', 'compare', 'complex', 'concepts', 'condition_variable', 'coroutine', 'csetjmp', 'csignal', 'cstdarg', 'cstddef', 'cstdint', 'cstdio', 'cstdlib', 'cstring', 'ctime', 'cuchar', 'cwchar', 'cwctype', 'deque', 'exception', 'execution', 'filesystem', 'format', 'forward_list', 'fstream', 'functional', 'future', 'initializer_list', 'iomanip', 'ios', 'iosfwd', 'iostream', 'istream', 'iterator', 'latch', 'limits', 'list', 'locale', 'map', 'memory', 'memory_resource', 'mutex', 'new', 'numbers', 'numeric', 'optional', 'ostream', 'queue', 'random', 'ranges', 'ratio', 'regex', 'scoped_allocator', 'semaphore', 'set', 'shared_mutex', 'source_location', 'span', 'spanstream', 'sstream', 'stack', 'stacktrace', 'stdexcept', 'stop_token', 'streambuf', 'string', 'string_view', 'strstream', 'syncstream', 'system_error', 'thread', 'tuple', 'type_traits', 'typeindex', 'typeinfo', 'unordered_map', 'unordered_set', 'utility', 'valarray', 'variant', 'vector', 'version']
+const stdCppHeaders = ['algorithm', 'any', 'array', 'atomic', 'barrier', 'bit', 'bitset', 'cassert', 'cctype', 'cerrno', 'cfenv', 'cfloat', 'charconv', 'chrono', 'cinttypes', 'climits', 'clocale', 'cmath', 'codecvt', 'compare', 'complex', 'concepts', 'condition_variable', 'coroutine', 'csetjmp', 'csignal', 'cstdarg', 'cstddef', 'cstdint', 'cstdio', 'cstdlib', 'cstring', 'ctime', 'cuchar', 'cwchar', 'cwctype', 'deque', 'exception', 'execution', 'filesystem', 'format', 'forward_list', 'fstream', 'functional', 'future', 'initializer_list', 'iomanip', 'ios', 'iosfwd', 'iostream', 'istream', 'iterator', 'latch', 'limits', 'list', 'locale', 'map', 'memory', 'memory_resource', 'mutex', 'new', 'numbers', 'numeric', 'optional', 'ostream', 'queue', 'random', 'ranges', 'ratio', 'regex', 'scoped_allocator', 'semaphore', 'set', 'shared_mutex', 'source_location', 'span', 'spanstream', 'sstream', 'stack', 'stacktrace', 'stdexcept', 'stop_token', 'streambuf', 'string', 'string_view', 'strstream', 'syncstream', 'system_error', 'thread', 'tuple', 'type_traits', 'typeindex', 'typeinfo', 'unordered_map', 'unordered_set', 'utility', 'valarray', 'variant', 'vector', 'version'];
 
 function getLanguage(path: string) {
   if (extname(path) === '' && stdCppHeaders.includes(basename(path))) {
@@ -122,7 +122,7 @@ export class EditorService {
     this.editorText.pipe(
       debounceTime(300),
       distinctUntilChanged()
-    ).subscribe((_) => {
+    ).subscribe(() => {
       const model = this.editor?.getModel();
       if (model) {
         this.updateBkptInfo(model);
@@ -390,7 +390,7 @@ export class EditorService {
     }
     if (newModel === null) {
       newModel = monaco.editor.createModel(tab.code, getLanguage(tab.path), uri);
-      newModel.onDidChangeContent(_ => {
+      newModel.onDidChangeContent(() => {
         if (tab.type === "local" && tab.saved) {
           tab.saved = false;
         }

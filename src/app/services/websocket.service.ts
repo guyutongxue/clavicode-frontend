@@ -41,7 +41,7 @@ export class WebsocketWrapper {
       },
       error: (err: any) => this.ws.close(1000, err),
       complete: () => this.ws.close(1000)
-    }
+    };
     
     console.log("Successfully connected: ", url);
   }

@@ -143,7 +143,7 @@ export class PyodideService implements ILocalTermService {
         Atomics.store(this.inputMeta, 1, 1);
         Atomics.notify(this.inputMeta, 1);
       });
-    }
+    };
     await this.worker.init(
       Comlink.proxy(inputCb),
       this.inputBuffer,

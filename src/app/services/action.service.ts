@@ -20,8 +20,6 @@ type Action = {
   run: () => void;
 };
 
-type GlobalStatus = 'ready' | 'executing' | 'compiling' | 'debugging';
-
 @Injectable({
   providedIn: 'root'
 })

@@ -15,10 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with clavicode-frontend.  If not, see <http://www.gnu.org/licenses/>.
 
-import { Component, OnInit, ViewContainerRef } from '@angular/core';
-import { NzModalService } from 'ng-zorro-antd/modal';
-import { LoginPageComponent } from '../login-page/login-page.component';
-import { RegisterPageComponent } from '../register-page/register-page.component';
+import { Component, OnInit } from '@angular/core';
 import { ActionService } from '../services/action.service';
 import { UserService } from '../services/user.service';
 

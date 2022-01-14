@@ -2,7 +2,6 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { NzCascaderOption } from 'ng-zorro-antd/cascader';
 import { OjGetProblemResponse, OjListProblemSetsResponse, OjListProblemsResponse } from 'src/app/api';
-import { ProblemsComponent } from '../../tools/problems/problems.component';
 import { environment } from '../../../environments/environment';
 import { OjService } from 'src/app/services/oj.service';
 import { ActionService } from 'src/app/services/action.service';

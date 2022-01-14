@@ -110,7 +110,7 @@ export class MainViewComponent implements OnInit {
       if (this.currentOutletUrl("sidebar") === null) {
         this.router.navigate([{ outlets: { sidebar: 'common' } }]);
       }
-    })
+    });
   }
 
   currentOutletUrl(name: string, depth = 0) {
