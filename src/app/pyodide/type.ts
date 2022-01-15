@@ -15,6 +15,25 @@
 // You should have received a copy of the GNU General Public License
 // along with clavicode-frontend.  If not, see <http://www.gnu.org/licenses/>.
 
+/// <reference lib="webworker" />
+
+export type SelfType = typeof self & {
+  decoder: TextDecoder,
+  encoder: TextEncoder,
+  fsRDataBuffer: Uint8Array,
+  /**
+   * [ written | len | offset | ...path (256B, 32 elements) ]
+   */
+  fsRMetaBuffer: Int32Array,
+  fsRCallback: () => void;
+  fsWDataBuffer: Uint8Array,
+  fsWMetaBuffer: Int32Array,
+  fsWCallback: () => void;
+  pyodide: any,
+} & {
+  [key: string]: any
+};
+
 export type PyodideExecutionResult = {
   success: true,
   result: any
@@ -40,5 +59,12 @@ export type PyodideRemote = {
     outCb: (s: string) => void,
     errCb: (s: string) => void,
     int: Uint8Array): void;
+  initFs(
+    readDataBuffer: Uint8Array,
+    readMetaBuffer: Int32Array,
+    readCallback: () => void,
+    writeDataBuffer: Uint8Array,
+    writeMetaBuffer: Int32Array,
+    writeCallback: () => void): void;
   runCode(code: string): Promise<PyodideExecutionResult>;
 }

@@ -91,11 +91,11 @@ export class CompileService {
       const result = await this.pyodideService.closed.pipe(
         take(1),
         timeout(3000),
-        catchError(e => of(e as Error)),
+        catchError(() => of('Time limit exceeded')),
       ).toPromise();
       if (result !== null) {
-        console.log(result.message);
-        const lastLine = result.message.trim().split("\n").pop();
+        console.log(result);
+        const lastLine = result.trim().split("\n").pop();
         this.notification.error("运行错误", lastLine ?? "未知错误");
       }
       subscriptions.forEach(s => s.unsubscribe());

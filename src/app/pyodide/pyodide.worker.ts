@@ -18,14 +18,15 @@
 /// <reference lib="webworker" />
 
 import * as Comlink from 'comlink';
-import type { PyodideRemote } from "./type";
+import { openLocal, closeLocal, FS_PATCH } from './fs.worker';
+import type { PyodideRemote, SelfType } from "./type";
 
 const PYODIDE_VERSION = "v0.19.0";
 
 importScripts(`https://cdn.jsdelivr.net/pyodide/${PYODIDE_VERSION}/full/pyodide.js`);
 declare let loadPyodide: any;
 
-const Self: any = self;
+const Self: SelfType = self as any;
 
 const decoder = new TextDecoder();
 
@@ -57,10 +58,30 @@ async function init(
   console.log(Self.pyodide);
 }
 
+export function initFs(
+  readDataBuffer: Uint8Array,
+  readMetaBuffer: Int32Array,
+  readCallback: () => void, 
+  writeDataBuffer: Uint8Array,
+  writeMetaBuffer: Int32Array,
+  writeCallback: () => void) {
+  Self.pyodide.FS.mkdir('/mnt');
+  Self.pyodide.FS.mkdir('/mnt/local');
+  Self.fsRDataBuffer = readDataBuffer;
+  Self.fsRMetaBuffer = readMetaBuffer;
+  Self.fsWDataBuffer = writeDataBuffer;
+  Self.fsWMetaBuffer = writeMetaBuffer;
+  Self.fsWCallback = writeCallback;
+  Self.fsRCallback = readCallback;
+  Self['open_local'] = (arg: string) => { const r = openLocal(arg); console.log(r); return r; };
+  Self['close_local'] = (path: string, data: any) => closeLocal(path, data.toJs());
+}
+
 async function runCode(code: string) {
   try {
     await Self.pyodide.loadPackagesFromImports(code);
     const globals = Self.pyodide.toPy({});
+    code = FS_PATCH + code;
     let result = await Self.pyodide.runPythonAsync(code, globals);
     return {
       success: true,
@@ -74,4 +95,4 @@ async function runCode(code: string) {
   }
 }
 
-Comlink.expose(<PyodideRemote>{ init, runCode });
+Comlink.expose(<PyodideRemote>{ init, initFs, runCode });

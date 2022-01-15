@@ -273,19 +273,29 @@ export class FileLocalService {
     }
   }
 
+  private async getHandleByPath(path: string, create = true): Promise<[] | [FileSystemFileHandle, ...FileSystemDirectoryHandle[]]> {
+    if (this.rootHandle === null) return [];
+    const pathSeg = path.split('/');
+    let handle = this.rootHandle;
+    const handles = [this.rootHandle];
+    try {
+      while (pathSeg.length > 1) {
+        const name = pathSeg.shift()!;
+        handles.push(handle = await handle.getDirectoryHandle(name, { create }));
+      }
+      const filename = pathSeg[0];
+      return [await handle.getFileHandle(filename, { create }), ...handles.reverse()];
+    } catch {
+      return [];
+    }
+  }
+
   async save(tab: Tab | null) {
     if (tab === null) return false;
     this.tabsService.syncActiveCode();
-    if (this.rootHandle === null) return false;
-    const pathSeg = tab.path.split('/');
+    const [fileHandle] = await this.getHandleByPath(tab.path);
+    if (typeof fileHandle === "undefined") return false;
     try {
-      let handle = this.rootHandle;
-      while (pathSeg.length > 1) {
-        const name = pathSeg.shift()!;
-        handle = await handle.getDirectoryHandle(name);
-      }
-      const filename = pathSeg[0];
-      const fileHandle = await handle.getFileHandle(filename);
       if (!(await this.requestPermission(fileHandle))) return false;
       const writable = await fileHandle.createWritable();
       await writable.write(tab.code);
@@ -294,6 +304,40 @@ export class FileLocalService {
       return true;
     } catch {
       return false;
+    }
+  }
+
+  async readRaw(path: string, offset: number): Promise<[number, Uint8Array | null]> {
+    if (this.rootHandle === null) return [-1, null];
+    const [handle] = await this.getHandleByPath(path);
+    if (typeof handle === "undefined") return [-2, null];
+    if (!(await this.requestPermission(handle))) return [-3, null];
+    try {
+      const file = await handle.getFile();
+      if (file.size < offset) return [-4, null];
+      return [file.size - offset, new Uint8Array(await file.arrayBuffer(), offset)];
+    } catch {
+      return [-127, null];
+    }
+  }
+
+  async writeRaw(path: string, offset: number, data: Uint8Array) {
+    if (this.rootHandle === null) return -1;
+    const [handle, parent] = await this.getHandleByPath(path);
+    if (typeof handle === "undefined") return -2;
+    if (!(await this.requestPermission(handle))) return -3;
+    try {
+      const writable = await handle.createWritable();
+      await writable.seek(offset);
+      await writable.write(data);
+      await writable.close();
+      if (typeof parent !== "undefined") {
+        this.refresh(parent);
+      }
+      return 0;
+    } catch (e: any) {
+      console.log(e);
+      return -127;
     }
   }
 }

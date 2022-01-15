@@ -134,7 +134,7 @@ export class XtermComponent implements OnInit {
         await localEcho.println("代码运行完成。\n按任意键关闭窗口。");
       } else {
         await localEcho.println("代码运行出错：");
-        await localEcho.println(result.message);
+        await localEcho.println(result);
         await localEcho.println("按任意键关闭窗口。");
       }
       localEcho.abortRead();

@@ -24,6 +24,8 @@ import { DialogService } from '@ngneat/dialog';
 import { ExecuteDialogComponent } from '../execute-dialog/execute-dialog.component';
 import { terminalWidth } from '../execute-dialog/xterm/xterm.component';
 import { StatusService } from './status.service';
+import { CHUNK_SIZE, FS_PATCH_LINENO, MAX_PATH } from '../pyodide/fs.worker';
+import { FileLocalService } from './file-local.service';
 
 const INPUT_BUF_SIZE = 128 * 1024;
 const encoder = new TextEncoder();
@@ -55,6 +57,7 @@ def patch_stdout():
 patch_stdout()
 del patch_stdout
 `;
+const STDOUT_UNBUFFER_PATCH_LINENO = STDOUT_UNBUFFER_PATCH.match(/\n/g)?.length ?? 0;
 
 export interface ILocalTermService {
   readRequest: Subject<void>;
@@ -65,9 +68,9 @@ export interface ILocalTermService {
 
   /** Emit value when Ctrl-C. */
   // interrupt: Subject<void>;
-  
+
   /** Emit value when code execution complete. */
-  closed: Subject<Error | null>;
+  closed: Subject<string | null>;
 }
 
 @Injectable({
@@ -82,7 +85,7 @@ export class PyodideService implements ILocalTermService {
   writeRequest = new Subject<string>();
   writeResponse = new Subject<void>();
   // interrupt = new Subject<void>();
-  closed = new Subject<Error | null>();
+  closed = new Subject<string | null>();
 
   enableUnbufferPatch = true;
 
@@ -90,7 +93,8 @@ export class PyodideService implements ILocalTermService {
 
   constructor(
     private statusService: StatusService,
-    private dialogService: DialogService
+    private dialogService: DialogService,
+    private flService: FileLocalService,
   ) {
     if (typeof Worker === 'undefined') throw Error("Web worker not supported");
 
@@ -158,6 +162,7 @@ export class PyodideService implements ILocalTermService {
       Comlink.proxy((s) => this.output(s + '\n')),
       this.interruptBuffer
     );
+    this.initFs();
   }
 
   async runCode(code: string, showDialog = true) {
@@ -174,11 +179,24 @@ export class PyodideService implements ILocalTermService {
     if (result.success) {
       this.close();
     } else {
-      this.close(result.error);
+      // Correct line numbers
+      let SHIFT_LINENO = FS_PATCH_LINENO;
+      if (this.enableUnbufferPatch) {
+        SHIFT_LINENO += STDOUT_UNBUFFER_PATCH_LINENO;
+      }
+      let errorMsg: string = result.error.message;
+      const regex = /File "<exec>", line (\d+)/g;
+      let match = regex.exec(errorMsg);
+      while (match !== null) {
+        const line = parseInt(match[1]) - SHIFT_LINENO;
+        errorMsg = errorMsg.replace(match[0], `File "<exec>", line ${line}`);
+        match = regex.exec(errorMsg);
+      }
+      this.close(errorMsg);
     }
   }
 
-  private close(result: Error | null = null) {
+  private close(result: string | null = null) {
     this.statusService.next('ready');
     this.interruptBuffer[0] = 2;
     // Wait for all stdout printed.
@@ -195,6 +213,71 @@ export class PyodideService implements ILocalTermService {
     ref.afterClosed$.subscribe(() => {
       this.close();
     });
+  }
+
+  //
+  // File system
+  //
+
+  private fsRDataBuffer = new Uint8Array(new SharedArrayBuffer(CHUNK_SIZE));
+  private fsRMetaBuffer = new Int32Array(new SharedArrayBuffer(3 * Int32Array.BYTES_PER_ELEMENT + MAX_PATH));
+  private fsWDataBuffer = new Uint8Array(new SharedArrayBuffer(CHUNK_SIZE));
+  private fsWMetaBuffer = new Int32Array(new SharedArrayBuffer(3 * Int32Array.BYTES_PER_ELEMENT + MAX_PATH));
+
+  private decoder = new TextDecoder();
+  private encoder = new TextEncoder();
+
+  private async fsRead(path: string, offset: number): Promise<[number, Uint8Array | null]> {
+    return this.flService.readRaw(path, offset);
+  }
+
+  private initFs() {
+    const getFilePath = (metaBuffer: Int32Array) => {
+      let path = "";
+      for (let i = 0; ; i++) {
+        const int32 = metaBuffer[3 + Math.floor(i / 4)];
+        const int8 = (int32 >> ((i % 4) * 8)) & 0xff;
+        if (int8 === 0) break;
+        path += String.fromCharCode(int8);
+      }
+      return path;
+    };
+    const readCallback = () => {
+      const path = getFilePath(this.fsRMetaBuffer);
+      const offset = this.fsRMetaBuffer[2];
+      console.log("readCallback", "path", path);
+      console.log("readCallback", "offset", offset);
+      this.fsRead(path, offset).then(([size, buffer]) => {
+        this.fsRMetaBuffer[1] = size;
+        if (buffer !== null) {
+          const writeSize = Math.min(size, CHUNK_SIZE);
+          this.fsRDataBuffer.set(buffer.subarray(0, writeSize), 0);
+        }
+        Atomics.store(this.fsRMetaBuffer, 0, 1);
+        Atomics.notify(this.fsRMetaBuffer, 0);
+      });
+    };
+    const writeCallback = () => {
+      const path = getFilePath(this.fsWMetaBuffer);
+      const len = this.fsWMetaBuffer[1];
+      const offset = this.fsWMetaBuffer[2];
+      const data = new Uint8Array(new ArrayBuffer(len));
+      console.log(data);
+      data.set(this.fsWDataBuffer.subarray(0, len), 0);
+      this.flService.writeRaw(path, offset, data).then(result => {
+        this.fsWMetaBuffer[1] = result;
+        Atomics.store(this.fsWMetaBuffer, 0, 1);
+        Atomics.notify(this.fsWMetaBuffer, 0);
+      });
+    };
+    this.worker.initFs(
+      this.fsRDataBuffer,
+      this.fsRMetaBuffer,
+      Comlink.proxy(readCallback),
+      this.fsWDataBuffer,
+      this.fsWMetaBuffer,
+      Comlink.proxy(writeCallback)
+    );
   }
 
 }
