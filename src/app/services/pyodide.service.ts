@@ -166,9 +166,9 @@ export class PyodideService implements ILocalTermService {
     this.statusService.next('local-executing');
     if (showDialog) {
       this.openDialog();
-      if (this.enableUnbufferPatch) {
-        code = STDOUT_UNBUFFER_PATCH + code;
-      }
+    }
+    if (this.enableUnbufferPatch) {
+      code = STDOUT_UNBUFFER_PATCH + code;
     }
     const result = await this.worker.runCode(code);
     if (result.success) {

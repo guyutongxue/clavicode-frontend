@@ -90,7 +90,7 @@ export class CompileService {
       this.pyodideService.runCode(this.editorService.getCode(), false);
       const result = await this.pyodideService.closed.pipe(
         take(1),
-        timeout(1000),
+        timeout(3000),
         catchError(e => of(e as Error)),
       ).toPromise();
       if (result !== null) {
