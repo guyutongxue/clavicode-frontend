@@ -94,7 +94,9 @@ export class CompileService {
         catchError(e => of(e as Error)),
       ).toPromise();
       if (result !== null) {
-        this.notification.error("运行错误", result.message);
+        console.log(result.message);
+        const lastLine = result.message.trim().split("\n").pop();
+        this.notification.error("运行错误", lastLine ?? "未知错误");
       }
       subscriptions.forEach(s => s.unsubscribe());
       return stdout;
