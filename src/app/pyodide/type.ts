@@ -22,7 +22,7 @@ export type SelfType = typeof self & {
   encoder: TextEncoder,
   fsRDataBuffer: Uint8Array,
   /**
-   * [ written | len | offset | ...path (256B, 32 elements) ]
+   * [ done | len/create | offset | ...path (256B, 32 elements) ]
    */
   fsRMetaBuffer: Int32Array,
   fsRCallback: () => void;
@@ -40,7 +40,7 @@ export type PyodideExecutionResult = {
 } | {
   success: false,
   error: any
-}
+};
 
 export type PyodideRemote = {
   /**

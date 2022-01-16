@@ -24,7 +24,7 @@ import { DialogService } from '@ngneat/dialog';
 import { ExecuteDialogComponent } from '../execute-dialog/execute-dialog.component';
 import { terminalWidth } from '../execute-dialog/xterm/xterm.component';
 import { StatusService } from './status.service';
-import { CHUNK_SIZE, FS_PATCH_LINENO, MAX_PATH } from '../pyodide/fs.worker';
+import { CHUNK_SIZE, FS_PATCH_LINENO, MAX_PATH, MT_CREATE, MT_DONE, MT_LEN, MT_OFFSET, MT_PATH } from '../pyodide/constants';
 import { FileLocalService } from './file-local.service';
 
 const INPUT_BUF_SIZE = 128 * 1024;
@@ -224,18 +224,11 @@ export class PyodideService implements ILocalTermService {
   private fsWDataBuffer = new Uint8Array(new SharedArrayBuffer(CHUNK_SIZE));
   private fsWMetaBuffer = new Int32Array(new SharedArrayBuffer(3 * Int32Array.BYTES_PER_ELEMENT + MAX_PATH));
 
-  private decoder = new TextDecoder();
-  private encoder = new TextEncoder();
-
-  private async fsRead(path: string, offset: number): Promise<[number, Uint8Array | null]> {
-    return this.flService.readRaw(path, offset);
-  }
-
   private initFs() {
     const getFilePath = (metaBuffer: Int32Array) => {
       let path = "";
       for (let i = 0; ; i++) {
-        const int32 = metaBuffer[3 + Math.floor(i / 4)];
+        const int32 = metaBuffer[MT_PATH + Math.floor(i / 4)];
         const int8 = (int32 >> ((i % 4) * 8)) & 0xff;
         if (int8 === 0) break;
         path += String.fromCharCode(int8);
@@ -243,31 +236,31 @@ export class PyodideService implements ILocalTermService {
       return path;
     };
     const readCallback = () => {
+      const create = this.fsRMetaBuffer[MT_CREATE];
+      const offset = this.fsRMetaBuffer[MT_OFFSET];
       const path = getFilePath(this.fsRMetaBuffer);
-      const offset = this.fsRMetaBuffer[2];
-      console.log("readCallback", "path", path);
-      console.log("readCallback", "offset", offset);
-      this.fsRead(path, offset).then(([size, buffer]) => {
-        this.fsRMetaBuffer[1] = size;
+      // console.log({ create, offset, path });
+      this.flService.readRaw(path, offset, create).then(([size, buffer]) => {
+        this.fsRMetaBuffer[MT_LEN] = size;
         if (buffer !== null) {
           const writeSize = Math.min(size, CHUNK_SIZE);
           this.fsRDataBuffer.set(buffer.subarray(0, writeSize), 0);
         }
-        Atomics.store(this.fsRMetaBuffer, 0, 1);
-        Atomics.notify(this.fsRMetaBuffer, 0);
+        Atomics.store(this.fsRMetaBuffer, MT_DONE, 1);
+        Atomics.notify(this.fsRMetaBuffer, MT_DONE);
       });
     };
     const writeCallback = () => {
       const path = getFilePath(this.fsWMetaBuffer);
-      const len = this.fsWMetaBuffer[1];
-      const offset = this.fsWMetaBuffer[2];
-      const data = new Uint8Array(new ArrayBuffer(len));
-      console.log(data);
-      data.set(this.fsWDataBuffer.subarray(0, len), 0);
+      const len = this.fsWMetaBuffer[MT_LEN];
+      const offset = this.fsWMetaBuffer[MT_OFFSET];
+      // console.log({ len, offset, path });
+      const data = new Uint8Array(len);
+      data.set(this.fsWDataBuffer.subarray(0, len));
       this.flService.writeRaw(path, offset, data).then(result => {
-        this.fsWMetaBuffer[1] = result;
-        Atomics.store(this.fsWMetaBuffer, 0, 1);
-        Atomics.notify(this.fsWMetaBuffer, 0);
+        this.fsWMetaBuffer[MT_LEN] = result;
+        Atomics.store(this.fsWMetaBuffer, MT_DONE, 1);
+        Atomics.notify(this.fsWMetaBuffer, MT_DONE);
       });
     };
     this.worker.initFs(

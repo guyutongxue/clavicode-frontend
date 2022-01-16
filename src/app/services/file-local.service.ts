@@ -26,6 +26,7 @@ import { Tab, TabsService } from './tabs.service';
 
 import { v4 as uuid } from 'uuid';
 import { basename } from 'path';
+import { C_CREATE, C_EXCLUSIVE, C_NONE, E_EXCEPTION, E_FILE_EXIST, E_INTERNAL, E_NO_ENTRY, E_NO_LOCALFS, E_OFFSET, E_PERM_DENIED } from '../pyodide/constants';
 
 export type FsNode = {
   name: string;
@@ -273,20 +274,65 @@ export class FileLocalService {
     }
   }
 
-  private async getHandleByPath(path: string, create = true): Promise<[] | [FileSystemFileHandle, ...FileSystemDirectoryHandle[]]> {
-    if (this.rootHandle === null) return [];
+  private async getHandleByPath(path: string, create = C_CREATE): Promise<[null, number] | [FileSystemFileHandle, ...FileSystemDirectoryHandle[]]> {
+    if (this.rootHandle === null) return [null, E_NO_LOCALFS];
     const pathSeg = path.split('/');
     let handle = this.rootHandle;
     const handles = [this.rootHandle];
+
+    async function iter(type: 'getDirectoryHandle', handle: FileSystemDirectoryHandle, name: string): Promise<FileSystemDirectoryHandle | number>;
+    async function iter(type: 'getFileHandle', handle: FileSystemDirectoryHandle, name: string): Promise<FileSystemFileHandle | number>;
+    async function iter(type: 'getDirectoryHandle' | 'getFileHandle', handle: FileSystemDirectoryHandle, name: string): Promise<FileSystemDirectoryHandle | FileSystemFileHandle | number> {
+      switch (create) {
+        case C_CREATE:
+          return await handle[type](name, { create: true });
+        case C_NONE:
+          try {
+            return await handle[type](name);
+          } catch (e) {
+            if (e instanceof DOMException && e.name === 'NotFoundError') {
+              return E_NO_ENTRY;
+            } else {
+              throw e;
+            }
+          }
+        case C_EXCLUSIVE:
+          try {
+            await handle[type](name);
+            return E_FILE_EXIST;
+          } catch (e) {
+            if (e instanceof DOMException && e.name === 'NotFoundError') {
+              return await handle[type](name, { create: true });
+            } else {
+              throw e;
+            }
+          }
+        default:
+          return E_INTERNAL;
+      }
+    };
+
     try {
       while (pathSeg.length > 1) {
         const name = pathSeg.shift()!;
-        handles.push(handle = await handle.getDirectoryHandle(name, { create }));
+        const result = await iter('getDirectoryHandle', handle, name);
+        if (typeof result === "number") {
+          return [null, result];
+        }
+        handles.push(handle = result);
       }
       const filename = pathSeg[0];
-      return [await handle.getFileHandle(filename, { create }), ...handles.reverse()];
-    } catch {
-      return [];
+      const result = await iter('getFileHandle', handle, filename);
+      if (typeof result === "number") {
+        return [null, result];
+      }
+      return [result, ...handles.reverse()];
+    } catch (e) {
+      if (e instanceof DOMException && e.name === 'NotAllowedError') {
+        return [null, E_PERM_DENIED];
+      }
+      console.log(e);
+      return [null, E_EXCEPTION];
     }
   }
 
@@ -294,7 +340,7 @@ export class FileLocalService {
     if (tab === null) return false;
     this.tabsService.syncActiveCode();
     const [fileHandle] = await this.getHandleByPath(tab.path);
-    if (typeof fileHandle === "undefined") return false;
+    if (fileHandle === null) return false;
     try {
       if (!(await this.requestPermission(fileHandle))) return false;
       const writable = await fileHandle.createWritable();
@@ -307,37 +353,41 @@ export class FileLocalService {
     }
   }
 
-  async readRaw(path: string, offset: number): Promise<[number, Uint8Array | null]> {
-    if (this.rootHandle === null) return [-1, null];
-    const [handle] = await this.getHandleByPath(path);
-    if (typeof handle === "undefined") return [-2, null];
-    if (!(await this.requestPermission(handle))) return [-3, null];
+  async readRaw(path: string, offset: number, create: number): Promise<[number, Uint8Array | null]> {
+    if (this.rootHandle === null) return [E_NO_LOCALFS, null];
+    const res = await this.getHandleByPath(path, create);
+    if (res[0] === null) return [res[1], null];
+    if (!(await this.requestPermission(res[0]))) return [E_PERM_DENIED, null];
     try {
-      const file = await handle.getFile();
-      if (file.size < offset) return [-4, null];
+      const file = await res[0].getFile();
+      if (file.size < offset) return [E_OFFSET, null];
       return [file.size - offset, new Uint8Array(await file.arrayBuffer(), offset)];
-    } catch {
-      return [-127, null];
+    } catch (e) {
+      console.log(e);
+      return [E_EXCEPTION, null];
     }
   }
 
   async writeRaw(path: string, offset: number, data: Uint8Array) {
-    if (this.rootHandle === null) return -1;
-    const [handle, parent] = await this.getHandleByPath(path);
-    if (typeof handle === "undefined") return -2;
-    if (!(await this.requestPermission(handle))) return -3;
+    if (this.rootHandle === null) return E_NO_LOCALFS;
+    const res = await this.getHandleByPath(path);
+    if (res[0] === null) return res[1];
+    if (!(await this.requestPermission(res[0]))) return E_PERM_DENIED;
     try {
-      const writable = await handle.createWritable();
+      const writable = await res[0].createWritable({
+        keepExistingData: offset !== 0
+      });
       await writable.seek(offset);
       await writable.write(data);
+      console.log({ offset, data });
       await writable.close();
       if (typeof parent !== "undefined") {
-        this.refresh(parent);
+        this.refresh(res[1]);
       }
       return 0;
     } catch (e: any) {
       console.log(e);
-      return -127;
+      return E_EXCEPTION;
     }
   }
 }

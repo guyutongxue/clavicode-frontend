@@ -18,7 +18,8 @@
 /// <reference lib="webworker" />
 
 import * as Comlink from 'comlink';
-import { openLocal, closeLocal, FS_PATCH } from './fs.worker';
+import { FS_PATCH } from './constants';
+import { openLocal, closeLocal } from './fs.worker';
 import type { PyodideRemote, SelfType } from "./type";
 
 const PYODIDE_VERSION = "v0.19.0";
@@ -73,7 +74,7 @@ export function initFs(
   Self.fsWMetaBuffer = writeMetaBuffer;
   Self.fsWCallback = writeCallback;
   Self.fsRCallback = readCallback;
-  Self['open_local'] = (arg: string) => { const r = openLocal(arg); console.log(r); return r; };
+  Self['open_local'] = (path: string, mode: string) => { const r = openLocal(path, mode); console.log(r); return r; };
   Self['close_local'] = (path: string, data: any) => closeLocal(path, data.toJs());
 }
 

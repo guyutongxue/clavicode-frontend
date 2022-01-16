@@ -16,135 +16,105 @@
 // along with clavicode-frontend.  If not, see <http://www.gnu.org/licenses/>.
 
 import { SelfType } from "./type";
+import { MAX_PATH, CHUNK_SIZE, MT_PATH, MT_OFFSET, MT_DONE, MT_LEN, MT_CREATE, C_EXCLUSIVE, C_CREATE, C_NONE, E_MAX_PATH } from './constants';
 
 /// <reference lib="webworker" />
 
 type OpenLocalResult = {
-  success: false,
-  reason: string
+  success: false;
+  errno: number;
 } | {
-  success: true,
-  data: Uint8Array
+  success: true;
+  data: Uint8Array;
 }
 
 const Self: SelfType = self as any;
 
-export const FS_PATCH = `
-__open = open
-def patch_fs():
-    from js import open_local, close_local
-    from pathlib import Path
-    import os
-    PREFIX = '/mnt/local/'
-    def patched_open(file, *args, **kwargs):
-        if not isinstance(file, str):
-            return __open(file, *args, **kwargs)
-        path = Path(file).resolve()
-        pathstr = str(path)
-        if not pathstr.startswith(PREFIX):
-            return __open(file, *args, **kwargs)
-        res = open_local(pathstr[len(PREFIX):])
-        if res.success:
-            os.makedirs(str(path.parent), exist_ok=True)
-            with __open(pathstr, 'wb') as pf:
-                pf.write(res.data.to_py().tobytes())
-        else:
-            raise OSError("Failed to load %s from local fs. Reason: %s" % (file, res.reason))
-        f = __open(file, *args, **kwargs)
-        __close = f.close
-        def patched_close():
-            __close()
-            with __open(pathstr, 'rb') as pf:
-                data = pf.read()
-                res = close_local(pathstr[len(PREFIX):], data)
-                if res < 0:
-                    raise OSError("Failed to store %s to local fs. Errno: %d" % (file, res))
-        f.close = patched_close
-        return f
-    os.chdir(PREFIX)
-    return patched_open
-open = patch_fs()
-del patch_fs
-`;
-export const FS_PATCH_LINENO = FS_PATCH.match(/\n/g)?.length ?? 0;
-
-export const MAX_PATH = 256;
-export const CHUNK_SIZE = 4096;
-
 function fillPathToMeta(path: string, buffer: Int32Array) {
-  buffer.fill(0, 3);
+  buffer.fill(0, MT_PATH);
   for (let i = 0; i < path.length; i++) {
-    buffer[3 + Math.floor(i / 4)] |= path.charCodeAt(i) << (8 * (i % 4));
+    buffer[MT_PATH + Math.floor(i / 4)] |= path.charCodeAt(i) << (8 * (i % 4));
   }
-
 }
 
-export function openLocal(path: string): OpenLocalResult {
+export function openLocal(path: string, mode: string): OpenLocalResult {
   if (path.length > MAX_PATH) {
     return {
       success: false,
-      reason: `Path is too long.`
+      errno: E_MAX_PATH
     };
   }
   const dataBuf = Self.fsRDataBuffer;
   const metaBuf = Self.fsRMetaBuffer;
   fillPathToMeta(path, metaBuf);
-  metaBuf[2] = 0;                         // offset = 0;
-  Self.fsRCallback();                     // read
-  Atomics.wait(metaBuf, 0, 0);            // wait for read to finish
-  Atomics.store(metaBuf, 0, 0);           // reset
-  let len = Atomics.exchange(metaBuf, 1, 0);
+  let create: number;
+  if (mode.includes('x')) {
+    create = C_EXCLUSIVE;
+  } else if (mode.includes('w') || mode.includes('a')) {
+    create = C_CREATE;
+  } else {
+    create = C_NONE;
+  }
+  let offset = 0;                         // current read position
+  metaBuf[MT_CREATE] = create;
+  metaBuf[MT_OFFSET] = offset;
+  Self.fsRCallback();                     // read from local fs
+  Atomics.wait(metaBuf, MT_DONE, 0);      // wait for read to finish
+  Atomics.store(metaBuf, MT_DONE, 0);     // reset
+  let len = metaBuf[MT_LEN];
   if (len < 0) {
-    return {
-      success: false,
-      reason: `errno ${len}`
-    };
+    return { success: false, errno: len };
   }
   const resultBuf = new Uint8Array(len);
-  let pos = 0;                            // current read position
-  if (len <= CHUNK_SIZE) {
-    resultBuf.set(dataBuf.subarray(0, len));
-    return { success: true, data: resultBuf };
-  }
   while (len > CHUNK_SIZE) {
-    resultBuf.set(dataBuf, pos);          // copy chunk
-    metaBuf[2] = pos;                     // offset = pos
-    Self.fsRCallback();                   // read from local fs
-    Atomics.wait(metaBuf, 0, 0);          // wait for read to finish
-    Atomics.store(dataBuf, 0, 0);         // reset
+    resultBuf.set(dataBuf, offset);       // copy chunk
     len -= CHUNK_SIZE;
-    pos += CHUNK_SIZE;
+    offset += CHUNK_SIZE;
+    metaBuf[MT_CREATE] = create;
+    metaBuf[MT_OFFSET] = offset;          // update offset
+    Self.fsRCallback();                   // read from local fs
+    Atomics.wait(metaBuf, MT_DONE, 0);    // wait for read to finish
+    Atomics.store(metaBuf, MT_DONE, 0);   // reset
   }
-  resultBuf.set(dataBuf.subarray(0, len), pos); // copy last chunk
+  resultBuf.set(dataBuf.subarray(0, len), offset); // copy last chunk
   return { success: true, data: resultBuf };
 }
 
 export function closeLocal(path: string, data: Uint8Array): number {
+  if (path.length > MAX_PATH) {
+    return E_MAX_PATH;
+  }
   const dataBuf = Self.fsWDataBuffer;
   const metaBuf = Self.fsWMetaBuffer;
   fillPathToMeta(path, metaBuf);
   let len = data.length;
-  let pos = 0;
-  metaBuf[1] = len;
-  metaBuf[2] = pos;
-  if (len <= CHUNK_SIZE) {
-    dataBuf.set(data.subarray(0, len), pos);
-    Self.fsWCallback();                     // write to local fs
-    Atomics.wait(metaBuf, 0, 0);            // wait for read to finish
-    Atomics.store(metaBuf, 0, 0);           // reset
-    const result = Atomics.exchange(metaBuf, 1, len);
-    return result;
-  }
-  while (len > 0) {
-    metaBuf[1] = len;
-    metaBuf[2] = pos;
-    dataBuf.set(data, pos);
-    Self.fsWCallback();
-    Atomics.wait(metaBuf, 0, 0);
-    Atomics.store(metaBuf, 0, 0);
+  let offset = 0;
+  let result = 0;
+  while (len > CHUNK_SIZE) {
+    metaBuf[MT_LEN] = CHUNK_SIZE;
+    metaBuf[MT_OFFSET] = offset;
+    console.log({ len, offset });
+    dataBuf.set(data.subarray(offset, offset + CHUNK_SIZE)); // copy chunk
+    Self.fsWCallback();                  // write to local fs
+    Atomics.wait(metaBuf, MT_DONE, 0);
+    Atomics.store(metaBuf, MT_DONE, 0);
+    if (metaBuf[MT_LEN] < 0) {
+      return metaBuf[MT_LEN];
+    }
+    result += metaBuf[MT_LEN];
     len -= CHUNK_SIZE;
-    pos += CHUNK_SIZE;
+    offset += CHUNK_SIZE;
   }
-  const result = Atomics.exchange(metaBuf, 1, len);
+  metaBuf[MT_LEN] = len;
+  metaBuf[MT_OFFSET] = offset;
+  console.log({ len, offset });
+  dataBuf.set(data.subarray(offset));     // copy last chunk
+  Self.fsWCallback();                     // write to local fs
+  Atomics.wait(metaBuf, MT_DONE, 0);      // wait for read to finish
+  Atomics.store(metaBuf, MT_DONE, 0);     // reset
+  if (metaBuf[MT_LEN] < 0) {
+    return metaBuf[MT_LEN];
+  }
+  result += metaBuf[MT_LEN];
   return result;
 }
