@@ -269,7 +269,9 @@ export class FileLocalService {
     const name = node.name;
     const handle = this.getParent(node);
     if (handle && await this.requestPermission(handle)) {
-      await handle.removeEntry(name);
+      await handle.removeEntry(name, {
+        recursive: true
+      });
       this.refresh(handle);
     }
   }
