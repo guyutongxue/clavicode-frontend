@@ -27,7 +27,7 @@ import zh from '@angular/common/locales/zh';
 import { FormsModule , ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MonacoEditorModule, MONACO_PATH } from '@gytx/ngx-monaco-editor';
+import { MonacoEditorModule, MONACO_PATH } from '@materia-ui/ngx-monaco-editor';
 
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -94,7 +94,7 @@ registerLocaleData(zh);
   ],
   providers: [
     { provide: NZ_I18N, useValue: zh_CN },
-    { provide: MONACO_PATH, useValue: 'https://cdn.jsdelivr.net/npm/monaco-editor-core@0.30.1/min/vs'}
+    { provide: MONACO_PATH, useValue: 'https://cdn.jsdelivr.net/npm/monaco-editor-core@0.31.1/min/vs'}
   ],
   bootstrap: [AppComponent]
 })

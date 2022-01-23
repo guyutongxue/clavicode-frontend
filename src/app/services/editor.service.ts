@@ -19,7 +19,7 @@
 import { Injectable } from '@angular/core';
 import { listen, MessageConnection } from 'vscode-ws-jsonrpc';
 import ReconnectingWebSocket from 'reconnecting-websocket';
-import { MonacoEditorLoaderService } from '@gytx/ngx-monaco-editor';
+import { MonacoEditorLoaderService } from '@materia-ui/ngx-monaco-editor';
 import { MonacoLanguageClient, CloseAction, ErrorAction, MonacoServices, createConnection } from '@codingame/monaco-languageclient';
 import { DocumentSymbol, SemanticTokens } from 'vscode-languageserver-protocol';
 import { BehaviorSubject, Subject } from 'rxjs';
@@ -50,7 +50,7 @@ function getLanguage(path: string) {
 }
 
 const clangdSemanticTokensLegend: monaco.languages.SemanticTokensLegend = {
-  tokenModifiers: [], // No token modifier supported now (12.0.0-rc1)
+  tokenModifiers: [], // No token modifier supported now (12.0.1)
   // See https://github.com/llvm/llvm-project/blob/4dc8365/clang-tools-extra/clangd/SemanticHighlighting.h#L30
   tokenTypes: [
     "variable.global",         // Global var
@@ -66,13 +66,13 @@ const clangdSemanticTokensLegend: monaco.languages.SemanticTokensLegend = {
     "number.enum",             // Enum member
     "type",                    // Type-alias (rely on template)
     "type",                    // Other type
-    "",                        // Unknown
+    "",                        // Unknown (Dependent name)
     "type.namespace",          // Namespace
     "type.param",              // Template param
     "type.concept",            // Concept
     "type",                    // Primitive type (type-alias)
     "macro",                   // Macro
-    "comment"                  // Inactive Code
+    "comment"                  // Inactive code
   ]
 };
 
@@ -153,9 +153,11 @@ export class EditorService {
         getLegend() {
           return clangdSemanticTokensLegend;
         },
-        provideDocumentSemanticTokens: async (model: monaco.editor.ITextModel) => {
+        provideDocumentSemanticTokens: async (model) => {
+          const data = await this.getSemanticTokens(model);
+          console.log(data);
           return {
-            data: new Uint32Array(await this.getSemanticTokens(model))
+            data: new Uint32Array(data)
           };
         },
         releaseDocumentSemanticTokens() { }
