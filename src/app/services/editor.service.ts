@@ -132,7 +132,7 @@ export class EditorService {
     this.monacoEditorLoaderService.isMonacoLoaded$.pipe(
       filter(isLoaded => isLoaded),
       take(1)
-    ).subscribe(() => {
+    ).subscribe(async () => {
       monaco.languages.register({
         id: 'cpp',
         extensions: [
@@ -149,23 +149,25 @@ export class EditorService {
       });
       monaco.languages.setMonarchTokensProvider('python', pyLang);
       monaco.languages.setLanguageConfiguration('python', pyLangConf);
+      MonacoServices.install(monaco as any);
+
+      await Promise.all([
+        this.startLanguageClient('cpp'),
+        this.startLanguageClient('python')
+      ]);
+      // Override default SemanticTokensProvider. Replace legend with our own.
       monaco.languages.registerDocumentSemanticTokensProvider('cpp', {
         getLegend() {
           return clangdSemanticTokensLegend;
         },
         provideDocumentSemanticTokens: async (model) => {
           const data = await this.getSemanticTokens(model);
-          console.log(data);
           return {
             data: new Uint32Array(data)
           };
         },
         releaseDocumentSemanticTokens() { }
       });
-      MonacoServices.install(monaco as any);
-
-      this.startLanguageClient('cpp');
-      this.startLanguageClient('python');
     });
   }
 
@@ -182,37 +184,42 @@ export class EditorService {
     };
     const webSocket = new ReconnectingWebSocket(socketUrl, [], socketOptions) as any;
     let client: MonacoLanguageClient;
-    // listen when the web socket is opened
-    listen({
-      webSocket,
-      onConnection: (connection: MessageConnection) => {
-        // create and start the language client
-        client = new MonacoLanguageClient({
-          name: `${lang} client`,
-          clientOptions: {
-            // use a language id as a document selector
-            documentSelector: [lang],
-            // disable the default error handler
-            errorHandler: {
-              error: () => ErrorAction.Continue,
-              closed: () => CloseAction.DoNotRestart
+    return new Promise<void>((resolve) => {
+      // listen when the web socket is opened
+      listen({
+        webSocket,
+        onConnection: (connection: MessageConnection) => {
+          // create and start the language client
+          client = new MonacoLanguageClient({
+            name: `${lang} client`,
+            clientOptions: {
+              // use a language id as a document selector
+              documentSelector: [lang],
+              // disable the default error handler
+              errorHandler: {
+                error: () => ErrorAction.Continue,
+                closed: () => CloseAction.DoNotRestart
+              }
+            },
+            // create a language client connection from the JSON RPC connection on demand
+            connectionProvider: {
+              get: (errorHandler, closeHandler) => {
+                return Promise.resolve(createConnection(<any>connection, errorHandler, closeHandler));
+              }
             }
-          },
-          // create a language client connection from the JSON RPC connection on demand
-          connectionProvider: {
-            get: (errorHandler, closeHandler) => {
-              return Promise.resolve(createConnection(<any>connection, errorHandler, closeHandler));
-            }
-          }
-        });
-        const disposable = client.start();
-        // When client is ready, assign it to global
-        client.onReady().then(() => this.languageClient[lang] = client);
-        connection.onClose(() => {
-          this.languageClient[lang] = null;
-          disposable?.dispose();
-        });
-      }
+          });
+          const disposable = client.start();
+          // When client is ready, assign it to global
+          client.onReady().then(() => {
+            this.languageClient[lang] = client;
+            resolve();
+          });
+          connection.onClose(() => {
+            this.languageClient[lang] = null;
+            disposable?.dispose();
+          });
+        }
+      });
     });
   }
 

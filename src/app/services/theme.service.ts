@@ -157,14 +157,14 @@ export class ThemeService {
     const nonTokenColors = [
       "background", "foreground", "activeLine", "debugStep", "breakpoint"
     ];
-    const rules: monaco.editor.ITokenThemeRule[] = Object.entries(theme.colors)
+    const rules = Object.entries(theme.colors)
       .filter(([key, _]) => !nonTokenColors.includes(key))
       .map(([key, value]) => {
         const styles: string[] = [];
         if (theme.boldTokens.includes(key)) styles.push("bold");
         if (theme.italicTokens.includes(key)) styles.push("italic");
         if (theme.underlineTokens.includes(key)) styles.push("underline");
-        return {
+        return <monaco.editor.ITokenThemeRule>{
           token: key,
           foreground: value,
           fontStyle: styles.join(" ")
