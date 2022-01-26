@@ -1,19 +1,10 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { EmptyPageComponent } from './empty-page/empty-page.component';
 import { SidebarRoutingModule } from './sidebar/sidebar-routing.module';
 import { EditorComponent } from './tabs/editor/editor.component';
 import { ToolsRoutingModule } from './tools/tools-routing.module';
 
 const routes: Routes = [
-  {
-    path: 'empty',
-    component: EmptyPageComponent
-  },
-  {
-    path: 'file/:key',
-    component: EditorComponent
-  },
   // {
   //   path: 'setting/~build',
   //   component: BuildSettingComponent,
@@ -49,13 +40,14 @@ const routes: Routes = [
   //   ]
   // },
   {
-    path: '**',
-    redirectTo: 'file/main'
-  }];
+    path: '',
+    component: EditorComponent
+  }
+];
 
 @NgModule({
   imports: [
-    RouterModule.forRoot(routes, { useHash: true }),
+    RouterModule.forRoot(routes),
     SidebarRoutingModule,
     ToolsRoutingModule
   ],

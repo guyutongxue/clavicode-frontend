@@ -66,20 +66,6 @@ export class TabsService {
   private activeTabKey: string | null = 'main';
 
   constructor(private editorService: EditorService) {
-    // TabsService controls how EditorService works.
-    // When EditorService is not initialized, TabsService should do noting.
-    // So I add `if (!this.editorService.isInit) return;` in each function
-    // that use EditorService.
-    // When initialization finished, it will send a event. TabsService will
-    // do necessary initialization by calling `getActive` then.
-    this.editorService.editorMessage.subscribe(({ type, arg }) => {
-      switch (type) {
-        case "initCompleted": {
-          this.getActive();
-          break;
-        }
-      }
-    });
     const init = INIT_TABS[this.pinnedLang];
     this.tabList = [{
       key: 'main',

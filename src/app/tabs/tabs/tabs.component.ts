@@ -49,16 +49,11 @@ export class TabsComponent implements OnInit {
   set activeIndex(index: number) {
     if (index >= 0) {
       this.tabsService.changeActive(index);
-      const tab = this.tabList[index];
-      this.router.navigate([tab.type + '/' + tab.key]);
     }
   }
 
   private doRemoveTab(tab: Tab) {
     this.activeIndex = this.tabsService.remove(tab.key);
-    if (this.tabList.length === 0) {
-      this.router.navigate(['empty']);
-    }
   }
 
   closeTab(e: { index: number }) {

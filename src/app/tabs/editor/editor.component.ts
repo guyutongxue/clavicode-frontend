@@ -27,7 +27,6 @@ import { TabsService } from '../../services/tabs.service';
 })
 export class EditorComponent implements OnInit {
 
-  key: string | null = null;
   get code() {
     return this.tabsService.getActive()[0]?.code ?? "";
   }
@@ -46,15 +45,7 @@ export class EditorComponent implements OnInit {
     private editorService: EditorService) { }
 
 
-  private keyOnChange(key: string) {
-    if (typeof key !== "undefined") this.key = null;
-    this.key = key;
-  }
-
   ngOnInit(): void {
-    this.route.params.subscribe(routeParams => {
-      this.keyOnChange(routeParams['key']);
-    });
     console.log(this.editorService);
   }
 
@@ -62,13 +53,6 @@ export class EditorComponent implements OnInit {
     console.log("Editor initialized");
     this.editorService.editorInit(editor);
     this.editorLoaded = true;
-    if (this.key) {
-      const [activeTab] = this.tabsService.getByKey(this.key);
-      if (activeTab) {
-        this.editorService.switchToModel(activeTab);
-      } else {
-        this.tabsService.changeActive('main');
-      }
-    }
+    this.tabsService.changeActive();
   }
 }
