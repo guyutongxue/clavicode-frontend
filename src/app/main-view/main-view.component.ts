@@ -108,7 +108,7 @@ export class MainViewComponent implements OnInit {
       take(1)
     ).subscribe(() => {
       if (this.currentOutletUrl("sidebar") === null) {
-        this.router.navigate([{ outlets: { sidebar: 'common' } }]);
+        this.router.navigate([{ outlets: { sidebar: 'common' } }], { skipLocationChange: true });
       }
     });
   }
@@ -122,34 +122,18 @@ export class MainViewComponent implements OnInit {
   }
   showSidebar(who: string | null): void {
     if (who === this.currentOutletUrl("sidebar") || who === null) {
-      this.router.navigate([{
-        outlets: {
-          sidebar: null
-        }
-      }]);
+      this.router.navigate([{ outlets: { sidebar: null } }], { skipLocationChange: true });
     } else {
       if (this.sidebarItems.find(i => i.url === who)?.disabled) return;
-      this.router.navigate([{
-        outlets: {
-          sidebar: who
-        }
-      }]);
+      this.router.navigate([{ outlets: { sidebar: who } }], { skipLocationChange: true });
     }
   }
   showTools(who: string | null, ...children: string[]): void {
     if (who === null) {
-      this.router.navigate([{
-        outlets: {
-          tools: null
-        }
-      }]);
+      this.router.navigate([{ outlets: { tools: null } }], { skipLocationChange: true });
     } else {
       if (this.toolsItems.find(i => i.url === who)?.disabled) return;
-      this.router.navigate([{
-        outlets: {
-          tools: [who, ...children]
-        }
-      }]);
+      this.router.navigate([{ outlets: { tools: [who, ...children] } }], { skipLocationChange: true });
     }
   }
 }

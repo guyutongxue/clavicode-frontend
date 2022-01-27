@@ -127,11 +127,7 @@ export class OjService {
   }
 
   showSolution() {
-    this.router.navigate([{
-      outlets: {
-        tools: ['output', 'solution']
-      }
-    }]);
+    this.router.navigate([{ outlets: { tools: ['output', 'solution'] } }], { skipLocationChange: true });
   }
 
 }

@@ -108,6 +108,6 @@ export class TabsComponent implements OnInit {
   }
 
   set currentLang(value: string) {
-    this.tabsService.changePinnedLang(value);
+    this.tabsService.changePinned(value);
   }
 }

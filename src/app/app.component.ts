@@ -16,6 +16,9 @@
 // along with clavicode-frontend.  If not, see <http://www.gnu.org/licenses/>.
 
 import { Component, HostListener, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { filter } from 'rxjs/operators';
+import { TabsService } from './services/tabs.service';
 import { ThemeService } from './services/theme.service';
 
 @Component({
@@ -27,12 +30,22 @@ export class AppComponent implements OnInit {
 
   private windowHeight: number;
 
-  constructor(private themeService: ThemeService) {
+  constructor(
+    private route: ActivatedRoute,
+    private tabsService: TabsService,
+    private themeService: ThemeService) {
     this.windowHeight = window.innerHeight;
     this.themeService.setTheme('classic');
   }
 
   ngOnInit() {
+    this.route.queryParams.subscribe((params) => {
+      const lang: string | undefined = params['lang'];
+      const code: string | undefined = params['code'];
+      if (typeof lang === 'string') {
+        this.tabsService.changePinned(lang, code);
+      }
+    });
   }
 
   @HostListener('window:resize', ['$event'])

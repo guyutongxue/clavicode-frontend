@@ -216,11 +216,7 @@ export class DebugService implements IRemoteTermService {
     for (const breakInfo of this.initBreakpoints) {
       await this.sendMiRequest(`-break-insert ${this.bkptConditionCmd(breakInfo)} "${this.sourceFilePath}:${breakInfo.line}"`);
     }
-    this.router.navigate([{
-      outlets: {
-        tools: 'debug'
-      }
-    }]);
+    this.router.navigate([{ outlets: { tools: 'debug' } }], { skipLocationChange: true });
     this.openDialog();
     await this.sendMiRequest("-exec-continue");
   }

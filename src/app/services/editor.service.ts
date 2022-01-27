@@ -21,7 +21,7 @@ import { listen, MessageConnection } from 'vscode-ws-jsonrpc';
 import ReconnectingWebSocket from 'reconnecting-websocket';
 import { MonacoEditorLoaderService } from '@materia-ui/ngx-monaco-editor';
 import { MonacoLanguageClient, CloseAction, ErrorAction, MonacoServices, createConnection } from '@codingame/monaco-languageclient';
-import { DocumentSymbol, SemanticTokens } from 'vscode-languageserver-protocol';
+import type { DocumentSymbol, SemanticTokens } from 'vscode-languageserver-protocol';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, filter, take } from 'rxjs/operators';
 

@@ -176,7 +176,7 @@ export class TabsService {
   }
 
   pinnedLang: string = 'python';
-  changePinnedLang(lang: string) {
+  changePinned(lang: string, code?: string) {
     const [_, i] = this.getByKey('main');
     const tab = INIT_TABS[lang];
     this.tabList[i] = {
@@ -184,7 +184,7 @@ export class TabsService {
       title: `main.${tab.ext}`,
       path: `/tmp/main.${tab.ext}`,
       type: 'pinned',
-      code: tab.code,
+      code: code ?? tab.code,
       saved: true
     };
     this.activeTabKey = null; // prevent sync editor code to tab

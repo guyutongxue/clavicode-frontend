@@ -40,7 +40,7 @@ export class EditorComponent implements OnInit {
   };
   editorLoaded: boolean = false;
 
-  constructor(private route: ActivatedRoute,
+  constructor(
     private tabsService: TabsService,
     private editorService: EditorService) { }
 

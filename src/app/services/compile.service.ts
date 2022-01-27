@@ -171,22 +171,14 @@ export class CompileService {
   }
 
   private showOutput(result : CppCompileResponse) {
-    this.router.navigate([{
-      outlets: {
-        tools: 'output'
-      }
-    }]);
+    this.router.navigate([{ outlets: { tools: 'output' } }], { skipLocationChange: true });
    /*
    todo maybe add this part?
    */
   }
 
   private showProblems(diagnostics: GccDiagnostics) {
-    this.router.navigate([{
-      outlets: {
-        tools: 'problems'
-      }
-    }]);
+    this.router.navigate([{ outlets: { tools: 'problems' } }], { skipLocationChange: true });
     this.problemsService.problems.next(diagnostics);
   }
   
