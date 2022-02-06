@@ -23,7 +23,7 @@ export class SidebarUserComponent implements OnInit {
     if (this.validateForm.valid) {
       console.log('submit', this.validateForm.value);
       this.isLoading = true;
-      this.http.post<UserGetVeriCodeResponse>(`//${environment.backendHost}/user/getVeriCode`, this.validateForm.value).subscribe((res) => {
+      this.http.post<UserGetVeriCodeResponse>(`//${environment.backendHost}/user/getVeriCode`, this.validateForm.value, {withCredentials: true}).subscribe((res) => {
         this.isLoading = false;
         if (res.success) {
           let i = 10;
@@ -55,6 +55,10 @@ export class SidebarUserComponent implements OnInit {
     }
   }
 
+  refresh():void{
+    this.userService.updateUserInfo();
+    return;
+  }
   ngOnInit(): void { }
 
 

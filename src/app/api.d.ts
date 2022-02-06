@@ -179,7 +179,7 @@ export type UserGetInfoResponse = {
   nickname: string,
   username: string;
   email: string | undefined,
-  status: string,
+  isVIP: boolean,
   authorized: Map<string, string[]> | undefined;
 } | {
   success: false;

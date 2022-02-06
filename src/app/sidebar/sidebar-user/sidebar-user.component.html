@@ -5,12 +5,13 @@
             <div *ngIf="userInfo">
                 <p>用户名: {{userInfo.username}}</p>
                 <p>昵称: {{userInfo.nickname}}</p>
-                <ng-template *ngIf="userInfo.email; else notVerified">
-                    认证邮箱: {{userInfo.email}}
-                </ng-template>                
+                <div *ngIf="userInfo.email; else notVerified">
+                    <p>认证邮箱: {{userInfo.email}}</p>
+                </div>
                 <ng-template #notVerified>
                     认证邮箱: 未认证
                 </ng-template>
+                <button nz-button [nzType]="'primary'" (click)="refresh">刷新</button>
                 <ng-template *ngIF="userInfo.authorized">
                 <p>认证编程网站</p>
                     <li *ngFor="let kv of userInfo.authorized | keyvalue">

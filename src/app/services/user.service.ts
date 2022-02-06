@@ -24,11 +24,11 @@ import { LoginPageComponent } from '../login-page/login-page.component';
 import { RegisterPageComponent } from '../register-page/register-page.component';
 import { UserGetInfoResponse } from '../api';
 
-export interface userInfo_t {
+export interface UserInfo {
   nickname: string,
   username: string;
   email: string | undefined,
-  status: string,
+  isVIP: boolean,
   authorized: Map<string, string[]> | undefined;
 }
 
@@ -38,7 +38,7 @@ export interface userInfo_t {
 
 export class UserService {
 
-  userInfo = new BehaviorSubject<null | userInfo_t>(null);
+  userInfo = new BehaviorSubject<null | UserInfo>(null);
 
   get isLoggedIn() {
     return this.userInfo.value !== null;
@@ -76,7 +76,7 @@ export class UserService {
           nickname: res.nickname,
           username: res.username,
           email: res.email,
-          status: res.status,
+          isVIP: res.isVIP,
           authorized: res.authorized
         });
       } else {
