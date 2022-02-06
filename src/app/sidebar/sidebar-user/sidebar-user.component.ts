@@ -18,28 +18,29 @@ export class SidebarUserComponent implements OnInit {
   inInterval = false;
   verifyBtnTxt: String;
   isLoading = false;
+
   submitForm(): void {
     console.log("here");
     if (this.validateForm.valid) {
       console.log('submit', this.validateForm.value);
       this.isLoading = true;
-      this.http.post<UserGetVeriCodeResponse>(`//${environment.backendHost}/user/getVeriCode`, this.validateForm.value, {withCredentials: true}).subscribe((res) => {
+      this.http.post<UserGetVeriCodeResponse>(`//${environment.backendHost}/user/getVeriCode`, this.validateForm.value, { withCredentials: true }).subscribe((res) => {
         this.isLoading = false;
         if (res.success) {
           let i = 10;
           this.inInterval = true;
-          let repeat = ()=>{
-            if (-- i < 0){
+          const repeat = () => {
+            if (--i < 0) {
               this.inInterval = false;
               this.verifyBtnTxt = "验证";
               return;
             }
-            setTimeout(()=>{
+            setTimeout(() => {
               this.verifyBtnTxt = `验证邮件已发送, 请于${i}秒后重试`;
               repeat();
             }, 1000);
             return;
-          }
+          };
           repeat();
         } else {
           alert("error: " + res.reason);
@@ -55,7 +56,7 @@ export class SidebarUserComponent implements OnInit {
     }
   }
 
-  refresh():void{
+  refresh(): void {
     this.userService.updateUserInfo();
     return;
   }
@@ -71,6 +72,6 @@ export class SidebarUserComponent implements OnInit {
     this.verifyBtnTxt = "验证";
     this.validateForm = this.fb.group({
       email: [null, [Validators.required]]
-    })
+    });
   }
 }

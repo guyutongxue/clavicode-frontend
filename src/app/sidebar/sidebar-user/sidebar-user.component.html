@@ -1,42 +1,43 @@
-<div class = "container">
-    <p>个人主页</p>
-    <nz-tabset nzTabPosition='left' nzSize='small' >
-        <nz-tab nzTitle="账户信息">
-            <div *ngIf="userInfo">
-                <p>用户名: {{userInfo.username}}</p>
-                <p>昵称: {{userInfo.nickname}}</p>
-                <div *ngIf="userInfo.email; else notVerified">
-                    <p>认证邮箱: {{userInfo.email}}</p>
-                </div>
-                <ng-template #notVerified>
-                    认证邮箱: 未认证
-                </ng-template>
-                <button nz-button [nzType]="'primary'" (click)="refresh">刷新</button>
-                <ng-template *ngIF="userInfo.authorized">
-                <p>认证编程网站</p>
-                    <li *ngFor="let kv of userInfo.authorized | keyvalue">
-                        {{kv.key}}: {{kv.value}}     
-                    </li>
-                </ng-template>
-            </div>
-        </nz-tab>
-        <nz-tab nzTitle="邮箱认证">
-            <form *ngIf="userInfo; else notLogin" nz-form [formGroup]="validateForm" class="validate-form" (ngSubmit)="submitForm()">
-                <nz-form-item>
-                    <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="email">E-mail</nz-form-label>
-                    <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="请输入正确的邮箱格式">
-                        <input nz-input formControlName="email" id="email"/>
-                    </nz-form-control>
-                </nz-form-item>
-                <button [disabled] = "inInterval" nz-button [nzType]="'primary'" [nzLoading] = "isLoading">
-                    {{verifyBtnTxt}}
-                </button>
-            </form>
-            <ng-template #notLogin>
-                <p>请先登录/注册</p>
-            </ng-template>
-        </nz-tab>
-    </nz-tabset>
+<div class="container">
+  <p>个人主页</p>
+  <nz-tabset nzTabPosition='left' nzSize='small'>
+    <nz-tab nzTitle="账户信息">
+      <div *ngIf="userInfo">
+        <p>用户名: {{userInfo.username}}</p>
+        <p>昵称: {{userInfo.nickname}}</p>
+        <div *ngIf="userInfo.email; else notVerified">
+          认证邮箱: {{userInfo.email}}
+        </div>
+        <ng-template #notVerified>
+          认证邮箱: 未认证
+        </ng-template>
+        <button nz-button [nzType]="'primary'" (click)="refresh">刷新</button>
+        <ng-template *ngIF="userInfo.authorized">
+          <p>认证编程网站</p>
+          <li *ngFor="let kv of userInfo.authorized | keyvalue">
+            {{kv.key}}: {{kv.value}}
+          </li>
+        </ng-template>
+      </div>
+    </nz-tab>
+    <nz-tab nzTitle="邮箱认证">
+      <form *ngIf="userInfo; else notLogin" nz-form [formGroup]="validateForm" class="validate-form"
+        (ngSubmit)="submitForm()">
+        <nz-form-item>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="email">E-mail</nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="请输入正确的邮箱格式">
+            <input nz-input formControlName="email" id="email" />
+          </nz-form-control>
+        </nz-form-item>
+        <button [disabled]="inInterval" nz-button [nzType]="'primary'" [nzLoading]="isLoading">
+          {{verifyBtnTxt}}
+        </button>
+      </form>
+      <ng-template #notLogin>
+        <p>请先登录/注册</p>
+      </ng-template>
+    </nz-tab>
+  </nz-tabset>
 </div>
 
 <!--
