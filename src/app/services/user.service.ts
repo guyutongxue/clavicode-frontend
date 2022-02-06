@@ -24,7 +24,7 @@ import { LoginPageComponent } from '../login-page/login-page.component';
 import { RegisterPageComponent } from '../register-page/register-page.component';
 import { UserGetInfoResponse } from '../api';
 
-export interface userInfo_t {
+export interface UserInfo {
   nickname: string,
   username: string;
   email: string | undefined,
@@ -38,7 +38,7 @@ export interface userInfo_t {
 
 export class UserService {
 
-  userInfo = new BehaviorSubject<null | userInfo_t>(null);
+  userInfo = new BehaviorSubject<null | UserInfo>(null);
 
   get isLoggedIn() {
     return this.userInfo.value !== null;
