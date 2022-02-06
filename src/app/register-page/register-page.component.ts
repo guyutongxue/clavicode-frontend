@@ -43,7 +43,7 @@ export class RegisterPageComponent implements OnInit {
     private modalRef: NzModalRef,
     private userService: UserService) {
     this.validateForm = this.fb.group({
-      email: [null, [Validators.required]],
+      nickname: [null, [Validators.required]],
       username: [null, [Validators.required]],
       password: [null, [Validators.required]]
     });

@@ -24,12 +24,21 @@ import { LoginPageComponent } from '../login-page/login-page.component';
 import { RegisterPageComponent } from '../register-page/register-page.component';
 import { UserGetInfoResponse } from '../api';
 
+export interface userInfo_t {
+  nickname: string,
+  username: string;
+  email: string | undefined,
+  status: string,
+  authorized: Map<string, string[]> | undefined;
+}
+
 @Injectable({
   providedIn: 'root'
 })
+
 export class UserService {
 
-  userInfo = new BehaviorSubject<null | string>(null);
+  userInfo = new BehaviorSubject<null | userInfo_t>(null);
 
   get isLoggedIn() {
     return this.userInfo.value !== null;
@@ -63,12 +72,20 @@ export class UserService {
       withCredentials: true
     }).subscribe((res) => {
       if (res.success) {
-        this.userInfo.next(res.username);
+        this.userInfo.next({
+          nickname: res.nickname,
+          username: res.username,
+          email: res.email,
+          status: res.status,
+          authorized: res.authorized
+        });
       } else {
         this.userInfo.next(null);
       }
     });
   }
+
+  
 
   logout() {
     this.http.get<any>(`//${environment.backendHost}/user/logout`, {

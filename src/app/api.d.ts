@@ -154,17 +154,14 @@ export type CppGetHeaderFileResponse = {
 }
 
 export type UserRegisterRequest = {
-  email: string;
+  nickname: string;
   username: string;
   password: string;
 };
 export type UserGetVeriCodeRequest={
   email: string;
 };
-export type UserVerifyVeriCodeRequest={
-  email: string;
-  veriCode: string;
-};
+
 export type UserRegisterResponse = {
   success: true;
 } | {
@@ -173,13 +170,16 @@ export type UserRegisterResponse = {
 };
 
 export type UserLoginRequest = {
-  email: string;
+  username: string;
   password: string;
 };
 
 export type UserGetInfoResponse = {
   success: true;
+  nickname: string,
   username: string;
+  email: string | undefined,
+  status: string,
   authorized: Map<string, string[]> | undefined;
 } | {
   success: false;

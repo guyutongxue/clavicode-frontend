@@ -17,7 +17,7 @@
 
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SidebarSearchComponent } from './sidebar-search/sidebar-search.component';
 import { SidebarFileComponent } from './sidebar-file/sidebar-file.component';
 import { SidebarCommonComponent } from './sidebar-common/sidebar-common.component';
@@ -38,6 +38,8 @@ import { NzCascaderModule } from 'ng-zorro-antd/cascader';
 import { NzTreeViewModule } from 'ng-zorro-antd/tree-view';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
+import { SidebarUserComponent } from './sidebar-user/sidebar-user.component';
+import { NzModalModule } from 'ng-zorro-antd/modal';
 
 
 @NgModule({
@@ -47,9 +49,12 @@ import { NzRadioModule } from 'ng-zorro-antd/radio';
     SidebarCommonComponent,
     SidebarDebugComponent,
     SidebarProblemComponent,
-    SidebarSettingsComponent
+    SidebarSettingsComponent,
+    SidebarUserComponent
   ],
   imports: [
+    NzModalModule,
+    ReactiveFormsModule,
     CommonModule,
     FormsModule,
     NzButtonModule,

@@ -65,7 +65,7 @@ export class LoginPageComponent implements OnInit {
     private actionService: ActionService,
     private userService: UserService) {
     this.validateForm = this.fb.group({
-      email: [null, [Validators.required]],
+      username: [null, [Validators.required]],
       password: [null, [Validators.required]],
       remember: [true]
     });

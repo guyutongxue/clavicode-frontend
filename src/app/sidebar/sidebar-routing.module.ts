@@ -28,6 +28,7 @@ import { SidebarCommonComponent } from './sidebar-common/sidebar-common.componen
 import { SidebarDebugComponent } from './sidebar-debug/sidebar-debug.component';
 import { SidebarProblemComponent } from './sidebar-problem/sidebar-problem.component';
 import { SidebarSettingsComponent } from './sidebar-settings/sidebar-settings.component';
+import { SidebarUserComponent } from './sidebar-user/sidebar-user.component';
 const routes: Routes = [
   {
     path: 'common',
@@ -52,6 +53,11 @@ const routes: Routes = [
   {
     path: 'settings',
     component: SidebarSettingsComponent,
+    outlet: 'sidebar'
+  },
+  {
+    path: 'user',
+    component: SidebarUserComponent,
     outlet: 'sidebar'
   }
 ];

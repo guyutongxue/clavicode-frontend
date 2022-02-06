@@ -4,7 +4,7 @@
     <ng-container *ngIf="userInfo; else loginTmpl">
       <button nz-button nz-dropdown nzType="text" [nzDropdownMenu]="menu">
         <i nz-icon nzType="user"></i>
-        {{userInfo}}
+        {{userInfo.username}}
       </button>
       <nz-dropdown-menu #menu="nzDropdownMenu">
         <ul nz-menu>

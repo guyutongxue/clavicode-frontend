@@ -1,0 +1,51 @@
+<div class = "container">
+    <p>个人主页</p>
+    <nz-tabset nzTabPosition='left' nzSize='small' >
+        <nz-tab nzTitle="账户信息">
+            <div *ngIf="userInfo">
+                <p>用户名: {{userInfo.username}}</p>
+                <p>昵称: {{userInfo.nickname}}</p>
+                <ng-template *ngIf="userInfo.email; else notVerified">
+                    认证邮箱: {{userInfo.email}}
+                </ng-template>                
+                <ng-template #notVerified>
+                    认证邮箱: 未认证
+                </ng-template>
+                <ng-template *ngIF="userInfo.authorized">
+                <p>认证编程网站</p>
+                    <li *ngFor="let kv of userInfo.authorized | keyvalue">
+                        {{kv.key}}: {{kv.value}}     
+                    </li>
+                </ng-template>
+            </div>
+        </nz-tab>
+        <nz-tab nzTitle="邮箱认证">
+            <form *ngIf="userInfo; else notLogin" nz-form [formGroup]="validateForm" class="validate-form" (ngSubmit)="submitForm()">
+                <nz-form-item>
+                    <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="email">E-mail</nz-form-label>
+                    <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="请输入正确的邮箱格式">
+                        <input nz-input formControlName="email" id="email"/>
+                    </nz-form-control>
+                </nz-form-item>
+                <button [disabled] = "inInterval" nz-button [nzType]="'primary'" [nzLoading] = "isLoading">
+                    {{verifyBtnTxt}}
+                </button>
+            </form>
+            <ng-template #notLogin>
+                <p>请先登录/注册</p>
+            </ng-template>
+        </nz-tab>
+    </nz-tabset>
+</div>
+
+<!--
+第一页放常用功能，编译运行，以及代码大纲（符号列表）
+第二页放调试相关内容，变量查看，表达式求值，调用栈等
+第三页是编程网格，查看题目列表，题目信息，提交代码
+第四页暂定。可以加一些编译参数、运行参数设置之类的
+下面工具栏：
+要有这几页：
+问题页：以类似表格的形式查看编译错误和警告
+输出页：展示一些程序输出和系统日志
+调试页：调试控制台
+-->

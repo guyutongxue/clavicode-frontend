@@ -60,6 +60,12 @@ export class MainViewComponent implements OnInit {
       url: 'settings',
       icon: 'setting',
       disabled: false
+    },
+    {
+      title: '用户',
+      url: 'user',
+      icon: 'user',
+      disabled: false
     }
   ];
   readonly toolsItems = [
@@ -121,6 +127,7 @@ export class MainViewComponent implements OnInit {
     return null;
   }
   showSidebar(who: string | null): void {
+    console.log(who);
     if (who === this.currentOutletUrl("sidebar") || who === null) {
       this.router.navigate([{ outlets: { sidebar: null } }], { skipLocationChange: true });
     } else {
