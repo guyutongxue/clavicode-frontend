@@ -27,7 +27,7 @@ export class SidebarUserComponent implements OnInit {
       this.http.post<UserGetVeriCodeResponse>(`//${environment.backendHost}/user/getVeriCode`, this.validateForm.value, { withCredentials: true }).subscribe((res) => {
         this.isLoading = false;
         if (res.success) {
-          let i = 10;
+          let i = 60;
           this.inInterval = true;
           const repeat = () => {
             if (--i < 0) {
