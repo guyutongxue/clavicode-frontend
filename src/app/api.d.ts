@@ -154,7 +154,6 @@ export type CppGetHeaderFileResponse = {
 }
 
 export type UserRegisterRequest = {
-  nickname: string;
   username: string;
   password: string;
 };
@@ -162,7 +161,7 @@ export type UserGetVeriCodeRequest={
   email: string;
 };
 
-export type UserRegisterResponse = {
+export type UserSystemResponse = {
   success: true;
 } | {
   success: false;
@@ -176,7 +175,6 @@ export type UserLoginRequest = {
 
 export type UserGetInfoResponse = {
   success: true;
-  nickname: string,
   username: string;
   email: string | undefined,
   isVIP: boolean,
@@ -200,26 +198,28 @@ export type OjSetCourseResponse = {
   reason: string;
 };
 
-export type UserLoginResponse = UserRegisterResponse;
+export type UserLoginResponse = UserSystemResponse;
 
-export type UserLogoutResponse = UserRegisterResponse;
+export type UserRegisterResponse = UserSystemResponse;
 
-export type UserGetVeriCodeResponse = UserRegisterResponse;
+export type UserLogoutResponse = UserSystemResponse;
 
-export type UserVerifyVeriCodeResponse = UserRegisterResponse;
+export type UserGetVeriCodeResponse = UserSystemResponse;
+
+export type UserVerifyVeriCodeResponse = UserSystemResponse;
 
 export type UserChangePasswordRequest = {
   email: string; 
   oldPassword: string;
   newPassword: string;
 }
-export type UserChangePasswordResponse = UserRegisterResponse;
+export type UserChangePasswordResponse = UserSystemResponse;
 
 
 export type UserChangeUsernameRequest = {
   newUsername: string;
 }
-export type UserChangeUsernameResponse = UserRegisterResponse;
+export type UserChangeUsernameResponse = UserSystemResponse;
 
 
 // OJ

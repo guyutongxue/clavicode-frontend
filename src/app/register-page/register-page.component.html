@@ -1,25 +1,35 @@
 <form nz-form [formGroup]="validateForm" class="login-form" (ngSubmit)="submitForm()">
   <nz-form-item>
-    <nz-form-control nzErrorTip="请输入用户名，这是你的唯一标识">
+    <nz-form-control nzHasFeedback [nzErrorTip]="usernameError">
       <nz-input-group nzPrefixIcon="user">
         <input type="text" nz-input formControlName="username" autocomplete="username" placeholder="用户名" />
+      <ng-template #usernameError let-control>
+        <ng-container *ngIf="control.hasError('used')">用户名已使用</ng-container>
+        <ng-container *ngIf="control.hasError('required')">请输入用户名</ng-container>
+      </ng-template>
       </nz-input-group>
     </nz-form-control>
   </nz-form-item>
   <nz-form-item>
-    <nz-form-control nzErrorTip="为自己起个名字吧，注册后可更改">
-      <nz-input-group nzPrefixIcon="star">
-        <input type="text" nz-input formControlName="nickname" placeholder="昵称" />
-      </nz-input-group>
-    </nz-form-control>
-  </nz-form-item>
-  <nz-form-item>
-    <nz-form-control nzErrorTip="请输入密码">
+    <nz-form-control nzHasFeedback [nzErrorTip]="passwordError">
       <nz-input-group nzPrefixIcon="lock">
         <input type="password" nz-input formControlName="password" placeholder="密码" />
       </nz-input-group>
+      <ng-template #passwordError let-control>
+        <ng-container *ngIf="control.hasError('required')">请输入密码</ng-container>
+        <ng-container *ngIf="control.hasError('formError')">至少一个字母,一个数字,且长度不小于6</ng-container>
+      </ng-template>
     </nz-form-control>
   </nz-form-item>
+  <nz-form-item>
+    <nz-form-control nzHasFeedback [nzErrorTip]="confirmError">
+      <input type="password" nz-input formControlName="confirm" placeholder="确认密码">
+      <ng-template #confirmError let-control>
+        <ng-container *ngIf="control.hasError('required')">请确认密码</ng-container>
+        <ng-container *ngIf="control.hasError('confirm')">密码不一致</ng-container>
+      </ng-template>
+    </nz-form-control>
+    </nz-form-item>
   <div nz-row class="login-form-margin">
     <!-- <div nz-col [nzSpan]="12">
       <label nz-checkbox formControlName="remember">

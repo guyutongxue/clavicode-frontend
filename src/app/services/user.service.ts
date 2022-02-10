@@ -25,7 +25,6 @@ import { RegisterPageComponent } from '../register-page/register-page.component'
 import { UserGetInfoResponse } from '../api';
 
 export interface UserInfo {
-  nickname: string,
   username: string;
   email: string | undefined,
   isVIP: boolean,
@@ -73,7 +72,6 @@ export class UserService {
     }).subscribe((res) => {
       if (res.success) {
         this.userInfo.next({
-          nickname: res.nickname,
           username: res.username,
           email: res.email,
           isVIP: res.isVIP,

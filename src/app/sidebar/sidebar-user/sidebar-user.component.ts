@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { UserService } from '../../services/user.service';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { UserGetVeriCodeResponse } from "../../api";
+import { UserGetVeriCodeResponse, UserSystemResponse } from "../../api";
 import { environment } from 'src/environments/environment';
 import { BooleanInput } from 'ng-zorro-antd/core/types';
 
@@ -15,9 +15,11 @@ import { BooleanInput } from 'ng-zorro-antd/core/types';
 export class SidebarUserComponent implements OnInit {
 
   validateForm: FormGroup;
+  changePasswordForm: FormGroup;
   inInterval = false;
   verifyBtnTxt: String;
   isLoading = false;
+  regPassword = /^(?=.*?[a-z])(?=.*?[0-9]).{6,}$/;
 
   submitForm(): void {
     console.log("here");
@@ -56,6 +58,38 @@ export class SidebarUserComponent implements OnInit {
     }
   }
 
+  isChangingPassword = false;
+  changePasswordBtn = "修改密码";
+  changePasswordMsg = "";
+
+  submitForm_changePassword(): void {
+    console.log("here");
+    if (this.changePasswordForm.valid) {
+      console.log('submit', this.changePasswordForm.value);
+      this.isChangingPassword = true;
+      this.http.post<UserSystemResponse>(`//${environment.backendHost}/user/changePassword`, 
+      {oldPassword: this.changePasswordForm.value.oldPassword, newPassword: this.changePasswordForm.value.newPassword}, {withCredentials: true }).subscribe((res) => {
+        this.isChangingPassword = false;
+        console.log(res)
+        if (res.success) {
+          this.changePasswordMsg = "密码修改成功!";
+        } else {
+          this.changePasswordMsg = "密码修改失败:" + res.reason;
+        }
+        setTimeout(()=>{
+          this.changePasswordMsg = ""; 
+        }, 10000);
+      });
+    } else {
+      Object.values(this.changePasswordForm.controls).forEach(control => {
+        if (control.invalid) {
+          control.markAsDirty();
+          control.updateValueAndValidity({ onlySelf: true });
+        }
+      });
+    }
+  }
+
   refresh(): void {
     this.userService.updateUserInfo();
     return;
@@ -66,12 +100,36 @@ export class SidebarUserComponent implements OnInit {
   get userInfo() {
     return this.userService.userInfo.value;
   }
+
+  passwordValidator = (control: FormControl): { [s: string]: boolean } => {
+    if (!control.value) {
+      return { error: true, required: true };
+    } else if (!this.regPassword.test(control.value)) {
+      return { error: true, formError: true };
+    }
+    return {};
+  }
+  
+  confirmValidator = (control: FormControl): { [s: string]: boolean } => {
+    if (!control.value) {
+      return { error: true, required: true };
+    } else if (control.value !== this.changePasswordForm.controls.newPassword.value) {
+      return { error: true, confirm: true };
+    }
+    return {};
+  }
+
   constructor(private userService: UserService,
     private fb: FormBuilder,
     private http: HttpClient) {
     this.verifyBtnTxt = "验证";
     this.validateForm = this.fb.group({
       email: [null, [Validators.required]]
+    });
+    this.changePasswordForm = this.fb.group({
+      oldPassword: ["", [Validators.required]],
+      newPassword: ["", [Validators.required, this.passwordValidator]],
+      confirm: [null, [this.confirmValidator]]
     });
   }
 }
