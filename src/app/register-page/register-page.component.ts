@@ -48,7 +48,7 @@ export class RegisterPageComponent implements OnInit {
 
         }
         else {
-          this.http.get<UserSystemResponse>(`//${environment.backendHost}/user/search`, {params: {username: control.value}}).subscribe(
+          this.http.get<UserSystemResponse>(`//${environment.backendHost}/user/search`, {params: {username: control.value, email: ""}}).subscribe(
             (res) => {
               console.log(res)
               if(res.success) {

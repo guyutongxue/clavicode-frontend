@@ -54,6 +54,7 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
 import { RegisterPageComponent } from './register-page/register-page.component';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { NzSelectModule } from 'ng-zorro-antd/select';
+import { ForgetPasswordComponent } from './forget-password/forget-password.component';
 
 registerLocaleData(zh);
 
@@ -68,6 +69,7 @@ registerLocaleData(zh);
     ExecuteDialogComponent,
     LoginPageComponent,
     RegisterPageComponent,
+    ForgetPasswordComponent,
   ],
   imports: [
     BrowserModule,

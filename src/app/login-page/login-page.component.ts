@@ -79,4 +79,8 @@ export class LoginPageComponent implements OnInit {
     this.actionService.runAction('user.register');
   }
 
+  forgotPassword() {
+    this.modalRef.close();
+    this.actionService.runAction('user.forgotPassword');
+  }
 }

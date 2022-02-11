@@ -19,9 +19,9 @@
         <span>记住我</span>
       </label>
     </div>
-    <!-- <div nz-col [nzSpan]="12">
-        <a class="login-form-forgot">Forgot password</a>
-      </div> -->
+    <div nz-col [nzSpan]="12">
+      <a class="login-form-forgot" (click)="forgotPassword()">忘记密码</a>
+    </div>
   </div>
   <button nz-button class="login-form-button login-form-margin" [nzType]="'primary'">登录</button>
   或者<a href="javascript: void 0" (click)="register()">立即注册</a>

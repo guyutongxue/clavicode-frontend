@@ -96,6 +96,11 @@ export class ActionService {
       enabled: () => !!this.userService.isLoggedIn,
       run: () => this.userService.logout()
     },
+    'user.forgotPassword': {
+      name: '忘记密码',
+      enabled: () => true,
+      run: () => this.userService.forgotPassword()
+    },
     'file.save': {
       name: '保存',
       icon: 'save',

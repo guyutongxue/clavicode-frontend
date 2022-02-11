@@ -22,6 +22,7 @@ import { BehaviorSubject } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { LoginPageComponent } from '../login-page/login-page.component';
 import { RegisterPageComponent } from '../register-page/register-page.component';
+import { ForgetPasswordComponent } from '../forget-password/forget-password.component';
 import { UserGetInfoResponse } from '../api';
 
 export interface UserInfo {
@@ -64,6 +65,15 @@ export class UserService {
       nzWidth: '400px',
       nzFooter: null
     });
+  }
+
+  forgotPassword() {
+    this.modal.create({
+      nzTitle: '',
+      nzContent: ForgetPasswordComponent,
+      nzWidth: '400px',
+      nzFooter: null
+    })
   }
 
   updateUserInfo() {
