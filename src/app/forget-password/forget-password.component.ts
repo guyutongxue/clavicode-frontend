@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormControl, ValidationErrors } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { NzModalRef } from 'ng-zorro-antd/modal';
-import { Observable, Observer } from 'rxjs/Rx';
+import { Observable, Observer } from 'rxjs';
 import { UserRegisterResponse, UserSystemResponse } from '../api';
 import { environment } from 'src/environments/environment';
 
