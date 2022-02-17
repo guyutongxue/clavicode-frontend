@@ -1,5 +1,6 @@
 <div id="sidebarSettings">
   <app-sidebar-user></app-sidebar-user>
+  <nz-divider></nz-divider>
   <div>
     <h2>主题</h2>
     <nz-radio-group [(ngModel)]="theme" (ngModelChange)="onThemeChange()">
@@ -9,4 +10,6 @@
       <label nz-radio nzValue="monokai">Monokai</label>
     </nz-radio-group>
   </div>
+  <nz-divider></nz-divider>
+  <app-sidebar-feedback></app-sidebar-feedback>
 </div>

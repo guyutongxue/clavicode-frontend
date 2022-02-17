@@ -1,0 +1,12 @@
+<h2> 意见反馈 </h2>
+<form nz-form [formGroup]="feedbackForm" nzLayout="vertical" (ngSubmit)="onSubmit()">
+  <nz-form-item>
+    <nz-form-control>
+      <nz-textarea-count [nzMaxCharacterCount]="100">
+        <textarea rows="4" formControlName="feedback" nz-input></textarea>
+      </nz-textarea-count>
+    </nz-form-control>
+  </nz-form-item>
+  <button nz-button [nzType]="'primary'" [nzLoading] = isLoading> 提交反馈 </button>
+  <p> {{msg}} </p>
+</form>

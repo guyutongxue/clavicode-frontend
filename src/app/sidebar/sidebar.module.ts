@@ -34,12 +34,14 @@ import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzCascaderModule } from 'ng-zorro-antd/cascader';
 import { NzTreeViewModule } from 'ng-zorro-antd/tree-view';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { SidebarUserComponent } from './sidebar-user/sidebar-user.component';
 import { NzModalModule } from 'ng-zorro-antd/modal';
+import { FeedbackComponent } from './feedback/feedback.component';
 
 
 @NgModule({
@@ -50,7 +52,8 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
     SidebarDebugComponent,
     SidebarProblemComponent,
     SidebarSettingsComponent,
-    SidebarUserComponent
+    SidebarUserComponent,
+    FeedbackComponent
   ],
   imports: [
     NzModalModule,
@@ -70,7 +73,8 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
     NzCascaderModule,
     NzTreeViewModule,
     NzDropDownModule,
-    NzRadioModule
+    NzRadioModule,
+    NzDividerModule
   ]
 })
 export class SidebarModule { }
