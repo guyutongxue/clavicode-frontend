@@ -1,5 +1,6 @@
 {
   "licenser.author": "Clavicode Team",
   "licenser.license": "GPLv3",
-  "licenser.disableAutoHeaderInsertion": true
+  "licenser.disableAutoHeaderInsertion": true,
+  "vsicons.presets.angular": true
 }

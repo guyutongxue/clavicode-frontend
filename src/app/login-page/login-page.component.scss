@@ -4,4 +4,11 @@
   .login-form-button {
     width: 100%;
   }
+
+  .last-line {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
 }

@@ -13,6 +13,7 @@ export class SidebarSettingsComponent implements OnInit {
   theme = 'classic';
 
   ngOnInit(): void {
+    this.theme = this.themeService.currentThemeName;
   }
 
   onThemeChange() {

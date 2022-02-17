@@ -99,6 +99,7 @@ export class ThemeService {
   }
 
   private currentTheme: ThemeType = undefined!;
+  currentThemeName = "classic";
 
   private reverseTheme(theme: string): ThemeType {
     return theme === ThemeType.Dark ? ThemeType.Light : ThemeType.Dark;
@@ -186,5 +187,7 @@ export class ThemeService {
       ]
     };
     this.editorService.setEditorTheme(editorTheme);
+    this.currentThemeName = name;
+    window.localStorage.setItem("theme", name);
   }
 }

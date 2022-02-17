@@ -35,7 +35,8 @@ export class AppComponent implements OnInit {
     private tabsService: TabsService,
     private themeService: ThemeService) {
     this.windowHeight = window.innerHeight;
-    this.themeService.setTheme('classic');
+    const themeName = window.localStorage.getItem("theme") ?? "classic";
+    this.themeService.setTheme(themeName);
   }
 
   ngOnInit() {

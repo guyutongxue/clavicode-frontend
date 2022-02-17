@@ -60,12 +60,6 @@ export class MainViewComponent implements OnInit {
       url: 'settings',
       icon: 'setting',
       disabled: false
-    },
-    {
-      title: '用户',
-      url: 'user',
-      icon: 'user',
-      disabled: false
     }
   ];
   readonly toolsItems = [

@@ -23,15 +23,15 @@
         [disabled]="!enabled || !isDebugging" (click)="debugStepout()">
         <i class="codicon codicon-debug-step-out"></i>
       </button>
-      <button nz-button nzType="default" nz-tooltip nzTooltipPlacement="top" nzTooltipTitle="重新运行"
+      <!-- <button nz-button nzType="default" nz-tooltip nzTooltipPlacement="top" nzTooltipTitle="重新运行"
         [disabled]="!enabled || !isDebugging" (click)="debugRestart()">
         <i class="codicon codicon-debug-restart"></i>
-      </button>
+      </button> -->
       <button *ngIf="!isDebugging" nz-button nzType="default" (click)="startDebug()" nz-tooltip
         nzTooltipPlacement="topRight" nzTooltipTitle="开始调试" [disabled]="!enabled">
         <i class="codicon codicon-debug-start"></i>
       </button>
-      <button *ngIf="!isDebugging" nz-button nzType="default" (click)="exitDebug()" nz-tooltip
+      <button *ngIf="isDebugging" nz-button nzType="default" (click)="exitDebug()" nz-tooltip
         nzTooltipPlacement="topRight" nzTooltipTitle="退出调试" [disabled]="!enabled">
         <i class="codicon codicon-debug-stop"></i>
       </button>

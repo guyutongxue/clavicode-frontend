@@ -44,6 +44,10 @@ export class UserService {
     return this.userInfo.value !== null;
   }
 
+  get isVip() {
+    return (this.userInfo.value && this.userInfo.value.isVIP) ?? false;
+  }
+
   constructor(private http: HttpClient, private modal: NzModalService) {
     this.updateUserInfo();
     this.userInfo.subscribe((v) => console.log("userinfo: ", v));

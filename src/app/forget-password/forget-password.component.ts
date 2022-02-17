@@ -14,7 +14,7 @@ import { environment } from 'src/environments/environment';
 })
 export class ForgetPasswordComponent implements OnInit {
   emailForm: FormGroup;
-  hintMsg = ""
+  hintMsg = "";
   isLoading = false;
   onSubmit(): void {
     if (this.emailForm.valid) {

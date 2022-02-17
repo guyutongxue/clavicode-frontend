@@ -108,7 +108,7 @@ export class SidebarUserComponent implements OnInit {
       return { error: true, formError: true };
     }
     return {};
-  }
+  };
   
   confirmValidator = (control: FormControl): { [s: string]: boolean } => {
     if (!control.value) {
@@ -117,7 +117,7 @@ export class SidebarUserComponent implements OnInit {
       return { error: true, confirm: true };
     }
     return {};
-  }
+  };
 
   constructor(private userService: UserService,
     private fb: FormBuilder,

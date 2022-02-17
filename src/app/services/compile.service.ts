@@ -26,6 +26,7 @@ import { Router } from '@angular/router';
 import { PyodideService } from './pyodide.service';
 import { of, Subscription } from 'rxjs';
 import { catchError, take, timeout } from 'rxjs/operators';
+import { UserService } from './user.service';
 
 const COMPILE_URL = `//${environment.backendHost}/cpp/compile`;
 
@@ -44,7 +45,8 @@ export class CompileService {
               private router: Router,
               private notification: NzNotificationService,
               private problemsService: ProblemsService,
-              private pyodideService: PyodideService
+              private pyodideService: PyodideService,
+              private userService: UserService,
               ) {
   }
 
@@ -106,6 +108,10 @@ export class CompileService {
   }
 
   async interactiveCompile() {
+    if (!this.userService.isLoggedIn) {
+      alert("登录后可用");
+      return null;
+    }
     const result = await this.http.post<CppCompileResponse>(COMPILE_URL, <CppCompileRequest>{
       code: this.code(),
       execute: 'interactive'
@@ -122,7 +128,14 @@ export class CompileService {
   }
 
   async debugCompile(): Promise<string | null> {
-    if (this.editorService.getLanguage() !== "cpp") return null;
+    if (this.editorService.getLanguage() !== "cpp") {
+      alert("调试功能仅限 C++ 代码"); 
+      return null;
+    }
+    if (!this.userService.isVip) {
+      alert("仅认证用户可用");
+      return null;
+    }
     const result = await this.http.post<CppCompileResponse>(COMPILE_URL, <CppCompileRequest>{
       code: this.code(),
       execute: 'debug'

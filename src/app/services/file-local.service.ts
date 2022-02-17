@@ -101,7 +101,17 @@ const REQ_RW_OPT: FileSystemHandlePermissionDescriptor = {
 })
 export class FileLocalService {
 
-  constructor(private tabsService: TabsService) { }
+  constructor(private tabsService: TabsService) {
+    let refresh = async () => {
+      while (true) {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        if (this.dirty) {
+          await this.refresh();
+        }
+      }
+    };
+    refresh();
+  }
 
   private flattenedData = new BehaviorSubject<FsNode[]>([]);
   treeControl = new FlatTreeControl<FsNode>(
@@ -149,12 +159,18 @@ export class FileLocalService {
     this.flattenedData.next(data);
   }
 
+  private dirty = false;
+
   /**
    * 
    * @param handle handle of the node to be refreshed
    * @returns 
    */
-  private async refresh(handle: FileSystemDirectoryHandle) {
+  async refresh(handle?: FileSystemDirectoryHandle) {
+    if (typeof handle === "undefined") {
+      if (this.rootHandle === null) return;
+      handle = this.rootHandle;
+    }
     const data = this.flattenedData.value;
     const index = data.findIndex(v => v.value === handle);
     const node = data[index] as FsNode | undefined;
@@ -183,6 +199,7 @@ export class FileLocalService {
       node.loaded = "yes";
     }
     this.flattenedData.next(data);
+    this.dirty = false;
   }
 
   async init() {
@@ -384,7 +401,8 @@ export class FileLocalService {
       console.log({ offset, data });
       await writable.close();
       if (typeof parent !== "undefined") {
-        this.refresh(res[1]);
+        // FIXME：密集的刷新导致显示异常
+        this.dirty = true;
       }
       return 0;
     } catch (e: any) {

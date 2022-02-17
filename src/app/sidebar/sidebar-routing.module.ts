@@ -54,11 +54,6 @@ const routes: Routes = [
     path: 'settings',
     component: SidebarSettingsComponent,
     outlet: 'sidebar'
-  },
-  {
-    path: 'user',
-    component: SidebarUserComponent,
-    outlet: 'sidebar'
   }
 ];
 

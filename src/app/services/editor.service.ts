@@ -30,6 +30,7 @@ import { cppLang, cppLangConf } from '../configs/cpp';
 import { pyLang, pyLangConf } from '../configs/py';
 import { environment } from '../../environments/environment';
 import { basename, extname } from 'path';
+import { UserService } from './user.service';
 
 // All standard C++ headers filename
 // Generate on https://eel.is/c++draft/headerindex, run js below:
@@ -118,7 +119,9 @@ export class EditorService {
   private traceDecoration: string[] = [];
   private lastTraceUri: monaco.Uri | null = null;
 
-  constructor(private monacoEditorLoaderService: MonacoEditorLoaderService) {
+  constructor(
+    private monacoEditorLoaderService: MonacoEditorLoaderService,
+    private userService: UserService) {
     this.editorText.pipe(
       debounceTime(300),
       distinctUntilChanged()
@@ -150,28 +153,10 @@ export class EditorService {
       monaco.languages.setMonarchTokensProvider('python', pyLang);
       monaco.languages.setLanguageConfiguration('python', pyLangConf);
       MonacoServices.install(monaco as any);
-
-      await Promise.all([
-        this.startLanguageClient('cpp'),
-        this.startLanguageClient('python')
-      ]);
-      // Override default SemanticTokensProvider. Replace legend with our own.
-      monaco.languages.registerDocumentSemanticTokensProvider('cpp', {
-        getLegend() {
-          return clangdSemanticTokensLegend;
-        },
-        provideDocumentSemanticTokens: async (model) => {
-          const data = await this.getSemanticTokens(model);
-          return {
-            data: new Uint32Array(data)
-          };
-        },
-        releaseDocumentSemanticTokens() { }
-      });
     });
   }
 
-  private startLanguageClient(lang: string) {
+  private async startLanguageClient(lang: string) {
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     const socketUrl = `${protocol}//${environment.backendHost}/ws/languageServer/${lang}`;
     const socketOptions = {
@@ -184,7 +169,7 @@ export class EditorService {
     };
     const webSocket = new ReconnectingWebSocket(socketUrl, [], socketOptions) as any;
     let client: MonacoLanguageClient;
-    return new Promise<void>((resolve) => {
+    await new Promise<void>((resolve) => {
       // listen when the web socket is opened
       listen({
         webSocket,
@@ -221,6 +206,20 @@ export class EditorService {
         }
       });
     });
+    if (lang === "cpp") {
+      monaco.languages.registerDocumentSemanticTokensProvider('cpp', {
+        getLegend() {
+          return clangdSemanticTokensLegend;
+        },
+        provideDocumentSemanticTokens: async (model) => {
+          const data = await this.getSemanticTokens(model);
+          return {
+            data: new Uint32Array(data)
+          };
+        },
+        releaseDocumentSemanticTokens() { }
+      });
+    }
   }
 
   private getUri(tab: Tab): monaco.Uri {
@@ -434,6 +433,10 @@ export class EditorService {
     this.editor.updateOptions({ readOnly: this.modelInfos[newUri].readOnly });
     this.setPosition(this.modelInfos[newUri].cursor);
     this.editor.setScrollTop(this.modelInfos[newUri].scrollTop);
+    let lang = newModel.getLanguageId();
+    if (this.userService.isVip && this.languageClient[lang] === null) {
+      this.startLanguageClient(lang);
+    }
   }
 
   async getSymbols(): Promise<DocumentSymbol[]> {
