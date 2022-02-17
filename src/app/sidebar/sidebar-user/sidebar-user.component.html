@@ -11,7 +11,7 @@
           认证邮箱: 未认证
         </ng-template>
         <button nz-button [nzType]="'primary'" (click)="refresh()">刷新</button>
-        <ng-template *ngIF="userInfo.authorized">
+        <ng-template *ngIf="userInfo.authorized">
           <p>认证编程网站</p>
           <li *ngFor="let kv of userInfo.authorized | keyvalue">
             {{kv.key}}: {{kv.value}}

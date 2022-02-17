@@ -59,6 +59,10 @@ export class OjService {
     private editorService: EditorService) { }
 
   async listProblemSets() {
+    if (1 === 1) {
+      alert("暂不好使");
+      return null;
+    }
     const res = await this.http.get<OjListProblemSetsResponse>(LIST_PROBLEM_SET_URL).toPromise();
     if (!res.success) {
       alert("Load set list failed");

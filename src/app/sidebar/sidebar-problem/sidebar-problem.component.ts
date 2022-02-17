@@ -40,7 +40,7 @@ export class SidebarProblemComponent implements OnInit {
     if (index === -1) {
       // load set list
       const res = await this.ojService.listProblemSets();
-      if (!res) return;
+      if (res === null) return;
       node.children = res.map<NzCascaderOption>(set => ({
         value: set.problemSetId,
         label: set.title,
