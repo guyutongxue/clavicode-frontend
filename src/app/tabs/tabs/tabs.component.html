@@ -4,11 +4,17 @@
     (cdkDropListDropped)="cdkOnDrop($any($event))">
     <nz-tab *ngFor="let tab of tabList" [nzTitle]="titleTemplate" [nzClosable]="tab.type !== 'pinned'">
       <ng-template #titleTemplate>
-        <div cdkDrag class="tab-title">
+        <div cdkDrag class="tab-title"
+          (contextmenu)="tab.type === 'local' && nzContextMenuService.create($event, saveMenu)">
           {{ tab.title }}
           <span *ngIf="tab.type === 'local' && !tab.saved">*</span>
         </div>
       </ng-template>
+      <nz-dropdown-menu #saveMenu>
+        <ul nz-menu>
+          <li nz-menu-item (click)="flService.save(tab)">保存</li>
+        </ul>
+      </nz-dropdown-menu>
     </nz-tab>
   </nz-tabset>
   <ng-template #languageSelect>

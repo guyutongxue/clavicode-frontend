@@ -59,7 +59,7 @@ export class SidebarProblemComponent implements OnInit {
         isLeaf: true
       }));
     }
-  }
+  };
 
   async updateDescription(value: string[]) {
     this.ojService.updateDescription(value);

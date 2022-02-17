@@ -15,12 +15,13 @@
 // You should have received a copy of the GNU General Public License
 // along with clavicode-frontend.  If not, see <http://www.gnu.org/licenses/>.
 
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Router } from '@angular/router';
 import { Tab, TabsService } from '../../services/tabs.service';
 import { FileLocalService } from 'src/app/services/file-local.service';
 import { FileService } from 'src/app/services/file.service';
+import { NzContextMenuService } from 'ng-zorro-antd/dropdown';
 
 @Component({
   selector: 'app-tabs',
@@ -33,7 +34,8 @@ export class TabsComponent implements OnInit {
     private router: Router, 
     private tabsService: TabsService,
     private fileService: FileService,
-    private flService: FileLocalService
+    public flService: FileLocalService,
+    public nzContextMenuService: NzContextMenuService
     ) { }
 
   ngOnInit(): void {
@@ -109,5 +111,10 @@ export class TabsComponent implements OnInit {
 
   set currentLang(value: string) {
     this.tabsService.changePinned(value);
+  }
+
+  @HostListener('window:beforeunload')
+  canDeactivate(): boolean {
+    return this.tabList.every(tab => tab.type !== "local" || tab.saved);
   }
 }
